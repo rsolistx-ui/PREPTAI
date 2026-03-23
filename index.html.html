@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="PREPT AI — AI-powered resume optimizer and real-time interview coach. Beat ATS filters, land more interviews, and ace every call.">
+<title>PREPT AI — Get the Job. Keep the Job.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06060d;
+  --s1: #0a0a14;
+  --s2: #0f0f1c;
+  --s3: #161625;
+  --s4: #1d1d2e;
+  --b1: rgba(255,255,255,0.05);
+  --b2: rgba(255,255,255,0.09);
+  --b3: rgba(255,255,255,0.14);
+  --gold: #c8a84b;
+  --gold2: #e6c668;
+  --gold3: #f5e0a0;
+  --gd: rgba(200,168,75,0.08);
+  --gd2: rgba(200,168,75,0.15);
+  --vi: #7b6df4;
+  --vi2: #a498ff;
+  --vd: rgba(123,109,244,0.08);
+  --cy: #38d9c0;
+  --cyd: rgba(56,217,192,0.08);
+  --gr: #45de7a;
+  --re: #ef5f5f;
+  --am: #f5a52a;
+  --tx: #edeaf7;
+  --tx2: #8c89a6;
+  --tx3: #4d4a66;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ── AMBIENT GLOWS ── */
+.glow-1 {
+  position: fixed; top: -20%; left: 20%;
+  width: 700px; height: 600px;
+  background: radial-gradient(ellipse, rgba(123,109,244,0.06) 0%, transparent 65%);
+  pointer-events: none; z-index: 0;
+}
+.glow-2 {
+  position: fixed; bottom: -10%; right: 10%;
+  width: 500px; height: 400px;
+  background: radial-gradient(ellipse, rgba(200,168,75,0.05) 0%, transparent 65%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── NAVBAR ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center;
+  padding: 0 48px; height: 62px;
+  border-bottom: 1px solid var(--b1);
+  background: rgba(6,6,13,0.88);
+  backdrop-filter: blur(28px);
+  transition: all 0.3s;
+}
+nav.scrolled { background: rgba(6,6,13,0.97); border-color: var(--b2); }
+.nav-logo {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 22px; font-weight: 800;
+  color: var(--gold2); letter-spacing: -0.5px;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold2);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+.nav-links {
+  display: flex; align-items: center; gap: 32px;
+  margin: 0 auto;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--tx2); text-decoration: none;
+  font-size: 14px; font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--tx); }
+.nav-cta {
+  display: flex; align-items: center; gap: 10px;
+}
+.btn-ghost {
+  padding: 8px 20px;
+  border: 1px solid var(--b2);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--tx2);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: var(--b3); color: var(--tx); }
+.btn-primary {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 8px;
+  background: var(--gold);
+  color: #06060d;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+}
+.btn-primary:hover { background: var(--gold2); transform: translateY(-1px); }
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: var(--vd);
+  border: 1px solid rgba(123,109,244,0.2);
+  font-size: 12px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--vi2);
+  margin-bottom: 28px;
+  animation: fadeup 0.6s ease both;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--vi2);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.hero-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(42px, 7vw, 86px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -2.5px;
+  color: var(--tx);
+  margin-bottom: 20px;
+  animation: fadeup 0.6s 0.1s ease both;
+  max-width: 900px;
+}
+.hero-title .line2 {
+  display: block;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 50%, var(--gold3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--tx2);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto 36px;
+  animation: fadeup 0.6s 0.2s ease both;
+}
+
+.hero-actions {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 60px;
+  flex-wrap: wrap; justify-content: center;
+  animation: fadeup 0.6s 0.3s ease both;
+}
+
+.btn-hero {
+  padding: 16px 36px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+  color: #06060d;
+  border: none; border-radius: 10px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 32px rgba(200,168,75,0.22);
+  letter-spacing: 0.3px;
+}
+.btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(200,168,75,0.35); }
+
+.btn-hero-ghost {
+  padding: 16px 28px;
+  border: 1px solid var(--b2);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--tx2);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-hero-ghost:hover { border-color: var(--b3); color: var(--tx); }
+
+.hero-trust {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--tx3);
+  animation: fadeup 0.6s 0.35s ease both;
+}
+.trust-dot { color: var(--gr); font-size: 10px; }
+
+/* Hero stats ticker */
+.hero-stats {
+  display: flex; align-items: center; gap: 0;
+  border: 1px solid var(--b1);
+  border-radius: 14px;
+  background: var(--s2);
+  overflow: hidden;
+  margin-bottom: 48px;
+  animation: fadeup 0.6s 0.25s ease both;
+}
+.hstat {
+  padding: 18px 32px;
+  text-align: center;
+  border-right: 1px solid var(--b1);
+}
+.hstat:last-child { border-right: none; }
+.hstat-n {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 28px; font-weight: 800;
+  color: var(--gold2); line-height: 1;
+}
+.hstat-l {
+  font-size: 12px; color: var(--tx3);
+  margin-top: 4px;
+}
+
+/* Product mockup preview */
+.hero-preview {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 900px;
+  margin: 0 auto;
+  animation: fadeup 0.8s 0.4s ease both;
+}
+.preview-frame {
+  background: var(--s2);
+  border: 1px solid var(--b2);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px var(--b1);
+}
+.preview-topbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--b1);
+  background: var(--s3);
+}
+.ptb-dot { width: 10px; height: 10px; border-radius: 50%; }
+.ptb-red { background: #ff5f57; }
+.ptb-yellow { background: #ffbd2e; }
+.ptb-green { background: #28c840; }
+.ptb-url {
+  flex: 1; background: var(--s4); border-radius: 6px;
+  padding: 5px 12px; margin: 0 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--tx3);
+  text-align: center;
+}
+.preview-content {
+  display: grid; grid-template-columns: 240px 1fr;
+  min-height: 340px;
+}
+.preview-left {
+  border-right: 1px solid var(--b1);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.pl-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--tx3); margin-bottom: 4px; }
+.pl-score {
+  background: var(--s3); border: 1px solid var(--b1);
+  border-radius: 8px; padding: 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.pl-score-n {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 32px; font-weight: 800;
+  color: var(--am); line-height: 1;
+}
+.pl-score-info { flex: 1; }
+.pl-score-grade { font-size: 13px; font-weight: 700; color: var(--am); }
+.pl-score-label { font-size: 11px; color: var(--tx3); }
+.pl-proj {
+  background: var(--grd); border: 1px solid rgba(69,222,122,0.15);
+  border-radius: 6px; padding: 8px 12px;
+  font-size: 12px; color: var(--gr);
+  display: flex; align-items: center; gap: 6px;
+}
+.pl-kw-miss { display: flex; flex-wrap: wrap; gap: 5px; }
+.kw-chip {
+  padding: 3px 8px; border-radius: 12px;
+  font-size: 11px; font-weight: 500;
+}
+.kw-red { background: var(--red); color: var(--re); border: 1px solid rgba(239,95,95,0.15); }
+.kw-amber { background: var(--amd); color: var(--am); border: 1px solid rgba(245,165,42,0.15); }
+.preview-right { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.pr-tabs { display: flex; gap: 4px; }
+.pr-tab {
+  padding: 5px 12px; border-radius: 6px;
+  font-size: 11px; font-weight: 600;
+  color: var(--tx3); cursor: default;
+}
+.pr-tab.on { background: var(--gd); color: var(--gold2); }
+.pr-block { background: var(--s3); border: 1px solid var(--b1); border-radius: 8px; padding: 12px 14px; }
+.pb-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); margin-bottom: 6px; }
+.pb-text { font-size: 12px; color: var(--tx); line-height: 1.6; }
+.pb-text .hi { background: rgba(200,168,75,0.15); color: var(--gold3); border-radius: 2px; padding: 0 2px; }
+.pr-metrics { display: flex; gap: 8px; }
+.prm { flex: 1; background: var(--s3); border: 1px solid var(--b1); border-radius: 8px; padding: 10px 12px; text-align: center; }
+.prm-n { font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 700; color: var(--tx); }
+.prm-l { font-size: 10px; color: var(--tx3); margin-top: 2px; }
+
+@keyframes fadeup {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTION BASE ── */
+section {
+  position: relative; z-index: 1;
+  padding: 100px 24px;
+}
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.section-eyebrow {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--gold); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-eyebrow::before {
+  content: ''; display: block;
+  width: 24px; height: 1px;
+  background: var(--gold);
+}
+.section-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: var(--tx);
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 17px; color: var(--tx2);
+  line-height: 1.7; max-width: 540px;
+}
+
+/* ── PROBLEM SECTION ── */
+.problem-section { background: var(--s1); }
+.problem-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--b1);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 56px;
+}
+.problem-card {
+  background: var(--s2);
+  padding: 36px 32px;
+}
+.pc-number {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 52px; font-weight: 900;
+  line-height: 1; margin-bottom: 12px;
+}
+.pc-label { font-size: 15px; font-weight: 600; color: var(--tx); margin-bottom: 8px; }
+.pc-desc { font-size: 14px; color: var(--tx2); line-height: 1.6; }
+
+/* ── HOW IT WORKS ── */
+.how-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+  margin-top: 56px;
+}
+.how-steps { display: flex; flex-direction: column; gap: 0; }
+.how-step {
+  display: flex; gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--b1);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.how-step:last-child { border-bottom: none; }
+.how-step:hover .hs-content { opacity: 1; }
+.hs-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--b2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--tx3);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all 0.2s;
+}
+.how-step.active .hs-num {
+  background: var(--gold); color: #06060d;
+  border-color: var(--gold); font-weight: 700;
+}
+.hs-title { font-size: 16px; font-weight: 700; color: var(--tx); margin-bottom: 6px; }
+.hs-desc { font-size: 14px; color: var(--tx2); line-height: 1.6; }
+.how-visual {
+  background: var(--s2); border: 1px solid var(--b2);
+  border-radius: 16px; padding: 32px;
+  min-height: 360px;
+  display: flex; flex-direction: column; gap: 16px;
+  position: sticky; top: 100px;
+}
+.hv-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); }
+.hv-score-ring {
+  display: flex; align-items: center; gap: 20px;
+  padding: 20px; background: var(--s3);
+  border-radius: 12px; border: 1px solid var(--b1);
+}
+.ring-wrap { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+.ring-num {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 800;
+}
+.ring-info-title { font-size: 15px; font-weight: 700; color: var(--tx); }
+.ring-info-sub { font-size: 12px; color: var(--tx2); margin-top: 3px; }
+.hv-kw-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.hv-issue {
+  background: var(--s3); border: 1px solid var(--b1);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 12px; color: var(--tx2); line-height: 1.5;
+}
+.hv-issue .fix { color: var(--cy); margin-top: 4px; font-size: 11px; }
+
+/* ── FEATURES ── */
+.features-section { background: var(--s1); }
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--b1);
+  border-radius: 16px; overflow: hidden;
+  margin-top: 56px;
+}
+.feat-card {
+  background: var(--s2);
+  padding: 32px 28px;
+  transition: background 0.2s;
+}
+.feat-card:hover { background: var(--s3); }
+.feat-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 16px;
+}
+.fi-gold { background: var(--gd); border: 1px solid rgba(200,168,75,0.18); }
+.fi-vi { background: var(--vd); border: 1px solid rgba(123,109,244,0.18); }
+.fi-cy { background: var(--cyd); border: 1px solid rgba(56,217,192,0.18); }
+.feat-title { font-size: 16px; font-weight: 700; color: var(--tx); margin-bottom: 8px; }
+.feat-desc { font-size: 14px; color: var(--tx2); line-height: 1.6; }
+.feat-tag {
+  display: inline-block; margin-top: 12px;
+  padding: 3px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 600;
+}
+.tag-new { background: var(--vd); color: var(--vi2); border: 1px solid rgba(123,109,244,0.2); }
+.tag-pro { background: var(--gd); color: var(--gold2); border: 1px solid rgba(200,168,75,0.2); }
+
+/* ── COMPARISON ── */
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  margin-top: 56px;
+  border-radius: 16px; overflow: hidden;
+}
+.compare-table th {
+  padding: 16px 20px;
+  font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--b1);
+  background: var(--s2);
+}
+.compare-table th:first-child { text-align: left; color: var(--tx3); }
+.compare-table th.us { color: var(--gold2); background: var(--s3); }
+.compare-table td {
+  padding: 14px 20px;
+  font-size: 14px; color: var(--tx2);
+  border-bottom: 1px solid var(--b1);
+  background: var(--s2); text-align: center;
+}
+.compare-table td:first-child { text-align: left; color: var(--tx); }
+.compare-table td.us { background: rgba(200,168,75,0.04); }
+.compare-table tr:last-child td { border-bottom: none; }
+.chk-yes { color: var(--gr); font-size: 16px; }
+.chk-no { color: var(--tx4); font-size: 16px; }
+.chk-part { color: var(--am); font-size: 12px; font-weight: 600; }
+
+/* ── PRICING ── */
+.pricing-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px; margin-top: 56px;
+}
+.price-card {
+  background: var(--s2);
+  border: 1px solid var(--b1);
+  border-radius: 16px;
+  padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 16px;
+  position: relative; overflow: hidden;
+  transition: transform 0.2s;
+}
+.price-card:hover { transform: translateY(-3px); }
+.price-card.featured {
+  border-color: var(--gold);
+  background: linear-gradient(160deg, var(--s3) 0%, rgba(200,168,75,0.05) 100%);
+}
+.price-card.featured::before {
+  content: 'MOST POPULAR';
+  position: absolute; top: 16px; right: -28px;
+  background: var(--gold);
+  color: #06060d;
+  font-size: 9px; font-weight: 800;
+  padding: 4px 40px;
+  transform: rotate(45deg);
+  letter-spacing: 1px;
+}
+.price-tier {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--tx3);
+}
+.price-amount {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 44px; font-weight: 900;
+  line-height: 1; color: var(--tx);
+}
+.price-amount span { font-size: 16px; font-weight: 400; color: var(--tx3); }
+.price-desc { font-size: 13px; color: var(--tx2); line-height: 1.6; }
+.price-divider { height: 1px; background: var(--b1); }
+.price-features { display: flex; flex-direction: column; gap: 9px; }
+.pf {
+  display: flex; gap: 10px;
+  font-size: 13px; color: var(--tx2);
+  align-items: flex-start;
+}
+.pf-ico { flex-shrink: 0; margin-top: 1px; }
+.pf-ico.yes { color: var(--gr); }
+.pf-ico.no { color: var(--tx4); }
+.price-cta {
+  margin-top: auto;
+  padding: 13px;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  text-align: center;
+  transition: all 0.2s;
+  display: block;
+}
+.cta-free {
+  background: var(--s4); color: var(--tx2);
+  border: 1px solid var(--b2);
+}
+.cta-free:hover { border-color: var(--b3); color: var(--tx); }
+.cta-pro {
+  background: var(--gold); color: #06060d;
+  border: none;
+}
+.cta-pro:hover { background: var(--gold2); }
+.cta-career {
+  background: var(--s4); color: var(--vi2);
+  border: 1px solid rgba(123,109,244,0.2);
+}
+.cta-career:hover { background: var(--vd); }
+
+/* ── TESTIMONIALS ── */
+.testimonials-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px; margin-top: 56px;
+}
+.tcard {
+  background: var(--s2); border: 1px solid var(--b1);
+  border-radius: 16px; padding: 24px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.tcard-stars { color: var(--gold2); font-size: 14px; letter-spacing: 2px; }
+.tcard-quote { font-size: 14px; color: var(--tx); line-height: 1.7; }
+.tcard-quote em { color: var(--gold2); font-style: normal; font-weight: 600; }
+.tcard-person { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+.tcard-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #06060d;
+  flex-shrink: 0;
+}
+.tcard-name { font-size: 13px; font-weight: 600; color: var(--tx); }
+.tcard-role { font-size: 12px; color: var(--tx3); }
+
+/* ── FAQ ── */
+.faq-list { display: flex; flex-direction: column; gap: 0; margin-top: 56px; }
+.faq-item {
+  border-bottom: 1px solid var(--b1);
+  padding: 0;
+}
+.faq-q {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 0;
+  font-size: 16px; font-weight: 600; color: var(--tx);
+  cursor: pointer; gap: 16px;
+  list-style: none;
+}
+.faq-q::after {
+  content: '+';
+  font-size: 20px; color: var(--gold2);
+  flex-shrink: 0; transition: transform 0.2s;
+}
+.faq-item.open .faq-q::after { transform: rotate(45deg); }
+.faq-a {
+  font-size: 14px; color: var(--tx2);
+  line-height: 1.7; padding-bottom: 20px;
+  display: none;
+}
+.faq-item.open .faq-a { display: block; }
+
+/* ── CTA BANNER ── */
+.cta-banner {
+  position: relative; z-index: 1;
+  background: var(--s1);
+  padding: 100px 24px;
+  text-align: center;
+  overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(200,168,75,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.cta-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.cta-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(30px, 5vw, 52px);
+  font-weight: 800; letter-spacing: -2px;
+  color: var(--tx); line-height: 1.1;
+  margin-bottom: 16px;
+}
+.cta-title .gold { color: var(--gold2); }
+.cta-sub { font-size: 17px; color: var(--tx2); margin-bottom: 36px; line-height: 1.6; }
+.cta-actions { display: flex; align-items: center; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--b1);
+  padding: 48px 48px 32px;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px; max-width: 1100px; margin: 0 auto 48px;
+}
+.footer-brand { }
+.footer-logo {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px; font-weight: 800;
+  color: var(--gold2); margin-bottom: 12px;
+}
+.footer-tagline { font-size: 14px; color: var(--tx3); line-height: 1.6; max-width: 260px; }
+.footer-col-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--tx3); margin-bottom: 16px;
+}
+.footer-links { display: flex; flex-direction: column; gap: 10px; }
+.footer-links a {
+  font-size: 14px; color: var(--tx2);
+  text-decoration: none; transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--tx); }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 24px; border-top: 1px solid var(--b1);
+  max-width: 1100px; margin: 0 auto;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-size: 13px; color: var(--tx3); }
+.footer-badges { display: flex; gap: 10px; }
+.fbadge {
+  padding: 4px 12px;
+  border: 1px solid var(--b1);
+  border-radius: 12px;
+  font-size: 11px; color: var(--tx3);
+  display: flex; align-items: center; gap: 5px;
+}
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .preview-content { grid-template-columns: 1fr; }
+  .preview-left { border-right: none; border-bottom: 1px solid var(--b1); }
+  .problem-grid, .features-grid, .testimonials-grid, .pricing-grid { grid-template-columns: 1fr; gap: 1px; }
+  .pricing-grid { gap: 12px; background: transparent; }
+  .how-grid { grid-template-columns: 1fr; }
+  .how-visual { position: static; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .compare-table { font-size: 13px; }
+  .compare-table th, .compare-table td { padding: 10px 12px; }
+  section { padding: 64px 20px; }
+  .hero { padding: 100px 20px 60px; }
+}
+@media (max-width: 600px) {
+  .hero-stats { flex-direction: column; border: none; background: transparent; gap: 12px; }
+  .hstat { border: 1px solid var(--b1); border-radius: 10px; padding: 14px 20px; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="glow-1"></div>
+<div class="glow-2"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-dot"></div>
+    PREPT AI
+  </div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" class="btn-ghost">Log in</a>
+    <a href="#pricing" class="btn-primary">Start free →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <div class="eyebrow-dot"></div>
+    AI-Powered Career Suite
+  </div>
+
+  <h1 class="hero-title">
+    Stop getting filtered out.<br>
+    <span class="line2">Start getting hired.</span>
+  </h1>
+
+  <p class="hero-sub">
+    PREPT AI beats the ATS algorithm that rejects 75% of resumes before a human reads them — then coaches you through every interview answer in real time.
+  </p>
+
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">75%</div><div class="hstat-l">Resumes filtered by ATS</div></div>
+    <div class="hstat"><div class="hstat-n">3×</div><div class="hstat-l">More callbacks, optimized</div></div>
+    <div class="hstat"><div class="hstat-n">6s</div><div class="hstat-l">Human review average</div></div>
+    <div class="hstat"><div class="hstat-n">2min</div><div class="hstat-l">To your first analysis</div></div>
+  </div>
+
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-hero">Optimize my resume free →</a>
+    <a href="#how" class="btn-hero-ghost">See how it works</a>
+  </div>
+
+  <div class="hero-trust">
+    <span class="trust-dot">●</span>
+    No credit card required &nbsp;·&nbsp; Free tier always available &nbsp;·&nbsp; Cancel anytime
+  </div>
+
+  <!-- PRODUCT PREVIEW -->
+  <div class="hero-preview" style="margin-top:56px">
+    <div class="preview-frame">
+      <div class="preview-topbar">
+        <div class="ptb-dot ptb-red"></div>
+        <div class="ptb-dot ptb-yellow"></div>
+        <div class="ptb-dot ptb-green"></div>
+        <div class="ptb-url">preptai.com/match</div>
+      </div>
+      <div class="preview-content">
+        <div class="preview-left">
+          <div class="pl-label">Match score</div>
+          <div class="pl-score">
+            <div class="pl-score-n">64</div>
+            <div class="pl-score-info">
+              <div class="pl-score-grade">Grade C</div>
+              <div class="pl-score-label">Likely filtered by ATS</div>
+            </div>
+          </div>
+          <div class="pl-proj">↑ Optimized score: ~91/100</div>
+          <div class="pl-label" style="margin-top:8px">Critical keywords missing</div>
+          <div class="pl-kw-miss">
+            <span class="kw-chip kw-amber">Salesforce</span>
+            <span class="kw-chip kw-red">KPI tracking</span>
+            <span class="kw-chip kw-red">SLA compliance</span>
+            <span class="kw-chip kw-red">churn analysis</span>
+            <span class="kw-chip kw-amber">CRM software</span>
+          </div>
+        </div>
+        <div class="preview-right">
+          <div class="pr-tabs">
+            <div class="pr-tab on">Rewritten Resume</div>
+            <div class="pr-tab">Cover Letter</div>
+            <div class="pr-tab">LinkedIn</div>
+            <div class="pr-tab">Interview Prep</div>
+          </div>
+          <div class="pr-block">
+            <div class="pb-label">Rewritten summary</div>
+            <div class="pb-text">Results-driven <span class="hi">Customer Success Manager</span> with 5+ years driving enterprise retention. Expert in <span class="hi">CRM systems (Salesforce)</span>, <span class="hi">KPI tracking</span>, and <span class="hi">SLA compliance</span>. Proven track record in <span class="hi">churn analysis</span> — delivering 90%+ retention rates consistently.</div>
+          </div>
+          <div class="pr-metrics">
+            <div class="prm"><div class="prm-n">+27</div><div class="prm-l">Score gain</div></div>
+            <div class="prm"><div class="prm-n">8</div><div class="prm-l">Keywords added</div></div>
+            <div class="prm"><div class="prm-n">3</div><div class="prm-l">Issues fixed</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" class="problem-section">
+  <div class="section-inner reveal">
+    <div class="section-eyebrow">The brutal truth</div>
+    <h2 class="section-title">The system is designed<br>to filter you out.</h2>
+    <p class="section-sub">Most job seekers never find out why they're not getting callbacks. Here's why.</p>
+    <div class="problem-grid reveal">
+      <div class="problem-card">
+        <div class="pc-number" style="color:var(--re)">75%</div>
+        <div class="pc-label">Resumes never reach a human</div>
+        <div class="pc-desc">Applicant Tracking Systems automatically filter out resumes that don't match their keyword criteria — regardless of your actual qualifications.</div>
+      </div>
+      <div class="problem-card">
+        <div class="pc-number" style="color:var(--am)">6s</div>
+        <div class="pc-label">Average recruiter review time</div>
+        <div class="pc-desc">If you make it past the ATS, a human spends less time reading your resume than it takes to tie your shoes. First impression is everything.</div>
+      </div>
+      <div class="problem-card">
+        <div class="pc-number" style="color:var(--vi2)">$0</div>
+        <div class="pc-label">What most people invest in preparation</div>
+        <div class="pc-desc">Career coaches charge $200/hour. Resume writers charge $500+. Most people just submit and hope. PREPT AI gives you professional-grade preparation at a fraction of the cost.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">How it works</div>
+    <h2 class="section-title reveal">From application to offer.<br>Every step covered.</h2>
+    <div class="how-grid reveal">
+      <div class="how-steps">
+        <div class="how-step active" id="hs1">
+          <div class="hs-num">01</div>
+          <div>
+            <div class="hs-title">Paste your resume + job description</div>
+            <div class="hs-desc">Drop in your current resume and the job posting you want. PREPT AI reads both and understands exactly what the ATS is looking for.</div>
+          </div>
+        </div>
+        <div class="how-step" id="hs2">
+          <div class="hs-num">02</div>
+          <div>
+            <div class="hs-title">Get your match score and gaps</div>
+            <div class="hs-desc">See your current ATS score, every missing keyword, formatting issues, and your projected score after optimization — before you change a word.</div>
+          </div>
+        </div>
+        <div class="how-step" id="hs3">
+          <div class="hs-num">03</div>
+          <div>
+            <div class="hs-title">Apply the rewrites and download</div>
+            <div class="hs-desc">PREPT AI rewrites your summary, skills section, and bullet points with the exact language the ATS is scanning for. One click downloads the full optimized version.</div>
+          </div>
+        </div>
+        <div class="how-step" id="hs4">
+          <div class="hs-num">04</div>
+          <div>
+            <div class="hs-title">Ace the interview with PREPT Live</div>
+            <div class="hs-desc">When you land the call, open PREPT AI Live. It listens to every question and coaches you with a confident, personalized answer in under 3 seconds.</div>
+          </div>
+        </div>
+      </div>
+      <div class="how-visual">
+        <div class="hv-title">PREPT AI MATCH — Analysis results</div>
+        <div class="hv-score-ring">
+          <div class="ring-wrap">
+            <svg width="72" height="72" viewBox="0 0 72 72" style="transform:rotate(-90deg)">
+              <circle cx="36" cy="36" r="30" fill="none" stroke="var(--s4)" stroke-width="5"/>
+              <circle cx="36" cy="36" r="30" fill="none" stroke="var(--am)" stroke-width="5"
+                stroke-dasharray="188.5" stroke-dashoffset="68" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-num" style="color:var(--am)">64</div>
+          </div>
+          <div>
+            <div class="ring-info-title">Grade C — Needs work</div>
+            <div class="ring-info-sub">Likely filtered before a human reads it</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:8px">Missing keywords</div>
+          <div class="hv-kw-row">
+            <span class="kw-chip kw-amber">Salesforce</span>
+            <span class="kw-chip kw-red">KPI tracking</span>
+            <span class="kw-chip kw-red">SLA compliance</span>
+            <span class="kw-chip kw-red">churn analysis</span>
+          </div>
+        </div>
+        <div class="hv-issue">
+          <strong style="color:var(--re)">!</strong> Job title mismatch — "Client Support Specialist" vs "Customer Success Manager"
+          <div class="fix">→ Add target title to your summary line</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--grd);border:1px solid rgba(69,222,122,0.15);border-radius:8px;font-size:13px;color:var(--gr)">
+          ↑ After optimization: estimated <strong>91/100</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="features-section">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">What you get</div>
+    <h2 class="section-title reveal">Two products.<br>One complete pipeline.</h2>
+    <div class="features-grid reveal">
+      <div class="feat-card">
+        <div class="feat-icon fi-gold">📄</div>
+        <div class="feat-title">ATS Match Scoring</div>
+        <div class="feat-desc">Know exactly where you stand before you apply. Section-by-section scores, benchmark comparison, and projected score after optimization.</div>
+        <span class="feat-tag tag-pro">PREPT AI Match</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-gold">✍️</div>
+        <div class="feat-title">Resume Rewriter</div>
+        <div class="feat-desc">AI rewrites your summary, skills, and bullet points using the exact language the ATS is scanning for — without sounding like a robot.</div>
+        <span class="feat-tag tag-pro">PREPT AI Match</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-vi">🎯</div>
+        <div class="feat-title">Cover Letter Generator</div>
+        <div class="feat-desc">One cover letter per job, written from your actual resume and the specific job description. Five tone options. Never generic.</div>
+        <span class="feat-tag tag-new">5 tones</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-vi">💼</div>
+        <div class="feat-title">LinkedIn Optimizer</div>
+        <div class="feat-desc">Recruiters search LinkedIn before your ATS application. Get an optimized headline, About section, and skills list using the same keywords.</div>
+        <span class="feat-tag tag-new">Exclusive</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-cy">🎙</div>
+        <div class="feat-title">PREPT AI Live — Real-Time Coach</div>
+        <div class="feat-desc">In your interview, PREPT AI listens to every question and feeds you a confident, personalized answer in under 3 seconds. Works on Zoom, Teams, or any video platform.</div>
+        <span class="feat-tag tag-new">Live mode</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-cy">📊</div>
+        <div class="feat-title">Post-Interview Debrief</div>
+        <div class="feat-desc">After every session: performance score, strengths, areas to improve, and a personalized thank-you email ready to send within 24 hours.</div>
+        <span class="feat-tag tag-pro">Auto-generated</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section id="compare">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">vs the competition</div>
+    <h2 class="section-title reveal">Every other tool tells you<br>what's wrong. We fix it.</h2>
+    <div class="reveal" style="overflow-x:auto">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Jobscan</th>
+            <th>Resumeworded</th>
+            <th>Teal</th>
+            <th class="us">PREPT AI ✦</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ATS keyword score</td>
+            <td><span class="chk-yes">✓</span></td>
+            <td><span class="chk-yes">✓</span></td>
+            <td><span class="chk-yes">✓</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Auto-rewrites resume sections</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Cover letter generator</td>
+            <td><span class="chk-part">Basic</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-part">Generic</span></td>
+            <td class="us"><span class="chk-yes">✓ Job-specific</span></td>
+          </tr>
+          <tr>
+            <td>LinkedIn optimizer</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Real-time interview coach</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓ Live mic</span></td>
+          </tr>
+          <tr>
+            <td>Before/after projected score</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Salary intelligence</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Starting price</td>
+            <td>$29.95/mo</td>
+            <td>$19/mo</td>
+            <td>$29/mo</td>
+            <td class="us" style="color:var(--gold2);font-weight:700">$12/mo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--s1)">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Pricing</div>
+    <h2 class="section-title reveal">Less than one hour<br>with a career coach.</h2>
+    <p class="section-sub reveal">Career coaches charge $200/hour. PREPT AI gives you the same results, available 24/7, for less than $0.40 a day.</p>
+    <div class="pricing-grid reveal">
+
+      <div class="price-card">
+        <div class="price-tier">Free</div>
+        <div class="price-amount">$0<span>/mo</span></div>
+        <div class="price-desc">See what PREPT AI can do. No card required, no time limit.</div>
+        <div class="price-divider"></div>
+        <div class="price-features">
+          <div class="pf"><span class="pf-ico yes">✓</span><span>1 resume analysis/month</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Keyword score + top 3 gaps</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>3 interview questions/session</span></div>
+          <div class="pf"><span class="pf-ico no">✗</span><span>Resume rewrite</span></div>
+          <div class="pf"><span class="pf-ico no">✗</span><span>Cover letter generator</span></div>
+          <div class="pf"><span class="pf-ico no">✗</span><span>LinkedIn optimizer</span></div>
+          <div class="pf"><span class="pf-ico no">✗</span><span>Unlimited interviews</span></div>
+        </div>
+        <a href="#" class="price-cta cta-free">Get started free</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-tier">Pro</div>
+        <div class="price-amount">$12<span>/mo</span></div>
+        <div class="price-desc">Everything you need to land interviews and ace every call. 80% of subscribers live here.</div>
+        <div class="price-divider"></div>
+        <div class="price-features">
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Unlimited resume analyses</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Full keyword + rewrite engine</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Cover letter generator</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>LinkedIn headline + About optimizer</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Unlimited PREPT Live interviews</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Mock interview + grading</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Post-interview debrief + thank-you email</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Application tracker</span></div>
+        </div>
+        <a href="#" class="price-cta cta-pro">Start Pro — $12/mo →</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Career+</div>
+        <div class="price-amount">$24<span>/mo</span></div>
+        <div class="price-desc">For career changers and competitive roles. The full arsenal, nothing held back.</div>
+        <div class="price-divider"></div>
+        <div class="price-features">
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Everything in Pro</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Salary negotiation coaching</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Industry-specific playbooks</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>30-day job search strategy</span></div>
+          <div class="pf"><span class="pf-ico yes">✓</span><span>Priority feature access</span></div>
+        </div>
+        <a href="#" class="price-cta cta-career">Start Career+ — $24/mo →</a>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:var(--tx3);margin-top:20px">
+      All plans include a 7-day free trial · No contracts · Cancel anytime
+    </p>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="social-proof">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Results</div>
+    <h2 class="section-title reveal">Real people. Real offers.</h2>
+    <div class="testimonials-grid reveal">
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-quote">I applied to 40 jobs and heard nothing. Added PREPT Match, optimized three resumes, and got <em>four callbacks in one week</em>. The ATS thing is real and I had no idea.</div>
+        <div class="tcard-person">
+          <div class="tcard-avatar" style="background:var(--vi)">M</div>
+          <div>
+            <div class="tcard-name">Marcus T.</div>
+            <div class="tcard-role">Now: Logistics Coordinator, Dallas TX</div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-quote">The interview coach on the second screen during my Zoom call is <em>genuinely unfair to the other candidates</em>. I sounded prepared for questions I had never thought about.</div>
+        <div class="tcard-person">
+          <div class="tcard-avatar" style="background:var(--gold)">J</div>
+          <div>
+            <div class="tcard-name">Jasmine R.</div>
+            <div class="tcard-role">Now: Customer Success Manager, remote</div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-quote">Career changer from retail to tech. PREPT AI rewrote my resume to speak the language of the industry I was targeting. <em>Got into a role I thought was out of reach.</em></div>
+        <div class="tcard-person">
+          <div class="tcard-avatar" style="background:var(--cy)">D</div>
+          <div>
+            <div class="tcard-name">David K.</div>
+            <div class="tcard-role">Now: Technical Support Specialist</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--s1)">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">FAQ</div>
+    <h2 class="section-title reveal">Common questions.</h2>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is this actually legal to use during an interview?</div>
+        <div class="faq-a">Yes. Using PREPT Live during a virtual interview is no different from having notes next to your monitor — which every interviewer knows candidates do. You are not fabricating credentials or deceiving anyone about your abilities. You are using a tool to articulate what you already know. Interviewers regularly use checklists and scripts during calls themselves.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Will the resume rewriter make my resume sound generic?</div>
+        <div class="faq-a">No — and this is specifically what we designed against. PREPT AI rewrites using your actual experience as the foundation. It inserts the keywords the ATS is scanning for, but threads them into sentences built around your real background, not templates. The summary and bullets still sound like you — just you with the right vocabulary for the job.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How does PREPT AI actually work during a Zoom call?</div>
+        <div class="faq-a">You open PREPT AI on a second monitor, a tablet, or your phone — somewhere the interviewer's camera cannot see it. The mic button listens to the interviewer's question (or you can type it manually), and within 2-3 seconds you get a coached answer tailored to your profile, sector, and the specific company you're interviewing at. You glance at it and speak naturally. No one can tell.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is my resume data stored or shared?</div>
+        <div class="faq-a">No. Your resume content and job description are processed in real time to generate your analysis and rewrites. They are not stored on our servers, sold, or used to train AI models. The analysis exists only for your session.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</div>
+        <div class="faq-a">Yes. No contracts, no cancellation fees. Cancel from your account settings and your access continues until the end of your billing period. We want you to stay because PREPT AI works, not because canceling is difficult.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What sectors does PREPT Live cover?</div>
+        <div class="faq-a">14 sectors currently: General, Legal, Healthcare, Technology, Retail, Hospitality, Logistics, Finance, Education, Remote Work, Customer Service, Skilled Trades, Sales, and Admin/Office. Within each sector you can specify your exact job title for even more targeted coaching. More sectors are added regularly.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-inner">
+    <h2 class="cta-title">Your next job is<br><span class="gold">one optimized resume away.</span></h2>
+    <p class="cta-sub">Start free. No credit card. See your ATS score in under 2 minutes.</p>
+    <div class="cta-actions">
+      <a href="#pricing" class="btn-hero">Analyze my resume free →</a>
+    </div>
+    <div style="margin-top:16px;font-size:13px;color:var(--tx3)">
+      Free tier always available &nbsp;·&nbsp; Upgrade only when you see the value
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">PREPT AI</div>
+      <div class="footer-tagline">The AI career suite that gets you past the algorithm and through the interview.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <div class="footer-links">
+        <a href="#">PREPT AI Match</a>
+        <a href="#">PREPT AI Live</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#">Changelog</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 PREPT AI. Built in San Antonio, TX.</div>
+    <div class="footer-badges">
+      <div class="fbadge"><span>🔒</span> SOC 2 Ready</div>
+      <div class="fbadge"><span>🛡</span> No data stored</div>
+      <div class="fbadge"><span>⚡</span> Powered by Claude AI</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// FAQ toggle
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+// How it works steps
+const steps = document.querySelectorAll('.how-step');
+steps.forEach((s, i) => {
+  s.addEventListener('click', () => {
+    steps.forEach(x => x.classList.remove('active'));
+    s.classList.add('active');
+  });
+});
+
+// Animate stats counter
+function animateCounter(el, target, suffix = '') {
+  let current = 0;
+  const increment = target / 60;
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= target) { current = target; clearInterval(timer); }
+    el.textContent = Math.floor(current) + suffix;
+  }, 16);
+}
+</script>
+</body>
+</html>
