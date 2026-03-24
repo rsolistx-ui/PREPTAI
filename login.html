@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREPT AI — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#07070e;color:#edeaf7;font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+body::before{content:'';position:fixed;top:-20%;left:20%;width:600px;height:500px;background:radial-gradient(ellipse,rgba(123,109,244,0.06) 0%,transparent 65%);pointer-events:none}
+.card{position:relative;z-index:1;background:#0f0f1c;border:1px solid rgba(255,255,255,0.09);border-radius:16px;padding:40px;width:100%;max-width:420px}
+.logo{font-size:24px;font-weight:900;color:#e6c668;letter-spacing:-0.5px;text-align:center;margin-bottom:6px}
+.tagline{font-size:13px;color:#8c89a6;text-align:center;margin-bottom:32px}
+.tabs{display:flex;background:#171728;border-radius:8px;padding:3px;margin-bottom:28px;gap:3px}
+.tab{flex:1;padding:9px;border-radius:6px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;background:transparent;color:#8c89a6;transition:all 0.2s;text-align:center}
+.tab.on{background:#e6c668;color:#07070e}
+.form-group{margin-bottom:16px}
+label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#4d4a66;margin-bottom:6px}
+input{width:100%;background:#171728;border:1px solid rgba(255,255,255,0.09);color:#edeaf7;font-family:'Outfit',sans-serif;font-size:14px;padding:12px 14px;border-radius:8px;outline:none;transition:border-color 0.2s}
+input:focus{border-color:#7b6df4}
+input::placeholder{color:#4d4a66}
+.submit-btn{width:100%;padding:13px;background:#e6c668;color:#07070e;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px;letter-spacing:0.3px}
+.submit-btn:hover{background:#f5dfa0;transform:translateY(-1px)}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.msg{padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.5;margin-top:14px;display:none}
+.msg.error{background:rgba(239,95,95,0.1);border:1px solid rgba(239,95,95,0.2);color:#ef5f5f}
+.msg.success{background:rgba(69,222,122,0.1);border:1px solid rgba(69,222,122,0.2);color:#45de7a}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#4d4a66;font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06)}
+.back-link{text-align:center;margin-top:20px;font-size:13px;color:#8c89a6}
+.back-link a{color:#e6c668;text-decoration:none}
+.back-link a:hover{text-decoration:underline}
+.plan-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-left:8px}
+.plan-free{background:rgba(123,109,244,0.1);color:#a498ff;border:1px solid rgba(123,109,244,0.2)}
+.plan-pro{background:rgba(200,168,75,0.1);color:#e6c668;border:1px solid rgba(200,168,75,0.2)}
+.plan-career{background:rgba(56,217,192,0.1);color:#38d9c0;border:1px solid rgba(56,217,192,0.2)}
+.loading{display:inline-block;width:16px;height:16px;border:2px solid rgba(7,7,14,0.3);border-top-color:#07070e;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">PREPT AI</div>
+  <div class="tagline">Get past the algorithm. Get to the interview.</div>
+
+  <div class="tabs">
+    <button class="tab on" id="tabLogin" onclick="switchTab('login')">Log in</button>
+    <button class="tab" id="tabSignup" onclick="switchTab('signup')">Sign up free</button>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <div id="loginForm">
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="loginEmail" placeholder="you@email.com" onkeydown="if(event.key==='Enter')handleLogin()"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="Your password" onkeydown="if(event.key==='Enter')handleLogin()"/>
+    </div>
+    <button class="submit-btn" id="loginBtn" onclick="handleLogin()">Log in →</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+
+  <!-- SIGNUP FORM -->
+  <div id="signupForm" style="display:none">
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="signupEmail" placeholder="you@email.com" onkeydown="if(event.key==='Enter')handleSignup()"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="signupPassword" placeholder="Create a password (min 8 characters)" onkeydown="if(event.key==='Enter')handleSignup()"/>
+    </div>
+    <button class="submit-btn" id="signupBtn" onclick="handleSignup()">Create free account →</button>
+    <div class="msg" id="signupMsg"></div>
+    <div style="font-size:12px;color:#4d4a66;text-align:center;margin-top:14px;line-height:1.6">
+      Free account includes 3 interview questions and 1 resume analysis.<br>
+      Upgrade to Pro anytime for unlimited access.
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="/">← Back to preptai.co</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── YOUR SUPABASE DETAILS ──────────────────────────────────────────
+// Replace these two values with your actual Supabase URL and anon key
+const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+// ──────────────────────────────────────────────────────────────────
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function switchTab(tab) {
+  document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('signupForm').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('tabLogin').classList.toggle('on', tab === 'login');
+  document.getElementById('tabSignup').classList.toggle('on', tab === 'signup');
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + type;
+  el.style.display = 'block';
+}
+
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) { showMsg('loginMsg', 'Please enter your email and password.', 'error'); return; }
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading"></span>Logging in...';
+
+  try {
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+
+    // Get their plan from subscribers table
+    const { data: sub } = await db.from('subscribers').select('plan').eq('email', email).single();
+    const plan = sub?.plan || 'free';
+
+    // Save to session storage so the app knows who they are
+    sessionStorage.setItem('preptai_user', JSON.stringify({ email, plan }));
+
+    showMsg('loginMsg', 'Welcome back! Redirecting...', 'success');
+
+    // Send them to the right place based on plan
+    setTimeout(() => {
+      window.location.href = plan === 'free' ? '/prept_v2.html' : '/prept_v2.html';
+    }, 1000);
+
+  } catch (err) {
+    showMsg('loginMsg', 'Incorrect email or password. Please try again.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = 'Log in →';
+  }
+}
+
+async function handleSignup() {
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+
+  if (!email || !password) { showMsg('signupMsg', 'Please enter your email and password.', 'error'); return; }
+  if (password.length < 8) { showMsg('signupMsg', 'Password must be at least 8 characters.', 'error'); return; }
+
+  const btn = document.getElementById('signupBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading"></span>Creating account...';
+
+  try {
+    // Create auth account in Supabase
+    const { data, error } = await db.auth.signUp({ email, password });
+    if (error) throw error;
+
+    // Add them to subscribers table as free user
+    await db.from('subscribers').upsert({ email, plan: 'free' });
+
+    sessionStorage.setItem('preptai_user', JSON.stringify({ email, plan: 'free' }));
+
+    showMsg('signupMsg', 'Account created! Welcome to PREPT AI. Redirecting...', 'success');
+
+    setTimeout(() => {
+      window.location.href = '/prept_v2.html';
+    }, 1500);
+
+  } catch (err) {
+    let msg = 'Something went wrong. Please try again.';
+    if (err.message?.includes('already registered')) msg = 'An account with this email already exists. Try logging in.';
+    showMsg('signupMsg', msg, 'error');
+    btn.disabled = false;
+    btn.innerHTML = 'Create free account →';
+  }
+}
+
+// Check if already logged in
+db.auth.getSession().then(({ data }) => {
+  if (data.session) {
+    window.location.href = '/prept_v2.html';
+  }
+});
+</script>
+</body>
+</html>
