@@ -7,7 +7,56 @@
 <title>PREPT AI — Get the Job. Keep the Job.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
-<style>
+/* ── LIVE COACH SPOTLIGHT ── */
+.live-section{position:relative;z-index:1;padding:100px 24px;overflow:hidden}
+.live-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(123,109,244,0.08) 0%,transparent 65%);pointer-events:none}
+.live-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.live-text{}
+.live-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:20px;background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.25);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#a498ff;margin-bottom:20px}
+.live-badge-dot{width:7px;height:7px;border-radius:50%;background:#a498ff;animation:live-pulse 1.4s ease-in-out infinite}
+@keyframes live-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+.live-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-1.5px;color:#edeaf7;line-height:1.1;margin-bottom:16px}
+.live-title .hl{color:#a498ff}
+.live-sub{font-size:16px;color:#8c89a6;line-height:1.7;margin-bottom:28px;max-width:440px}
+.live-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:32px}
+.live-step{display:flex;align-items:flex-start;gap:14px}
+.ls-num{width:28px;height:28px;border-radius:50%;background:rgba(123,109,244,0.15);border:1px solid rgba(123,109,244,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#a498ff;flex-shrink:0;margin-top:2px}
+.ls-text{font-size:14px;color:#8c89a6;line-height:1.6}
+.ls-text strong{color:#edeaf7;font-weight:600}
+.live-cta{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:var(--vi);color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 24px rgba(123,109,244,0.25)}
+.live-cta:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(123,109,244,0.4)}
+/* Mock phone/screen animation */
+.live-demo{position:relative}
+.demo-screen{background:#0f0f1c;border:1px solid rgba(255,255,255,0.09);border-radius:16px;padding:20px;box-shadow:0 32px 80px rgba(0,0,0,0.5)}
+.demo-topbar{display:flex;align-items:center;gap:6px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.demo-dot{width:9px;height:9px;border-radius:50%}
+.demo-title{font-size:12px;font-weight:700;color:#8c89a6;margin-left:8px;text-transform:uppercase;letter-spacing:1px}
+.demo-status{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:#ef5f5f;font-weight:600}
+.demo-status-dot{width:6px;height:6px;border-radius:50%;background:#ef5f5f;animation:live-pulse 1.2s ease-in-out infinite}
+/* Question bubble */
+.demo-question{background:#171728;border-radius:12px 12px 12px 4px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#8c89a6;line-height:1.6;border:1px solid rgba(255,255,255,0.06);position:relative}
+.demo-question-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4d4a66;margin-bottom:5px}
+/* Thinking animation */
+.demo-thinking{display:flex;align-items:center;gap:8px;padding:10px 0;margin-bottom:12px}
+.think-dots{display:flex;gap:4px}
+.think-dot{width:7px;height:7px;border-radius:50%;background:#7b6df4;animation:tbounce 1.2s ease-in-out infinite}
+.think-dot:nth-child(2){animation-delay:0.15s}
+.think-dot:nth-child(3){animation-delay:0.3s}
+@keyframes tbounce{0%,80%,100%{transform:translateY(0);opacity:0.35}40%{transform:translateY(-6px);opacity:1}}
+.think-label{font-size:12px;color:#4d4a66}
+/* Answer bubble */
+.demo-answer{background:rgba(123,109,244,0.08);border:1px solid rgba(123,109,244,0.2);border-radius:4px 12px 12px 12px;padding:14px 16px;margin-bottom:14px}
+.demo-answer-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7b6df4;margin-bottom:7px}
+.demo-answer-text{font-size:13px;color:#edeaf7;line-height:1.7}
+.demo-answer-text .typed{border-right:2px solid #a498ff;animation:cursor-blink 0.8s step-end infinite}
+@keyframes cursor-blink{0%,100%{border-color:#a498ff}50%{border-color:transparent}}
+/* Timer badge */
+.demo-timer{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:12px;background:rgba(69,222,122,0.1);border:1px solid rgba(69,222,122,0.2);font-size:11px;font-weight:600;color:#45de7a}
+/* Floating badges */
+.demo-float-1{position:absolute;top:-20px;right:-20px;background:#0f0f1c;border:1px solid rgba(200,168,75,0.25);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;color:#e6c668;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.demo-float-2{position:absolute;bottom:-16px;left:-16px;background:#0f0f1c;border:1px solid rgba(69,222,122,0.25);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;color:#45de7a;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+@media(max-width:900px){.live-inner{grid-template-columns:1fr;gap:48px}.demo-float-1,.demo-float-2{display:none}}
+  <style>
 :root {
   --bg: #06060d;
   --s1: #0a0a14;
