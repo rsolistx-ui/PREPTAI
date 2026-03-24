@@ -821,225 +821,168 @@ footer {
 .demo-float-1{position:absolute;top:-20px;right:-20px;background:#0f0f1c;border:1px solid rgba(200,168,75,0.25);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;color:#e6c668;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
 .demo-float-2{position:absolute;bottom:-16px;left:-16px;background:#0f0f1c;border:1px solid rgba(69,222,122,0.25);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;color:#45de7a;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
 @media(max-width:900px){.live-inner{grid-template-columns:1fr;gap:48px}.demo-float-1,.demo-float-2{display:none}}
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    background: #0e0e14;
-    font-family: 'DM Sans', sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 48px 24px;
-  }
-
-  .pricing-grid {
-    display: flex;
-    gap: 20px;
-    align-items: stretch;
-    max-width: 1000px;
-    width: 100%;
-  }
-
-  /* ── Card base ── */
-  .card {
-    flex: 1;
-    background: #16161f;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 18px;
-    padding: 32px 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    position: relative;
-  }
-
-  /* ── PRO card highlight ── */
-  .card.pro {
-    border-color: #d4a847;
-    background: #18181f;
-    box-shadow: 0 0 0 1px #d4a84740, 0 24px 60px rgba(212,168,71,0.1);
-  }
-
-  /* ── MOST POPULAR pill — sits ABOVE the card, no overlap ── */
-  .badge-wrap {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 12px;
-    height: 28px;
-  }
-
-  .badge {
-    background: #d4a847;
-    color: #0e0e14;
-    font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 5px 16px;
-    border-radius: 100px;
-    white-space: nowrap;
-  }
-
-  /* placeholder so free + career+ cards stay aligned */
-  .badge-wrap.empty {
-    visibility: hidden;
-  }
-
-  /* ── Tier label ── */
-  .tier {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 16px;
-  }
-
-  /* ── Trial pill ── */
-  .trial-pill {
-    display: inline-flex;
-    align-items: center;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 100px;
-    padding: 7px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(255,255,255,0.75);
-    margin-bottom: 20px;
-    width: fit-content;
-  }
-
-  .card.pro .trial-pill {
-    background: rgba(212,168,71,0.12);
-    border-color: rgba(212,168,71,0.3);
-    color: #d4a847;
-  }
-
-  .card.career .trial-pill {
-    background: rgba(130,110,220,0.12);
-    border-color: rgba(130,110,220,0.3);
-    color: #a08de8;
-  }
-
-  /* ── Price ── */
-  .price {
-    display: flex;
-    align-items: baseline;
-    gap: 3px;
-    margin-bottom: 12px;
-  }
-
-  .price-amount {
-    font-family: 'Syne', sans-serif;
-    font-size: 52px;
-    font-weight: 800;
-    color: #fff;
-    line-height: 1;
-  }
-
-  .price-mo {
-    font-size: 15px;
-    color: rgba(255,255,255,0.45);
-    font-weight: 400;
-  }
-
-  /* ── Description ── */
-  .desc {
-    font-size: 14px;
-    line-height: 1.6;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 28px;
-    padding-bottom: 28px;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-  }
-
-  /* ── Feature list ── */
-  .features {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 13px;
-    flex: 1;
-  }
-
-  .feature {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: 14px;
-    color: rgba(255,255,255,0.75);
-    line-height: 1.4;
-  }
-
-  .feature.off {
-    color: rgba(255,255,255,0.3);
-  }
-
-  .icon {
-    flex-shrink: 0;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-  }
-
-  .icon.check {
-    background: rgba(100,210,130,0.15);
-    color: #64d282;
-  }
-
-  .icon.x {
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.25);
-  }
-
-  .icon svg {
-    width: 10px;
-    height: 10px;
-  }
-
-  /* ── CTA button ── */
-  .cta {
-    margin-top: 28px;
-    width: 100%;
-    padding: 13px;
-    border-radius: 10px;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-
-  .cta:hover { opacity: 0.85; }
-
-  .card .cta {
-    background: rgba(255,255,255,0.07);
-    color: rgba(255,255,255,0.6);
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .card.pro .cta {
-    background: #d4a847;
-    color: #0e0e14;
-  }
-
-  .card.career .cta {
-    background: rgba(160,141,232,0.15);
-    color: #a08de8;
-    border: 1px solid rgba(160,141,232,0.25);
-  }
-</style>
-
+/* ── NEW PRICING CARDS ── */
+.new-pricing-grid {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+  margin-top: 48px;
+}
+.np-card {
+  flex: 1;
+  background: #16161f;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.np-card.np-pro {
+  border-color: #d4a847;
+  background: #18181f;
+  box-shadow: 0 0 0 1px rgba(212,168,71,0.25), 0 24px 60px rgba(212,168,71,0.1);
+}
+.np-badge-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+  height: 28px;
+}
+.np-badge-wrap.np-empty { visibility: hidden; }
+.np-badge {
+  background: #d4a847;
+  color: #0e0e14;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 100px;
+  white-space: nowrap;
+  font-family: 'Outfit', sans-serif;
+}
+.np-tier {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 14px;
+}
+.np-trial-pill {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(200,168,75,0.12);
+  border: 1px solid rgba(200,168,75,0.3);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #d4a847;
+  margin-bottom: 16px;
+  width: fit-content;
+}
+.np-trial-career {
+  background: rgba(130,110,220,0.12);
+  border-color: rgba(130,110,220,0.3);
+  color: #a08de8;
+}
+.np-price {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+.np-amount {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 52px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.np-mo {
+  font-size: 15px;
+  color: rgba(255,255,255,0.45);
+  font-weight: 400;
+}
+.np-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.np-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+.np-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.4;
+}
+.np-feature.np-off { color: rgba(255,255,255,0.3); }
+.np-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.np-check {
+  background: rgba(100,210,130,0.15);
+  color: #64d282;
+}
+.np-x {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.25);
+}
+.np-icon svg { width: 10px; height: 10px; }
+.np-cta {
+  margin-top: 24px;
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  display: block;
+  transition: all 0.2s;
+}
+.np-cta:hover { transform: translateY(-1px); opacity: 0.9; }
+.np-cta-free {
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.np-cta-pro {
+  background: #d4a847;
+  color: #0e0e14;
+}
+.np-cta-career {
+  background: rgba(160,141,232,0.15);
+  color: #a08de8;
+  border: 1px solid rgba(160,141,232,0.25);
+}
+@media(max-width:900px){
+  .new-pricing-grid { flex-direction: column; gap: 16px; }
+}
 </style>
 </head>
 <body>
@@ -1448,104 +1391,142 @@ footer {
     <div class="section-eyebrow reveal">Pricing</div>
     <h2 class="section-title reveal">Less than one hour<br>with a career coach.</h2>
     <p class="section-sub reveal">Career coaches charge $200/hour. PREPT AI gives you the same results, available 24/7, for less than $0.40 a day.</p>
-    <div class="pricing-grid">
 
-  <!-- FREE -->
-  <div class="card free">
-    <div class="badge-wrap empty"><span class="badge">placeholder</span></div>
-    <div class="tier">Free</div>
-    <div class="price">
-      <span class="price-amount">$0</span>
-      <span class="price-mo">/mo</span>
+    <div class="new-pricing-grid reveal">
+
+      <!-- FREE -->
+      <div class="np-card free">
+        <div class="np-badge-wrap np-empty"><span class="np-badge">placeholder</span></div>
+        <div class="np-tier">Free</div>
+        <div class="np-price">
+          <span class="np-amount">$0</span>
+          <span class="np-mo">/mo</span>
+        </div>
+        <p class="np-desc">See what PREPT AI can do. No card required, no time limit.</p>
+        <ul class="np-features">
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            1 resume analysis/month
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Keyword score + top 3 gaps
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            3 interview questions/session
+          </li>
+          <li class="np-feature np-off">
+            <span class="np-icon np-x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            Resume rewrite
+          </li>
+          <li class="np-feature np-off">
+            <span class="np-icon np-x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            Cover letter generator
+          </li>
+          <li class="np-feature np-off">
+            <span class="np-icon np-x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            LinkedIn optimizer
+          </li>
+          <li class="np-feature np-off">
+            <span class="np-icon np-x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            Unlimited interviews
+          </li>
+        </ul>
+        <a href="/login.html" class="np-cta np-cta-free">Get started free</a>
+      </div>
+
+      <!-- PRO -->
+      <div class="np-card np-pro">
+        <div class="np-badge-wrap"><span class="np-badge">Most Popular</span></div>
+        <div class="np-tier">Pro</div>
+        <div class="np-trial-pill">7-day free trial — then $12/mo</div>
+        <div class="np-price">
+          <span class="np-amount">$12</span>
+          <span class="np-mo">/mo</span>
+        </div>
+        <p class="np-desc">Everything you need to land interviews and ace every call. 80% of subscribers live here.</p>
+        <ul class="np-features">
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Unlimited resume analyses
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Full keyword + rewrite engine
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Cover letter generator
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            LinkedIn headline + About optimizer
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Unlimited PREPT AI Live interviews
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Mock interview + grading
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Post-interview debrief + thank-you email
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Application tracker
+          </li>
+        </ul>
+        <a href="#" class="np-cta np-cta-pro">Start Pro — $12/mo →</a>
+      </div>
+
+      <!-- CAREER+ -->
+      <div class="np-card np-career">
+        <div class="np-badge-wrap np-empty"><span class="np-badge">placeholder</span></div>
+        <div class="np-tier">Career+</div>
+        <div class="np-trial-pill np-trial-career">7-day free trial — then $24/mo</div>
+        <div class="np-price">
+          <span class="np-amount">$24</span>
+          <span class="np-mo">/mo</span>
+        </div>
+        <p class="np-desc">For career changers and competitive roles. The full arsenal, nothing held back.</p>
+        <ul class="np-features">
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Everything in Pro
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Salary negotiation coaching
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Industry-specific playbooks
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            30-day job search strategy
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Priority feature access
+          </li>
+        </ul>
+        <a href="#" class="np-cta np-cta-career">Start Career+ — $24/mo →</a>
+      </div>
+
     </div>
-    <p class="desc">See what PREPT AI can do. No card required, no time limit.</p>
-    <ul class="features">
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        1 resume analysis/month
-      </li>
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        Keyword score + top 3 gaps
-      </li>
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        3 interview questions/session
-      </li>
-      <li class="feature off">
-        <span class="icon x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-        Resume rewrite
-      </li>
-      <li class="feature off">
-        <span class="icon x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-        Cover letter generator
-      </li>
-    </ul>
-    <button class="cta">Get started free</button>
-  </div>
 
-  <!-- PRO -->
-  <div class="card pro">
-    <div class="badge-wrap"><span class="badge">Most Popular</span></div>
-    <div class="tier">Pro</div>
-    <div class="trial-pill">7-day free trial — then $12/mo</div>
-    <div class="price">
-      <span class="price-amount">$12</span>
-      <span class="price-mo">/mo</span>
-    </div>
-    <p class="desc">Everything you need to land interviews and ace every call. 80% of subscribers live here.</p>
-    <ul class="features">
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        Unlimited resume analyses
-      </li>
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        Full keyword + rewrite engine
-      </li>
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        Cover letter generator
-      </li>
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        LinkedIn headline + About optimizer
-      </li>
-    </ul>
-    <button class="cta">Start free trial</button>
+    <p style="text-align:center;font-size:13px;color:var(--tx3);margin-top:20px">
+      <span style="color:#45de7a">●</span> &nbsp;No contracts &nbsp;·&nbsp; <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank" style="color:#8c89a6;text-decoration:underline">Cancel anytime via billing portal</a>
+    </p>
+    <p style="text-align:center;font-size:11px;color:var(--tx3);margin-top:8px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.6">
+      Free trial must be canceled at least 24 hours before the end of the 7-day trial period to avoid being charged.
+    </p>
   </div>
-
-  <!-- CAREER+ -->
-  <div class="card career">
-    <div class="badge-wrap empty"><span class="badge">placeholder</span></div>
-    <div class="tier">Career+</div>
-    <div class="trial-pill">7-day free trial — then $24/mo</div>
-    <div class="price">
-      <span class="price-amount">$24</span>
-      <span class="price-mo">/mo</span>
-    </div>
-    <p class="desc">For career changers and competitive roles. The full arsenal, nothing held back.</p>
-    <ul class="features">
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        Everything in Pro
-      </li>
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        Salary negotiation coaching
-      </li>
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        Industry-specific playbooks
-      </li>
-      <li class="feature">
-        <span class="icon check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        30-day job search strategy
-      </li>
-    </ul>
-    <button class="cta">Start free trial</button>
-  </div>
-
 </section>
 
 <!-- TESTIMONIALS -->
@@ -1707,10 +1688,9 @@ footer {
       <div class="footer-links">
         <a href="/prept_match_v2.html">PREPT AI Match</a>
         <a href="/prept_v2.html">PREPT AI Live</a>
-        <a href="/#pricing">Pricing</a>
+        <a href="#pricing">Pricing</a>
         <a href="/changelog.html">Changelog</a>
-        <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank">Cancel Subscription</a>
-            </div>
+      </div>
     </div>
     <div>
       <div class="footer-col-title">Company</div>
