@@ -749,6 +749,18 @@ footer {
   .hstat { border: 1px solid var(--b1); border-radius: 10px; padding: 14px 20px; }
   .footer-grid { grid-template-columns: 1fr; }
 }
+  .trust-bar{position:relative;z-index:1;background:var(--s1);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);padding:28px 24px;overflow:hidden}
+.trust-bar-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:48px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.trust-item-icon{font-size:18px;flex-shrink:0}
+.trust-item-text{font-size:13px;font-weight:500;color:var(--tx2);line-height:1.4}
+.trust-item-label{font-size:11px;color:var(--tx3);margin-top:1px}
+.trust-stars{color:#f5a52a;font-size:14px;letter-spacing:1px;line-height:1}
+.tp-logo{display:flex;align-items:center;gap:6px}
+.tp-logo-icon{width:22px;height:22px;background:#00b67a;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tp-logo-text{font-size:14px;font-weight:700;color:var(--tx);letter-spacing:-0.3px}
+.trust-divider{width:1px;height:32px;background:var(--b1);flex-shrink:0}
+@media(max-width:700px){.trust-bar-inner{gap:24px}.trust-divider{display:none}}
 </style>
 </head>
 <body>
@@ -1236,7 +1248,60 @@ footer {
     </div>
   </div>
 </div>
-
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-bar-inner">
+    <div class="trust-item">
+      <div class="tp-logo">
+        <div class="tp-logo-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.9 9.1H22.5L16.8 13.8L18.9 21L12 16.9L5.1 21L7.2 13.8L1.5 9.1H9.1L12 2Z" fill="white"/></svg>
+        </div>
+        <div>
+          <div class="tp-logo-text">Trustpilot</div>
+          <div class="trust-stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Excellent</div>
+        <div class="trust-item-label">Early user rating</div>
+      </div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-item-icon">👥</div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Job seekers trust PREPT AI</div>
+        <div class="trust-item-label">To get past the algorithm</div>
+      </div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-item-icon" style="color:#635bff">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg>
+      </div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Secured by Stripe</div>
+        <div class="trust-item-label">256-bit SSL encryption</div>
+      </div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-item-icon">🔒</div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Your data stays private</div>
+        <div class="trust-item-label">Never stored or shared</div>
+      </div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-item-icon">⚡</div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Powered by Claude AI</div>
+        <div class="trust-item-label">By Anthropic</div>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
