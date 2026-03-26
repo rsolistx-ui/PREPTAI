@@ -230,46 +230,90 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 let user     = null;
 let userPlan = 'free';
+let _sbClient = null;
+
+function getSB() {
+  if (!_sbClient) {
+    const { createClient } = supabase;
+    _sbClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return _sbClient;
+}
 
 async function initAuth() {
   try {
-    const { createClient } = supabase;
-    const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const { data: { session } } = await sb.auth.getSession();
+    const sb = getSB();
+
+    // Handle OAuth redirect — Supabase puts the session in the URL hash after Google login
+    // This call processes the hash and establishes the session
+    const { data: { session }, error } = await sb.auth.getSession();
 
     if (session?.user) {
       user = session.user;
+
+      // Get plan from subscribers table
       const { data: sub } = await sb
         .from('subscribers')
         .select('plan')
         .eq('email', user.email)
         .single();
+
       userPlan = sub?.plan || 'free';
+
+      // Ensure subscriber record exists
+      if (!sub) {
+        await sb.from('subscribers').upsert(
+          { email: user.email, plan: 'free' },
+          { onConflict: 'email' }
+        );
+      }
+
       sessionStorage.setItem('preptai_user', JSON.stringify({ email: user.email, plan: userPlan }));
+
     } else {
+      // No active Supabase session — try sessionStorage fallback
       const userRaw = sessionStorage.getItem('preptai_user');
       if (userRaw) {
-        const stored = JSON.parse(userRaw);
-        user = stored;
-        userPlan = stored.plan || 'free';
+        try {
+          const stored = JSON.parse(userRaw);
+          user     = stored;
+          userPlan = stored.plan || 'free';
+        } catch(e) {}
       }
     }
+
+    // Listen for future auth state changes (e.g. token refresh)
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        user = session.user;
+        sessionStorage.setItem('preptai_user', JSON.stringify({ email: user.email, plan: userPlan }));
+      }
+      if (event === 'SIGNED_OUT') {
+        user = null;
+        userPlan = 'free';
+        sessionStorage.removeItem('preptai_user');
+      }
+    });
+
   } catch(e) {
+    console.error('Auth init error:', e);
     const userRaw = sessionStorage.getItem('preptai_user');
     if (userRaw) {
-      const stored = JSON.parse(userRaw);
-      user = stored;
-      userPlan = stored.plan || 'free';
+      try {
+        const stored = JSON.parse(userRaw);
+        user     = stored;
+        userPlan = stored.plan || 'free';
+      } catch(err) {}
     }
   }
 
-  // Time-based greeting
-  const hour = new Date().getHours();
-  const timeGreet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-  const firstName = user?.user_metadata?.full_name?.split(' ')[0]
+  // ── TIME-BASED GREETING ──────────────────────────────────────────────────
+  const hour       = new Date().getHours();
+  const timeGreet  = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const firstName  = user?.user_metadata?.full_name?.split(' ')[0]
     || user?.email?.split('@')[0]
     || null;
-  const greetName = firstName ? ', ' + firstName : '';
+  const greetName  = firstName ? ', ' + firstName : '';
 
   setTimeout(() => {
     if (user) {
@@ -280,8 +324,11 @@ async function initAuth() {
         : ' · Unlimited';
       addMsg('system', timeGreet + greetName + '! 👋',
         'Signed in as <strong>' + user.email + '</strong> · Plan: <strong style="color:' + planColor + '">' + planLabel + '</strong>' + planExtra);
+    } else {
+      addMsg('system', 'Welcome to PREPT AI Live 👋',
+        'Start by typing an interview question below, or use the mic. <a href="/login.html" style="color:#7b6df4">Sign in</a> to track your usage.');
     }
-  }, 300);
+  }, 400);
 }
 
 initAuth();
