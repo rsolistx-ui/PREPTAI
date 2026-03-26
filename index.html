@@ -1038,7 +1038,7 @@ footer {
 
   <div class="hero-trust">
     <span class="trust-dot">●</span>
-    No credit card required &nbsp;·&nbsp; Free tier always available &nbsp;·&nbsp; <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank" style="color:var(--tx3);text-decoration:underline">Cancel anytime</a>
+    No credit card required &nbsp;·&nbsp; Free tier always available &nbsp;·&nbsp; Cancel anytime
   </div>
 
   <!-- PRODUCT PREVIEW -->
@@ -1480,7 +1480,7 @@ footer {
             Application tracker
           </li>
         </ul>
-        <a href="https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00" class="np-cta np-cta-pro">Start Pro — $12/mo →</a>
+        <a href="#" class="np-cta np-cta-pro">Start Pro — $12/mo →</a>
       </div>
 
       <!-- CAREER+ -->
@@ -1515,7 +1515,7 @@ footer {
             Priority feature access
           </li>
         </ul>
-        <a href="https://buy.stripe.com/aFa6oI6WWfm5ces56UcbC02" class="np-cta np-cta-career">Start Career+ — $24/mo →</a>
+        <a href="#" class="np-cta np-cta-career">Start Career+ — $24/mo →</a>
       </div>
 
     </div>
@@ -1690,7 +1690,6 @@ footer {
         <a href="/prept_v2.html">PREPT AI Live</a>
         <a href="#pricing">Pricing</a>
         <a href="/changelog.html">Changelog</a>
-        <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank">Cancel Subscription</a>
       </div>
     </div>
     <div>
@@ -1712,10 +1711,10 @@ footer {
     </div>
   </div>
   <div class="footer-bottom">
-    <div class="footer-copy">© 2026 PREPT AI. Built with love in San Antonio, TX.</div>
+    <div class="footer-copy">© 2026 PREPT AI. Built in San Antonio, TX.</div>
     <div class="footer-badges">
       <div class="fbadge"><span>🔒</span> SOC 2 Ready</div>
-      <div class="fbadge"><span style="color:#ffffff">🛡</span> No data stored</div>
+      <div class="fbadge"><span>🛡</span> No data stored</div>
       
     </div>
   </div>
@@ -1758,6 +1757,43 @@ function animateCounter(el, target, suffix = '') {
     el.textContent = Math.floor(current) + suffix;
   }, 16);
 }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function() {
+  try {
+    const { createClient } = supabase;
+    const sb = createClient('https://lfxfwhitegsjeowlcvqk.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmeGZ3aGl0ZWdzamVvd2xjdnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODM3ODMsImV4cCI6MjA4OTg1OTc4M30.f67zZLrSbaLbTgWZtvx2AIr4aCGVRxuynEFm1_CKvWs');
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session?.user) return;
+
+    const user = session.user;
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const firstName = user.user_metadata?.full_name?.split(' ')[0]
+      || user.email?.split('@')[0]
+      || '';
+
+    // Swap all login buttons to show greeting
+    document.querySelectorAll('a[href="/login.html"]').forEach(btn => {
+      btn.textContent = greet + ', ' + firstName + ' ✓';
+      btn.href = '/prept_v2.html';
+      btn.style.cssText = 'background:rgba(69,222,122,0.12);color:#45de7a;border:1px solid rgba(69,222,122,0.25);padding:8px 18px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none';
+    });
+
+    // Also swap "Try free" / "Get started free" buttons to go straight to app
+    document.querySelectorAll('a.hero-cta-primary, a[href="/login.html"]').forEach(btn => {
+      if (btn.textContent.includes('Try free') || btn.textContent.includes('Get started')) {
+        btn.textContent = 'Go to dashboard →';
+        btn.href = '/prept_v2.html';
+      }
+    });
+
+  } catch(e) {
+    console.log('Session check skipped:', e.message);
+  }
+})();
 </script>
 </body>
 </html>
