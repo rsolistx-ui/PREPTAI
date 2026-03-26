@@ -1775,18 +1775,13 @@ function animateCounter(el, target, suffix = '') {
       || user.email?.split('@')[0]
       || '';
 
-    // Swap all login buttons to show greeting
+    // Only swap the "Log in" nav button — leave CTA buttons alone
     document.querySelectorAll('a[href="/login.html"]').forEach(btn => {
-      btn.textContent = greet + ', ' + firstName + ' ✓';
-      btn.href = '/prept_v2.html';
-      btn.style.cssText = 'background:rgba(69,222,122,0.12);color:#45de7a;border:1px solid rgba(69,222,122,0.25);padding:8px 18px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none';
-    });
-
-    // Also swap "Try free" / "Get started free" buttons to go straight to app
-    document.querySelectorAll('a.hero-cta-primary, a[href="/login.html"]').forEach(btn => {
-      if (btn.textContent.includes('Try free') || btn.textContent.includes('Get started')) {
-        btn.textContent = 'Go to dashboard →';
+      const txt = btn.textContent.trim();
+      if (txt === 'Log in' || txt === 'Login') {
+        btn.textContent = greet + ', ' + firstName + ' ✓';
         btn.href = '/prept_v2.html';
+        btn.style.cssText = 'background:rgba(69,222,122,0.12);color:#45de7a;border:1px solid rgba(69,222,122,0.25);padding:8px 18px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none';
       }
     });
 
