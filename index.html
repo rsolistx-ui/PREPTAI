@@ -1778,13 +1778,15 @@ function animateCounter(el, target, suffix = '') {
       || user.email?.split('@')[0]
       || '';
 
-    // Only swap the "Log in" nav button — leave CTA buttons alone
+    // Swap the "Log in" nav button to a non-clickable greeting span
     document.querySelectorAll('a[href="/login.html"]').forEach(btn => {
       const txt = btn.textContent.trim();
       if (txt === 'Log in' || txt === 'Login') {
-        btn.textContent = greet + ', ' + firstName + ' ✓';
-        btn.href = '/prept_v2.html';
-        btn.style.cssText = 'background:rgba(69,222,122,0.12);color:#45de7a;border:1px solid rgba(69,222,122,0.25);padding:8px 18px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none';
+        // Replace anchor with a span so it's not clickable
+        const span = document.createElement('span');
+        span.textContent = greet + ', ' + firstName + ' ✓';
+        span.style.cssText = 'background:rgba(69,222,122,0.12);color:#45de7a;border:1px solid rgba(69,222,122,0.25);padding:8px 18px;border-radius:8px;font-weight:600;font-size:13px;cursor:default;display:inline-block';
+        btn.parentNode.replaceChild(span, btn);
       }
     });
 
