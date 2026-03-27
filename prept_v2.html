@@ -3,742 +3,1818 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PREPT AI Live — Real-Time Interview Coach</title>
+<meta name="description" content="PREPT AI — AI-powered resume optimizer and real-time interview coach. Beat ATS filters, land more interviews, and ace every call.">
+<title>PREPT AI — Get the Job. Keep the Job.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#07070e;color:#edeaf7;font-family:'Outfit',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
-body::before{content:'';position:fixed;top:-20%;left:10%;width:600px;height:500px;background:radial-gradient(ellipse,rgba(123,109,244,0.06) 0%,transparent 65%);pointer-events:none;z-index:0}
+:root {
+  --bg: #06060d;
+  --s1: #0a0a14;
+  --s2: #0f0f1c;
+  --s3: #161625;
+  --s4: #1d1d2e;
+  --b1: rgba(255,255,255,0.05);
+  --b2: rgba(255,255,255,0.09);
+  --b3: rgba(255,255,255,0.14);
+  --gold: #c8a84b;
+  --gold2: #e6c668;
+  --gold3: #f5e0a0;
+  --gd: rgba(200,168,75,0.08);
+  --gd2: rgba(200,168,75,0.15);
+  --vi: #7b6df4;
+  --vi2: #a498ff;
+  --vd: rgba(123,109,244,0.08);
+  --cy: #38d9c0;
+  --cyd: rgba(56,217,192,0.08);
+  --gr: #45de7a;
+  --re: #ef5f5f;
+  --am: #f5a52a;
+  --tx: #edeaf7;
+  --tx2: #8c89a6;
+  --tx3: #4d4a66;
+}
 
-/* NAV */
-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;padding:0 24px;height:58px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(7,7,14,0.95);backdrop-filter:blur(20px);gap:12px}
-.nav-logo{font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;color:#e6c668;text-decoration:none;letter-spacing:-0.3px;margin-right:auto}
-.nav-badge{padding:3px 10px;border-radius:12px;background:rgba(123,109,244,0.12);border:1px solid rgba(123,109,244,0.25);font-size:11px;font-weight:700;color:#a498ff;display:flex;align-items:center;gap:5px}
-.nav-badge-dot{width:6px;height:6px;border-radius:50%;background:#ef5f5f;animation:pulse 1.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
-.nav-btn{padding:6px 16px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.2s}
-.nav-btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.09);color:#8c89a6}
-.nav-btn-ghost:hover{border-color:rgba(255,255,255,0.16);color:#edeaf7}
-.nav-btn-gold{background:#e6c668;border:none;color:#07070e}
-.nav-btn-gold:hover{background:#f5dfa0}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
 
-/* LAYOUT */
-.app{position:relative;z-index:1;display:grid;grid-template-columns:280px 1fr;min-height:calc(100vh - 58px)}
+/* ── NOISE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
 
-/* SIDEBAR */
-.sidebar{border-right:1px solid rgba(255,255,255,0.06);padding:20px 16px;display:flex;flex-direction:column;gap:16px;background:#08080f}
-.sidebar-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#4d4a66;margin-bottom:8px}
-.sidebar-input{width:100%;background:#111120;border:1px solid rgba(255,255,255,0.08);color:#edeaf7;font-family:'Outfit',sans-serif;font-size:13px;padding:9px 12px;border-radius:8px;outline:none;transition:border-color 0.2s}
-.sidebar-input:focus{border-color:#7b6df4}
-.sidebar-input::placeholder{color:#4d4a66}
-select.sidebar-input{cursor:pointer}
-.sector-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.sector-btn{padding:7px 8px;border-radius:7px;background:#111120;border:1px solid rgba(255,255,255,0.07);color:#8c89a6;font-family:'Outfit',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all 0.2s;text-align:center}
-.sector-btn:hover{border-color:rgba(123,109,244,0.3);color:#a498ff}
-.sector-btn.on{background:rgba(123,109,244,0.12);border-color:rgba(123,109,244,0.35);color:#a498ff;font-weight:700}
-.mode-tabs{display:flex;background:#111120;border-radius:8px;padding:3px;gap:2px}
-.mode-tab{flex:1;padding:7px;border-radius:6px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:#4d4a66;transition:all 0.2s;text-align:center}
-.mode-tab.on{background:#7b6df4;color:#fff}
-.divider{height:1px;background:rgba(255,255,255,0.05)}
+/* ── AMBIENT GLOWS ── */
+.glow-1 {
+  position: fixed; top: -20%; left: 20%;
+  width: 700px; height: 600px;
+  background: radial-gradient(ellipse, rgba(123,109,244,0.06) 0%, transparent 65%);
+  pointer-events: none; z-index: 0;
+}
+.glow-2 {
+  position: fixed; bottom: -10%; right: 10%;
+  width: 500px; height: 400px;
+  background: radial-gradient(ellipse, rgba(200,168,75,0.05) 0%, transparent 65%);
+  pointer-events: none; z-index: 0;
+}
 
-/* MAIN AREA */
-.main{display:flex;flex-direction:column;height:calc(100vh - 58px)}
-.chat-area{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px}
-.chat-area::-webkit-scrollbar{width:4px}
-.chat-area::-webkit-scrollbar-track{background:transparent}
-.chat-area::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+/* ── NAVBAR ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center;
+  padding: 0 48px; height: 62px;
+  border-bottom: 1px solid var(--b1);
+  background: rgba(6,6,13,0.88);
+  backdrop-filter: blur(28px);
+  transition: all 0.3s;
+}
+nav.scrolled { background: rgba(6,6,13,0.97); border-color: var(--b2); }
+.nav-logo {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 22px; font-weight: 800;
+  color: var(--gold2); letter-spacing: -0.5px;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold2);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+.nav-links {
+  display: flex; align-items: center; gap: 32px;
+  margin: 0 auto;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--tx2); text-decoration: none;
+  font-size: 14px; font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--tx); }
+.nav-cta {
+  display: flex; align-items: center; gap: 10px;
+}
+.btn-ghost {
+  padding: 8px 20px;
+  border: 1px solid var(--b2);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--tx2);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: var(--b3); color: var(--tx); }
+.btn-primary {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 8px;
+  background: var(--gold);
+  color: #06060d;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+}
+.btn-primary:hover { background: var(--gold2); transform: translateY(-1px); }
 
-/* MESSAGES */
-.msg{display:flex;flex-direction:column;gap:6px;max-width:820px}
-.msg-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4d4a66}
-.msg-bubble{padding:14px 18px;border-radius:12px;font-size:14px;line-height:1.7}
-.msg-q .msg-bubble{background:#111120;border:1px solid rgba(255,255,255,0.07);color:#8c89a6;border-radius:12px 12px 12px 4px}
-.msg-a .msg-bubble{background:rgba(123,109,244,0.08);border:1px solid rgba(123,109,244,0.18);color:#edeaf7;border-radius:4px 12px 12px 12px}
-.msg-a .msg-bubble strong{color:#a498ff}
-.msg-system .msg-bubble{background:rgba(200,168,75,0.07);border:1px solid rgba(200,168,75,0.15);color:#e6c668;font-size:13px;border-radius:10px}
-.msg-error .msg-bubble{background:rgba(239,95,95,0.07);border:1px solid rgba(239,95,95,0.15);color:#ef5f5f;font-size:13px;border-radius:10px}
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+}
 
-/* ANSWER META */
-.answer-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
-.meta-badge{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600}
-.meta-time{background:rgba(69,222,122,0.08);color:#45de7a;border:1px solid rgba(69,222,122,0.15)}
-.meta-copy{background:rgba(255,255,255,0.05);color:#8c89a6;border:1px solid rgba(255,255,255,0.08);cursor:pointer;transition:all 0.2s}
-.meta-copy:hover{color:#edeaf7;border-color:rgba(255,255,255,0.16)}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: var(--vd);
+  border: 1px solid rgba(123,109,244,0.2);
+  font-size: 12px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--vi2);
+  margin-bottom: 28px;
+  animation: fadeup 0.6s ease both;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--vi2);
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
 
-/* THINKING */
-.thinking{display:flex;align-items:center;gap:10px;padding:14px 18px;background:#111120;border:1px solid rgba(255,255,255,0.07);border-radius:12px;max-width:200px}
+.hero-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(42px, 7vw, 86px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -2.5px;
+  color: var(--tx);
+  margin-bottom: 20px;
+  animation: fadeup 0.6s 0.1s ease both;
+  max-width: 900px;
+}
+.hero-title .line2 {
+  display: block;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 50%, var(--gold3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--tx2);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto 36px;
+  animation: fadeup 0.6s 0.2s ease both;
+}
+
+.hero-actions {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 60px;
+  flex-wrap: wrap; justify-content: center;
+  animation: fadeup 0.6s 0.3s ease both;
+}
+
+.btn-hero {
+  padding: 16px 36px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+  color: #06060d;
+  border: none; border-radius: 10px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 32px rgba(200,168,75,0.22);
+  letter-spacing: 0.3px;
+}
+.btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(200,168,75,0.35); }
+
+.btn-hero-ghost {
+  padding: 16px 28px;
+  border: 1px solid var(--b2);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--tx2);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px; font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-hero-ghost:hover { border-color: var(--b3); color: var(--tx); }
+
+.hero-trust {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--tx3);
+  animation: fadeup 0.6s 0.35s ease both;
+}
+.trust-dot { color: var(--gr); font-size: 10px; }
+
+/* Hero stats ticker */
+.hero-stats {
+  display: flex; align-items: center; gap: 0;
+  border: 1px solid var(--b1);
+  border-radius: 14px;
+  background: var(--s2);
+  overflow: hidden;
+  margin-bottom: 48px;
+  animation: fadeup 0.6s 0.25s ease both;
+}
+.hstat {
+  padding: 18px 32px;
+  text-align: center;
+  border-right: 1px solid var(--b1);
+}
+.hstat:last-child { border-right: none; }
+.hstat-n {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 28px; font-weight: 800;
+  color: var(--gold2); line-height: 1;
+}
+.hstat-l {
+  font-size: 12px; color: var(--tx3);
+  margin-top: 4px;
+}
+
+/* Product mockup preview */
+.hero-preview {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 900px;
+  margin: 0 auto;
+  animation: fadeup 0.8s 0.4s ease both;
+}
+.preview-frame {
+  background: var(--s2);
+  border: 1px solid var(--b2);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px var(--b1);
+}
+.preview-topbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--b1);
+  background: var(--s3);
+}
+.ptb-dot { width: 10px; height: 10px; border-radius: 50%; }
+.ptb-red { background: #ff5f57; }
+.ptb-yellow { background: #ffbd2e; }
+.ptb-green { background: #28c840; }
+.ptb-url {
+  flex: 1; background: var(--s4); border-radius: 6px;
+  padding: 5px 12px; margin: 0 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--tx3);
+  text-align: center;
+}
+.preview-content {
+  display: grid; grid-template-columns: 240px 1fr;
+  min-height: 340px;
+}
+.preview-left {
+  border-right: 1px solid var(--b1);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.pl-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--tx3); margin-bottom: 4px; }
+.pl-score {
+  background: var(--s3); border: 1px solid var(--b1);
+  border-radius: 8px; padding: 14px;
+  display: flex; align-items: center; gap: 12px;
+}
+.pl-score-n {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 32px; font-weight: 800;
+  color: var(--am); line-height: 1;
+}
+.pl-score-info { flex: 1; }
+.pl-score-grade { font-size: 13px; font-weight: 700; color: var(--am); }
+.pl-score-label { font-size: 11px; color: var(--tx3); }
+.pl-proj {
+  background: var(--grd); border: 1px solid rgba(69,222,122,0.15);
+  border-radius: 6px; padding: 8px 12px;
+  font-size: 12px; color: var(--gr);
+  display: flex; align-items: center; gap: 6px;
+}
+.pl-kw-miss { display: flex; flex-wrap: wrap; gap: 5px; }
+.kw-chip {
+  padding: 3px 8px; border-radius: 12px;
+  font-size: 11px; font-weight: 500;
+}
+.kw-red { background: var(--red); color: var(--re); border: 1px solid rgba(239,95,95,0.15); }
+.kw-amber { background: var(--amd); color: var(--am); border: 1px solid rgba(245,165,42,0.15); }
+.preview-right { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.pr-tabs { display: flex; gap: 4px; }
+.pr-tab {
+  padding: 5px 12px; border-radius: 6px;
+  font-size: 11px; font-weight: 600;
+  color: var(--tx3); cursor: default;
+}
+.pr-tab.on { background: var(--gd); color: var(--gold2); }
+.pr-block { background: var(--s3); border: 1px solid var(--b1); border-radius: 8px; padding: 12px 14px; }
+.pb-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); margin-bottom: 6px; }
+.pb-text { font-size: 12px; color: var(--tx); line-height: 1.6; }
+.pb-text .hi { background: rgba(200,168,75,0.15); color: var(--gold3); border-radius: 2px; padding: 0 2px; }
+.pr-metrics { display: flex; gap: 8px; }
+.prm { flex: 1; background: var(--s3); border: 1px solid var(--b1); border-radius: 8px; padding: 10px 12px; text-align: center; }
+.prm-n { font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; font-weight: 700; color: var(--tx); }
+.prm-l { font-size: 10px; color: var(--tx3); margin-top: 2px; }
+
+@keyframes fadeup {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTION BASE ── */
+section {
+  position: relative; z-index: 1;
+  padding: 100px 24px;
+}
+.section-inner { max-width: 1100px; margin: 0 auto; }
+.section-eyebrow {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--gold); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-eyebrow::before {
+  content: ''; display: block;
+  width: 24px; height: 1px;
+  background: var(--gold);
+}
+.section-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  color: var(--tx);
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 17px; color: var(--tx2);
+  line-height: 1.7; max-width: 540px;
+}
+
+/* ── PROBLEM SECTION ── */
+.problem-section { background: var(--s1); }
+.problem-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--b1);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 56px;
+}
+.problem-card {
+  background: var(--s2);
+  padding: 36px 32px;
+}
+.pc-number {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 52px; font-weight: 900;
+  line-height: 1; margin-bottom: 12px;
+}
+.pc-label { font-size: 15px; font-weight: 600; color: var(--tx); margin-bottom: 8px; }
+.pc-desc { font-size: 14px; color: var(--tx2); line-height: 1.6; }
+
+/* ── HOW IT WORKS ── */
+.how-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+  margin-top: 56px;
+}
+.how-steps { display: flex; flex-direction: column; gap: 0; }
+.how-step {
+  display: flex; gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--b1);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.how-step:last-child { border-bottom: none; }
+.how-step:hover .hs-content { opacity: 1; }
+.hs-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--b2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--tx3);
+  flex-shrink: 0; margin-top: 2px;
+  transition: all 0.2s;
+}
+.how-step.active .hs-num {
+  background: var(--gold); color: #06060d;
+  border-color: var(--gold); font-weight: 700;
+}
+.hs-title { font-size: 16px; font-weight: 700; color: var(--tx); margin-bottom: 6px; }
+.hs-desc { font-size: 14px; color: var(--tx2); line-height: 1.6; }
+.how-visual {
+  background: var(--s2); border: 1px solid var(--b2);
+  border-radius: 16px; padding: 32px;
+  min-height: 360px;
+  display: flex; flex-direction: column; gap: 16px;
+  position: sticky; top: 100px;
+}
+.hv-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--tx3); }
+.hv-score-ring {
+  display: flex; align-items: center; gap: 20px;
+  padding: 20px; background: var(--s3);
+  border-radius: 12px; border: 1px solid var(--b1);
+}
+.ring-wrap { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+.ring-num {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 800;
+}
+.ring-info-title { font-size: 15px; font-weight: 700; color: var(--tx); }
+.ring-info-sub { font-size: 12px; color: var(--tx2); margin-top: 3px; }
+.hv-kw-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.hv-issue {
+  background: var(--s3); border: 1px solid var(--b1);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 12px; color: var(--tx2); line-height: 1.5;
+}
+.hv-issue .fix { color: var(--cy); margin-top: 4px; font-size: 11px; }
+
+/* ── FEATURES ── */
+.features-section { background: var(--s1); }
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--b1);
+  border-radius: 16px; overflow: hidden;
+  margin-top: 56px;
+}
+.feat-card {
+  background: var(--s2);
+  padding: 32px 28px;
+  transition: background 0.2s;
+}
+.feat-card:hover { background: var(--s3); }
+.feat-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 16px;
+}
+.fi-gold { background: var(--gd); border: 1px solid rgba(200,168,75,0.18); }
+.fi-vi { background: var(--vd); border: 1px solid rgba(123,109,244,0.18); }
+.fi-cy { background: var(--cyd); border: 1px solid rgba(56,217,192,0.18); }
+.feat-title { font-size: 16px; font-weight: 700; color: var(--tx); margin-bottom: 8px; }
+.feat-desc { font-size: 14px; color: var(--tx2); line-height: 1.6; }
+.feat-tag {
+  display: inline-block; margin-top: 12px;
+  padding: 3px 10px; border-radius: 12px;
+  font-size: 11px; font-weight: 600;
+}
+.tag-new { background: var(--vd); color: var(--vi2); border: 1px solid rgba(123,109,244,0.2); }
+.tag-pro { background: var(--gd); color: var(--gold2); border: 1px solid rgba(200,168,75,0.2); }
+
+/* ── COMPARISON ── */
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  margin-top: 56px;
+  border-radius: 16px; overflow: hidden;
+}
+.compare-table th {
+  padding: 16px 20px;
+  font-size: 13px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--b1);
+  background: var(--s2);
+}
+.compare-table th:first-child { text-align: left; color: var(--tx3); }
+.compare-table th.us { color: var(--gold2); background: var(--s3); }
+.compare-table td {
+  padding: 14px 20px;
+  font-size: 14px; color: var(--tx2);
+  border-bottom: 1px solid var(--b1);
+  background: var(--s2); text-align: center;
+}
+.compare-table td:first-child { text-align: left; color: var(--tx); }
+.compare-table td.us { background: rgba(200,168,75,0.04); }
+.compare-table tr:last-child td { border-bottom: none; }
+.chk-yes { color: var(--gr); font-size: 16px; }
+.chk-no { color: var(--tx4); font-size: 16px; }
+.chk-part { color: var(--am); font-size: 12px; font-weight: 600; }
+
+/* ── PRICING ── */
+.pricing-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px; margin-top: 56px;
+}
+.price-card {
+  background: var(--s2);
+  border: 1px solid var(--b1);
+  border-radius: 16px;
+  padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 16px;
+  position: relative; overflow: hidden;
+  transition: transform 0.2s;
+}
+.price-card:hover { transform: translateY(-3px); }
+.price-card.featured {
+  border-color: var(--gold);
+  background: linear-gradient(160deg, var(--s3) 0%, rgba(200,168,75,0.05) 100%);
+}
+.price-card.featured::before {
+  content: 'MOST POPULAR';
+  position: absolute; top: 16px; right: -28px;
+  background: var(--gold);
+  color: #06060d;
+  font-size: 9px; font-weight: 800;
+  padding: 4px 40px;
+  transform: rotate(45deg);
+  letter-spacing: 1px;
+}
+.price-tier {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 2px;
+  color: var(--tx3);
+}
+.price-amount {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 44px; font-weight: 900;
+  line-height: 1; color: var(--tx);
+}
+.price-amount span { font-size: 16px; font-weight: 400; color: var(--tx3); }
+.price-desc { font-size: 13px; color: var(--tx2); line-height: 1.6; }
+.price-divider { height: 1px; background: var(--b1); }
+.price-features { display: flex; flex-direction: column; gap: 9px; }
+.pf {
+  display: flex; gap: 10px;
+  font-size: 13px; color: var(--tx2);
+  align-items: flex-start;
+}
+.pf-ico { flex-shrink: 0; margin-top: 1px; }
+.pf-ico.yes { color: var(--gr); }
+.pf-ico.no { color: var(--tx4); }
+.price-cta {
+  margin-top: auto;
+  padding: 13px;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; text-decoration: none;
+  text-align: center;
+  transition: all 0.2s;
+  display: block;
+}
+.cta-free {
+  background: var(--s4); color: var(--tx2);
+  border: 1px solid var(--b2);
+}
+.cta-free:hover { border-color: var(--b3); color: var(--tx); }
+.cta-pro {
+  background: var(--gold); color: #06060d;
+  border: none;
+}
+.cta-pro:hover { background: var(--gold2); }
+.cta-career {
+  background: var(--s4); color: var(--vi2);
+  border: 1px solid rgba(123,109,244,0.2);
+}
+.cta-career:hover { background: var(--vd); }
+
+/* ── TESTIMONIALS ── */
+.testimonials-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px; margin-top: 56px;
+}
+.tcard {
+  background: var(--s2); border: 1px solid var(--b1);
+  border-radius: 16px; padding: 24px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.tcard-stars { color: var(--gold2); font-size: 14px; letter-spacing: 2px; }
+.tcard-quote { font-size: 14px; color: var(--tx); line-height: 1.7; }
+.tcard-quote em { color: var(--gold2); font-style: normal; font-weight: 600; }
+.tcard-person { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+.tcard-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: #06060d;
+  flex-shrink: 0;
+}
+.tcard-name { font-size: 13px; font-weight: 600; color: var(--tx); }
+.tcard-role { font-size: 12px; color: var(--tx3); }
+
+/* ── FAQ ── */
+.faq-list { display: flex; flex-direction: column; gap: 0; margin-top: 56px; }
+.faq-item {
+  border-bottom: 1px solid var(--b1);
+  padding: 0;
+}
+.faq-q {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 0;
+  font-size: 16px; font-weight: 600; color: var(--tx);
+  cursor: pointer; gap: 16px;
+  list-style: none;
+}
+.faq-q::after {
+  content: '+';
+  font-size: 20px; color: var(--gold2);
+  flex-shrink: 0; transition: transform 0.2s;
+}
+.faq-item.open .faq-q::after { transform: rotate(45deg); }
+.faq-a {
+  font-size: 14px; color: var(--tx2);
+  line-height: 1.7; padding-bottom: 20px;
+  display: none;
+}
+.faq-item.open .faq-a { display: block; }
+
+/* ── CTA BANNER ── */
+.cta-banner {
+  position: relative; z-index: 1;
+  background: var(--s1);
+  padding: 100px 24px;
+  text-align: center;
+  overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(200,168,75,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.cta-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.cta-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(30px, 5vw, 52px);
+  font-weight: 800; letter-spacing: -2px;
+  color: var(--tx); line-height: 1.1;
+  margin-bottom: 16px;
+}
+.cta-title .gold { color: var(--gold2); }
+.cta-sub { font-size: 17px; color: var(--tx2); margin-bottom: 36px; line-height: 1.6; }
+.cta-actions { display: flex; align-items: center; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--b1);
+  padding: 48px 48px 32px;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px; max-width: 1100px; margin: 0 auto 48px;
+}
+.footer-brand { }
+.footer-logo {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 20px; font-weight: 800;
+  color: var(--gold2); margin-bottom: 12px;
+}
+.footer-tagline { font-size: 14px; color: var(--tx3); line-height: 1.6; max-width: 260px; }
+.footer-col-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--tx3); margin-bottom: 16px;
+}
+.footer-links { display: flex; flex-direction: column; gap: 10px; }
+.footer-links a {
+  font-size: 14px; color: var(--tx2);
+  text-decoration: none; transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--tx); }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 24px; border-top: 1px solid var(--b1);
+  max-width: 1100px; margin: 0 auto;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-size: 13px; color: var(--tx3); }
+.footer-badges { display: flex; gap: 10px; }
+.fbadge {
+  padding: 4px 12px;
+  border: 1px solid var(--b1);
+  border-radius: 12px;
+  font-size: 11px; color: var(--tx3);
+  display: flex; align-items: center; gap: 5px;
+}
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .preview-content { grid-template-columns: 1fr; }
+  .preview-left { border-right: none; border-bottom: 1px solid var(--b1); }
+  .problem-grid, .features-grid, .testimonials-grid, .pricing-grid { grid-template-columns: 1fr; gap: 1px; }
+  .pricing-grid { gap: 12px; background: transparent; }
+  .how-grid { grid-template-columns: 1fr; }
+  .how-visual { position: static; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .compare-table { font-size: 13px; }
+  .compare-table th, .compare-table td { padding: 10px 12px; }
+  section { padding: 64px 20px; }
+  .hero { padding: 100px 20px 60px; }
+}
+@media (max-width: 600px) {
+  .hero-stats { flex-direction: column; border: none; background: transparent; gap: 12px; }
+  .hstat { border: 1px solid var(--b1); border-radius: 10px; padding: 14px 20px; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ── TRUST BAR ── */
+.trust-bar {
+  position: relative; z-index: 1;
+  background: var(--s1);
+  border-top: 1px solid var(--b1);
+  border-bottom: 1px solid var(--b1);
+  padding: 24px;
+  overflow: hidden;
+}
+.trust-bar-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center;
+  justify-content: center;
+  gap: 40px; flex-wrap: nowrap;
+}
+.trust-item {
+  display: flex; align-items: center;
+  gap: 8px; flex-shrink: 0;
+}
+.trust-item-icon { font-size: 16px; flex-shrink: 0; }
+.trust-item-text { font-size: 12px; font-weight: 500; color: var(--tx2); line-height: 1.3; }
+.trust-item-label { font-size: 10px; color: var(--tx3); margin-top: 1px; }
+.trust-stars { color: #f5a52a; font-size: 13px; letter-spacing: 1px; line-height: 1; }
+.tp-logo { display: flex; align-items: center; gap: 6px; }
+.tp-logo-icon { width: 20px; height: 20px; background: #00b67a; border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tp-logo-text { font-size: 13px; font-weight: 700; color: var(--tx); letter-spacing: -0.3px; }
+.trust-divider { width: 1px; height: 28px; background: var(--b2); flex-shrink: 0; }
+@media(max-width:900px){ .trust-bar-inner { gap: 20px; flex-wrap: wrap; } }
+@media(max-width:600px){ .trust-bar-inner { flex-direction: column; gap: 16px; } }
+  .trust-divider { display: none; }
+}
+
+/* ── LIVE COACH SPOTLIGHT ── */
+.live-section{position:relative;z-index:1;padding:100px 24px;overflow:hidden}
+.live-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(123,109,244,0.08) 0%,transparent 65%);pointer-events:none}
+.live-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.live-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:20px;background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.25);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#a498ff;margin-bottom:20px}
+.live-badge-dot{width:7px;height:7px;border-radius:50%;background:#a498ff;animation:live-pulse 1.4s ease-in-out infinite}
+@keyframes live-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+.live-title{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-1.5px;color:#edeaf7;line-height:1.1;margin-bottom:16px}
+.live-title .hl{color:#a498ff}
+.live-sub{font-size:16px;color:#8c89a6;line-height:1.7;margin-bottom:28px;max-width:440px}
+.live-steps{display:flex;flex-direction:column;gap:14px;margin-bottom:32px}
+.live-step{display:flex;align-items:flex-start;gap:14px}
+.ls-num{width:28px;height:28px;border-radius:50%;background:rgba(123,109,244,0.15);border:1px solid rgba(123,109,244,0.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#a498ff;flex-shrink:0;margin-top:2px}
+.ls-text{font-size:14px;color:#8c89a6;line-height:1.6}
+.ls-text strong{color:#edeaf7;font-weight:600}
+.live-cta{display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:#7b6df4;color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 24px rgba(123,109,244,0.25)}
+.live-cta:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(123,109,244,0.4)}
+.live-demo{position:relative}
+.demo-screen{background:#0f0f1c;border:1px solid rgba(255,255,255,0.09);border-radius:16px;padding:20px;box-shadow:0 32px 80px rgba(0,0,0,0.5)}
+.demo-topbar{display:flex;align-items:center;gap:6px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.demo-dot{width:9px;height:9px;border-radius:50%}
+.demo-title{font-size:12px;font-weight:700;color:#8c89a6;margin-left:8px;text-transform:uppercase;letter-spacing:1px}
+.demo-status{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:#ef5f5f;font-weight:600}
+.demo-status-dot{width:6px;height:6px;border-radius:50%;background:#ef5f5f;animation:live-pulse 1.2s ease-in-out infinite}
+.demo-question{background:#171728;border-radius:12px 12px 12px 4px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#8c89a6;line-height:1.6;border:1px solid rgba(255,255,255,0.06)}
+.demo-question-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#4d4a66;margin-bottom:5px}
+.demo-thinking{display:flex;align-items:center;gap:8px;padding:10px 0;margin-bottom:12px}
 .think-dots{display:flex;gap:4px}
-.think-dot{width:7px;height:7px;border-radius:50%;background:#7b6df4;animation:bounce 1.2s ease-in-out infinite}
+.think-dot{width:7px;height:7px;border-radius:50%;background:#7b6df4;animation:tbounce 1.2s ease-in-out infinite}
 .think-dot:nth-child(2){animation-delay:0.15s}
 .think-dot:nth-child(3){animation-delay:0.3s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:0.3}40%{transform:translateY(-6px);opacity:1}}
-.think-label{font-size:12px;color:#4d4a66}
+@keyframes tbounce{0%,80%,100%{transform:translateY(0);opacity:0.35}40%{transform:translateY(-6px);opacity:1}}
+.demo-answer{background:rgba(123,109,244,0.08);border:1px solid rgba(123,109,244,0.2);border-radius:4px 12px 12px 12px;padding:14px 16px;margin-bottom:14px}
+.demo-answer-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7b6df4;margin-bottom:7px}
+.demo-answer-text{font-size:13px;color:#edeaf7;line-height:1.7}
+.demo-timer{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:12px;background:rgba(69,222,122,0.1);border:1px solid rgba(69,222,122,0.2);font-size:11px;font-weight:600;color:#45de7a}
+.demo-float-1{position:absolute;top:-20px;right:-20px;background:#0f0f1c;border:1px solid rgba(200,168,75,0.25);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;color:#e6c668;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.demo-float-2{position:absolute;bottom:-16px;left:-16px;background:#0f0f1c;border:1px solid rgba(69,222,122,0.25);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;color:#45de7a;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+@media(max-width:900px){.live-inner{grid-template-columns:1fr;gap:48px}.demo-float-1,.demo-float-2{display:none}}
 
-/* INPUT BAR */
-.chips-bar{padding:10px 20px 0;background:#08080f}
-.chips-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#4d4a66;margin-bottom:7px;padding-left:0}
-.chips-row{display:flex;flex-wrap:wrap;gap:6px}
-.input-bar{padding:12px 20px 14px;border-top:1px solid rgba(255,255,255,0.06);background:#08080f}
-.input-row{display:flex;gap:10px;align-items:stretch}
-.input-wrap{flex:1;position:relative}
-#questionInput{width:100%;height:100%;background:#111120;border:1px solid rgba(255,255,255,0.09);color:#edeaf7;font-family:'Outfit',sans-serif;font-size:14px;padding:13px 46px 13px 14px;border-radius:10px;outline:none;resize:none;min-height:48px;max-height:140px;line-height:1.5;transition:border-color 0.2s}
-#questionInput:focus{border-color:#7b6df4}
-#questionInput::placeholder{color:#4d4a66;font-size:13px}
-.mic-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;border:none;background:rgba(123,109,244,0.15);color:#a498ff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;font-size:13px;z-index:2}
-.mic-btn:hover{background:rgba(123,109,244,0.25)}
-.mic-btn.listening{background:#ef5f5f;color:#fff;animation:pulse 0.8s ease-in-out infinite}
-.safari-note{font-size:11px;color:rgba(255,255,255,0.85);padding-left:2px;margin-top:6px}
-.send-btn{padding:0 20px;background:#7b6df4;color:#fff;border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap;align-self:stretch}
-.send-btn:hover{background:#9488ff;transform:translateY(-1px)}
-.send-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-
-/* EMPTY STATE */
-.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:16px}
-.empty-icon{font-size:48px;opacity:0.4}
-.empty-title{font-size:20px;font-weight:700;color:#edeaf7;letter-spacing:-0.3px}
-.empty-sub{font-size:14px;color:#4d4a66;max-width:400px;line-height:1.7}
-.starter-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
-.chip{padding:8px 14px;border-radius:20px;background:#111120;border:1px solid rgba(255,255,255,0.08);font-size:12px;color:#8c89a6;cursor:pointer;transition:all 0.2s;text-align:left}
-.chip:hover{border-color:rgba(123,109,244,0.3);color:#a498ff;background:rgba(123,109,244,0.05)}
-
-/* MOCK INTERVIEW */
-.mock-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:12px;background:#08080f}
-.mock-progress{flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
-.mock-progress-bar{height:100%;background:#7b6df4;border-radius:2px;transition:width 0.4s ease}
-.mock-q-count{font-size:12px;color:#4d4a66;white-space:nowrap}
-
-/* DEBRIEF */
-.debrief-card{background:#111120;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:20px 24px;margin-bottom:12px}
-.debrief-score{font-family:'Outfit',sans-serif;font-size:48px;font-weight:900;line-height:1}
-.score-a{color:#45de7a}
-.score-b{color:#e6c668}
-.score-c{color:#f5a52a}
-
-/* UPGRADE BANNER */
-.upgrade-banner{margin:0 20px 16px;padding:14px 18px;background:rgba(200,168,75,0.07);border:1px solid rgba(200,168,75,0.18);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.upgrade-text{font-size:13px;color:#e6c668}
-.upgrade-btn{padding:7px 16px;background:#e6c668;color:#07070e;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap}
-
-/* RESPONSIVE */
-@media(max-width:768px){
-  .app{grid-template-columns:1fr}
-  .sidebar{display:none}
+/* ── NEW PRICING CARDS ── */
+.new-pricing-grid {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+  margin-top: 48px;
+}
+.np-card {
+  flex: 1;
+  background: #16161f;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.np-card.np-pro {
+  border-color: #d4a847;
+  background: #18181f;
+  box-shadow: 0 0 0 1px rgba(212,168,71,0.25), 0 24px 60px rgba(212,168,71,0.1);
+}
+.np-badge-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+  height: 28px;
+}
+.np-badge-wrap.np-empty { visibility: hidden; }
+.np-badge {
+  background: #d4a847;
+  color: #0e0e14;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 100px;
+  white-space: nowrap;
+  font-family: 'Outfit', sans-serif;
+}
+.np-tier {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 14px;
+}
+.np-trial-pill {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(200,168,75,0.12);
+  border: 1px solid rgba(200,168,75,0.3);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #d4a847;
+  margin-bottom: 16px;
+  width: fit-content;
+}
+.np-trial-career {
+  background: rgba(130,110,220,0.12);
+  border-color: rgba(130,110,220,0.3);
+  color: #a08de8;
+}
+.np-price {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+.np-amount {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 52px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.np-mo {
+  font-size: 15px;
+  color: rgba(255,255,255,0.45);
+  font-weight: 400;
+}
+.np-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.np-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+.np-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.4;
+}
+.np-feature.np-off { color: rgba(255,255,255,0.3); }
+.np-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.np-check {
+  background: rgba(100,210,130,0.15);
+  color: #64d282;
+}
+.np-x {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.25);
+}
+.np-icon svg { width: 10px; height: 10px; }
+.np-cta {
+  margin-top: 24px;
+  width: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  display: block;
+  transition: all 0.2s;
+}
+.np-cta:hover { transform: translateY(-1px); opacity: 0.9; }
+.np-cta-free {
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.np-cta-pro {
+  background: #d4a847;
+  color: #0e0e14;
+}
+.np-cta-career {
+  background: rgba(160,141,232,0.15);
+  color: #a08de8;
+  border: 1px solid rgba(160,141,232,0.25);
+}
+@media(max-width:900px){
+  .new-pricing-grid { flex-direction: column; gap: 16px; }
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
+<div class="glow-1"></div>
+<div class="glow-2"></div>
+
 <!-- NAV -->
-<nav>
-  <a class="nav-logo" href="/" style="display:flex;align-items:center;gap:7px">
-    <div style="width:7px;height:7px;border-radius:50%;background:#e6c668;animation:pulse 2s ease-in-out infinite;flex-shrink:0"></div>
+<nav id="navbar">
+  <div class="nav-logo">
+    <div class="nav-logo-dot"></div>
     PREPT AI
-  </a>
-  <div class="nav-badge"><div class="nav-badge-dot"></div> Live</div>
-  <a href="/prept_match_v2.html" class="nav-btn nav-btn-ghost">Resume Match</a>
-  <a href="/login.html" class="nav-btn nav-btn-gold" id="accountBtn">My Account</a>
-  <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank" class="nav-btn nav-btn-ghost">Manage billing</a>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-cta" style="align-items:center">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:5px">
+      <a href="/login.html" class="btn-ghost" style="display:flex;align-items:center">Log in</a>
+      <a href="#" id="logoutBtn" onclick="handleLogout(event)" style="display:none;font-size:11px;color:rgba(255,255,255,0.3);text-decoration:underline;text-align:center;cursor:pointer">Log out</a>
+    </div>
+    <a href="/login.html" class="btn-primary">Try free →</a>
+  </div>
 </nav>
 
-<!-- ACCOUNT PANEL -->
-<div id="accountPanel" style="display:none;position:fixed;top:66px;right:20px;z-index:200;background:#13131f;border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:20px 24px;min-width:280px;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
-  <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#4d4a66;margin-bottom:12px">Your Account</div>
-  <div id="panelEmail" style="font-size:14px;color:#edeaf7;font-weight:600;margin-bottom:4px"></div>
-  <div id="panelPlan" style="font-size:12px;margin-bottom:16px"></div>
-  <div style="height:1px;background:rgba(255,255,255,0.06);margin-bottom:16px"></div>
-  <div id="panelUsage" style="font-size:13px;color:#8c89a6;margin-bottom:16px;line-height:1.7"></div>
-  <div style="display:flex;flex-direction:column;gap:8px">
-    <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank" style="display:block;padding:9px 14px;background:rgba(200,168,75,0.1);border:1px solid rgba(200,168,75,0.2);border-radius:8px;font-size:13px;font-weight:600;color:#e6c668;text-decoration:none;text-align:center">Manage billing →</a>
-    <a href="/#pricing" style="display:block;padding:9px 14px;background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.2);border-radius:8px;font-size:13px;font-weight:600;color:#a498ff;text-decoration:none;text-align:center">View plans →</a>
-    <button onclick="handleSignOut(event)" style="padding:9px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-size:13px;font-weight:600;color:#8c89a6;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.2s" onmouseover="this.style.color='#edeaf7'" onmouseout="this.style.color='#8c89a6'">Sign out</button>
-  </div>
-</div>
-
-<div class="app">
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div>
-      <div class="sidebar-section">Session Setup</div>
-      <input class="sidebar-input" id="companyInput" placeholder="Company name (optional)" type="text"/>
-    </div>
-    <div>
-      <input class="sidebar-input" id="roleInput" placeholder="Role / job title (optional)" type="text"/>
-    </div>
-    <div class="divider"></div>
-    <div>
-      <div class="sidebar-section">Mode</div>
-      <div class="mode-tabs">
-        <button class="mode-tab on" id="tabLive" onclick="setMode('live')">🎙 Live</button>
-        <button class="mode-tab" id="tabMock" onclick="setMode('mock')">📋 Mock</button>
-        <button class="mode-tab" id="tabDebrief" onclick="setMode('debrief')">📊 Debrief</button>
-      </div>
-    </div>
-    <div class="divider"></div>
-    <div>
-      <div class="sidebar-section">Industry</div>
-      <div class="sector-grid" id="sectorGrid"></div>
-    </div>
-    <div class="divider"></div>
-    <div>
-      <div class="sidebar-section">Answer Style</div>
-      <select class="sidebar-input" id="styleSelect">
-        <option value="star">STAR Method (behavioral)</option>
-        <option value="concise">Concise & direct</option>
-        <option value="story">Storytelling</option>
-        <option value="technical">Technical & detailed</option>
-        <option value="executive">Executive / senior level</option>
-      </select>
-    </div>
-    <div style="margin-top:auto">
-      <button onclick="clearChat()" style="width:100%;padding:8px;background:transparent;border:1px solid rgba(255,255,255,0.07);color:#4d4a66;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='#8c89a6'" onmouseout="this.style.color='#4d4a66'">Clear session</button>
-    </div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <div class="eyebrow-dot"></div>
+    Real-Time AI Interview Coach
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
-    <div class="chat-area" id="chatArea">
-      <div class="empty-state" id="emptyState">
-        <div class="empty-icon">🎙</div>
-        <div class="empty-title">PREPT AI Live is ready.</div>
-        <div class="empty-sub">Type or speak your interviewer's question and get a coached answer in seconds. Works alongside any video call.</div>
-      </div>
-    </div>
+  <h1 class="hero-title">
+    Your AI coach.<br>
+    <span class="line2">Live. In your interview.</span>
+  </h1>
 
-    <div id="upgradeBanner" style="display:none">
-      <div class="upgrade-banner">
-        <div class="upgrade-text">⚡ You've used your 3 free questions. Upgrade to Pro for unlimited coaching.</div>
-        <a href="/#pricing" class="upgrade-btn">Upgrade to Pro →</a>
-      </div>
-    </div>
+  <p class="hero-sub">
+    PREPT AI listens to every interview question and feeds you a confident, personalized answer in under 3 seconds — live, on your phone or second screen. Then optimizes your resume to get you the interview in the first place.
+  </p>
 
-    <!-- QUICK REFERENCE CHIPS — always visible -->
-    <div class="chips-bar">
-      <div class="chips-label">Quick questions</div>
-      <div class="chips-row">
-        <div class="chip" onclick="useStarter(this)">Tell me about yourself</div>
-        <div class="chip" onclick="useStarter(this)">What's your greatest weakness?</div>
-        <div class="chip" onclick="useStarter(this)">Why do you want to work here?</div>
-        <div class="chip" onclick="useStarter(this)">Tell me about a challenge you overcame</div>
-        <div class="chip" onclick="useStarter(this)">Where do you see yourself in 5 years?</div>
-        <div class="chip" onclick="useStarter(this)">Why are you leaving your current job?</div>
-      </div>
-    </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n">3s</div><div class="hstat-l">Answer coached in 3 seconds</div></div>
+    <div class="hstat"><div class="hstat-n">14</div><div class="hstat-l">Industries covered</div></div>
+    <div class="hstat"><div class="hstat-n">75%</div><div class="hstat-l">Resumes filtered by ATS</div></div>
+    <div class="hstat"><div class="hstat-n">2min</div><div class="hstat-l">To your first session</div></div>
+  </div>
 
-    <div class="input-bar">
-      <div class="input-row">
-        <div class="input-wrap">
-          <textarea id="questionInput" placeholder="Type the interviewer's question here... or tap the mic to speak" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-          <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="🎤 Voice input — works best in Chrome or Edge. Not supported in Safari.">🎤</button>
+  <div class="hero-actions">
+    <a href="/login.html" class="btn-hero">Try the live coach free →</a>
+    <a href="#how" class="btn-hero-ghost">See how it works ↓</a>
+  </div>
+
+  <div class="hero-trust">
+    <span class="trust-dot">●</span>
+    No credit card required &nbsp;·&nbsp; Free tier always available &nbsp;·&nbsp; Cancel anytime
+  </div>
+
+  <!-- PRODUCT PREVIEW -->
+  <div class="hero-preview" style="margin-top:56px">
+    <div class="preview-frame">
+      <div class="preview-topbar">
+        <div class="ptb-dot ptb-red"></div>
+        <div class="ptb-dot ptb-yellow"></div>
+        <div class="ptb-dot ptb-green"></div>
+        <div class="ptb-url">preptai.co/live</div>
+      </div>
+      <div class="preview-content">
+        <div class="preview-left">
+          <div class="pl-label">Match score</div>
+          <div class="pl-score">
+            <div class="pl-score-n">64</div>
+            <div class="pl-score-info">
+              <div class="pl-score-grade">Grade C</div>
+              <div class="pl-score-label">Likely filtered by ATS</div>
+            </div>
+          </div>
+          <div class="pl-proj">↑ Optimized score: ~91/100</div>
+          <div class="pl-label" style="margin-top:8px">Critical keywords missing</div>
+          <div class="pl-kw-miss">
+            <span class="kw-chip kw-amber">Salesforce</span>
+            <span class="kw-chip kw-red">KPI tracking</span>
+            <span class="kw-chip kw-red">SLA compliance</span>
+            <span class="kw-chip kw-red">churn analysis</span>
+            <span class="kw-chip kw-amber">CRM software</span>
+          </div>
         </div>
-        <button class="send-btn" id="sendBtn" onclick="sendQuestion()">Coach me →</button>
+        <div class="preview-right">
+          <div class="pr-tabs">
+            <div class="pr-tab on">Rewritten Resume</div>
+            <div class="pr-tab">Cover Letter</div>
+            <div class="pr-tab">LinkedIn</div>
+            <div class="pr-tab">Interview Prep</div>
+          </div>
+          <div class="pr-block">
+            <div class="pb-label">Rewritten summary</div>
+            <div class="pb-text">Results-driven <span class="hi">Customer Success Manager</span> with 5+ years driving enterprise retention. Expert in <span class="hi">CRM systems (Salesforce)</span>, <span class="hi">KPI tracking</span>, and <span class="hi">SLA compliance</span>. Proven track record in <span class="hi">churn analysis</span> — delivering 90%+ retention rates consistently.</div>
+          </div>
+          <div class="pr-metrics">
+            <div class="prm"><div class="prm-n">+27</div><div class="prm-l">Score gain</div></div>
+            <div class="prm"><div class="prm-n">8</div><div class="prm-l">Keywords added</div></div>
+            <div class="prm"><div class="prm-n">3</div><div class="prm-l">Issues fixed</div></div>
+          </div>
+        </div>
       </div>
-      <div class="safari-note">🎤 Voice input works best in Chrome or Edge — not currently supported in Safari</div>
     </div>
   </div>
+</section>
 
+<!-- LIVE COACH SPOTLIGHT -->
+<section class="live-section">
+  <div class="live-inner">
+    <div class="live-text">
+      <div class="live-badge"><div class="live-badge-dot"></div>PREPT AI Live — Real-Time Coach</div>
+      <h2 class="live-title">Your AI coach.<br><span class="hl">Live. During the call.</span></h2>
+      <p class="live-sub">While you're on Zoom, Teams, or any video call — PREPT AI listens to every question your interviewer asks and feeds you a confident, personalized answer in under 3 seconds. On your phone or second screen. Invisible to everyone else.</p>
+      <div class="live-steps">
+        <div class="live-step"><div class="ls-num">1</div><div class="ls-text"><strong>Open PREPT AI on your phone or second screen</strong> before your interview starts. Add the company name and role — takes 30 seconds.</div></div>
+        <div class="live-step"><div class="ls-num">2</div><div class="ls-text"><strong>Tap the mic when your interviewer speaks.</strong> PREPT AI listens, transcribes the question, and starts generating your answer immediately.</div></div>
+        <div class="live-step"><div class="ls-num">3</div><div class="ls-text"><strong>Your coached answer appears in under 3 seconds.</strong> STAR-structured for behavioral questions. Delivery tips included. Speak it naturally — it sounds like you.</div></div>
+        <div class="live-step"><div class="ls-num">4</div><div class="ls-text"><strong>After the call, get your full debrief.</strong> Performance score, strengths, improvements, and a personalized thank-you email ready to send.</div></div>
+      </div>
+      <a href="/login.html" class="live-cta">Try PREPT AI Live free →</a>
+    </div>
+    <div class="live-demo">
+      <div class="demo-float-1">⚡ Answer in 2.4 seconds</div>
+      <div class="demo-float-2">✓ Works on Zoom · Teams · Meet</div>
+      <div class="demo-screen">
+        <div class="demo-topbar">
+          <div class="demo-dot" style="background:#ff5f57"></div>
+          <div class="demo-dot" style="background:#ffbd2e"></div>
+          <div class="demo-dot" style="background:#28c840"></div>
+          <div class="demo-title">PREPT AI Live</div>
+          <div class="demo-status"><div class="demo-status-dot"></div>Listening</div>
+        </div>
+        <div class="demo-question">
+          <div class="demo-question-label">🎙 Interviewer asked</div>
+          Tell me about a time you had to manage a difficult situation under pressure. What did you do?
+        </div>
+        <div class="demo-thinking">
+          <div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div>
+          <span style="font-size:12px;color:#4d4a66">Coaching your answer...</span>
+        </div>
+        <div class="demo-answer">
+          <div class="demo-answer-label">💬 Suggested answer</div>
+          <div class="demo-answer-text" id="demoText"></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div class="demo-timer">⏱ ~18 seconds to speak</div>
+          <div style="display:flex;gap:6px">
+            <div style="padding:4px 10px;border-radius:8px;background:rgba(255,255,255,0.05);font-size:11px;font-weight:600;color:#8c89a6">⚡ Shorter</div>
+            <div style="padding:4px 10px;border-radius:8px;background:rgba(255,255,255,0.05);font-size:11px;font-weight:600;color:#8c89a6">📋 Bullets</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  const text = "Situation: In my previous role, a critical deadline moved up by two weeks with no reduction in scope. Task: As the point of contact I had to keep the team focused and the client calm. Action: I called an immediate standup, broke the project into daily milestones, and set up a shared tracker everyone could see. Result: We delivered on the new deadline and the client commented on how smooth the process felt from their end.";
+  const el = document.getElementById('demoText');
+  if(!el) return;
+  let i = 0;
+  function type(){
+    el.style.borderRight = '2px solid #a498ff';
+    const iv = setInterval(()=>{
+      if(i < text.length){ el.textContent = text.slice(0, ++i); }
+      else { el.style.borderRight = 'none'; clearInterval(iv); setTimeout(()=>{ i=0; el.textContent=''; type(); }, 4000); }
+    }, 22);
+  }
+  type();
+})();
+</script>
+
+
+
+<!-- PROBLEM -->
+<section id="problem" class="problem-section">
+  <div class="section-inner reveal">
+    <div class="section-eyebrow">The brutal truth</div>
+    <h2 class="section-title">The system is designed<br>to filter you out.</h2>
+    <p class="section-sub">Most job seekers never find out why they're not getting callbacks. Here's why.</p>
+    <div class="problem-grid reveal">
+      <div class="problem-card">
+        <div class="pc-number" style="color:var(--re)">75%</div>
+        <div class="pc-label">Resumes never reach a human</div>
+        <div class="pc-desc">Applicant Tracking Systems automatically filter out resumes that don't match their keyword criteria — regardless of your actual qualifications.</div>
+      </div>
+      <div class="problem-card">
+        <div class="pc-number" style="color:var(--am)">6s</div>
+        <div class="pc-label">Average recruiter review time</div>
+        <div class="pc-desc">If you make it past the ATS, a human spends less time reading your resume than it takes to tie your shoes. First impression is everything.</div>
+      </div>
+      <div class="problem-card">
+        <div class="pc-number" style="color:var(--vi2)">$0</div>
+        <div class="pc-label">What most people invest in preparation</div>
+        <div class="pc-desc">Career coaches charge $200/hour. Resume writers charge $500+. Most people just submit and hope. PREPT AI gives you professional-grade preparation at a fraction of the cost.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">How it works</div>
+    <h2 class="section-title reveal">From interview to offer.<br>Then back to the resume.</h2>
+    <div class="how-grid reveal">
+      <div class="how-steps">
+        <div class="how-step active" id="hs1">
+          <div class="hs-num">01</div>
+          <div>
+            <div class="hs-title">Open PREPT AI Live during your interview</div>
+            <div class="hs-desc">On your phone or second screen, PREPT AI listens to every question your interviewer asks and generates a confident, personalized answer in under 3 seconds. Invisible to everyone else.</div>
+          </div>
+        </div>
+        <div class="how-step" id="hs2">
+          <div class="hs-num">02</div>
+          <div>
+            <div class="hs-title">Get your match score and gaps</div>
+            <div class="hs-desc">See your current ATS score, every missing keyword, formatting issues, and your projected score after optimization — before you change a word.</div>
+          </div>
+        </div>
+        <div class="how-step" id="hs3">
+          <div class="hs-num">03</div>
+          <div>
+            <div class="hs-title">Apply the rewrites and download</div>
+            <div class="hs-desc">PREPT AI rewrites your summary, skills section, and bullet points with the exact language the ATS is scanning for. One click downloads the full optimized version.</div>
+          </div>
+        </div>
+        <div class="how-step" id="hs4">
+          <div class="hs-num">04</div>
+          <div>
+            <div class="hs-title">Optimize your resume before you apply</div>
+            <div class="hs-desc">Paste your resume and any job description — PREPT AI scores your ATS compatibility, fills in missing keywords, and rewrites your summary and bullet points in seconds.</div>
+          </div>
+        </div>
+      </div>
+      <div class="how-visual">
+        <div class="hv-title">PREPT AI MATCH — Analysis results</div>
+        <div class="hv-score-ring">
+          <div class="ring-wrap">
+            <svg width="72" height="72" viewBox="0 0 72 72" style="transform:rotate(-90deg)">
+              <circle cx="36" cy="36" r="30" fill="none" stroke="var(--s4)" stroke-width="5"/>
+              <circle cx="36" cy="36" r="30" fill="none" stroke="var(--am)" stroke-width="5"
+                stroke-dasharray="188.5" stroke-dashoffset="68" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-num" style="color:var(--am)">64</div>
+          </div>
+          <div>
+            <div class="ring-info-title">Grade C — Needs work</div>
+            <div class="ring-info-sub">Likely filtered before a human reads it</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:8px">Missing keywords</div>
+          <div class="hv-kw-row">
+            <span class="kw-chip kw-amber">Salesforce</span>
+            <span class="kw-chip kw-red">KPI tracking</span>
+            <span class="kw-chip kw-red">SLA compliance</span>
+            <span class="kw-chip kw-red">churn analysis</span>
+          </div>
+        </div>
+        <div class="hv-issue">
+          <strong style="color:var(--re)">!</strong> Job title mismatch — "Client Support Specialist" vs "Customer Success Manager"
+          <div class="fix">→ Add target title to your summary line</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--grd);border:1px solid rgba(69,222,122,0.15);border-radius:8px;font-size:13px;color:var(--gr)">
+          ↑ After optimization: estimated <strong>91/100</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="features-section">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">What you get</div>
+    <h2 class="section-title reveal">Lead with the interview.<br>Win with the resume.</h2>
+    <div class="features-grid reveal">
+      <div class="feat-card">
+        <div class="feat-icon fi-cy">🎙</div>
+        <div class="feat-title">PREPT AI Live — Real-Time Coach</div>
+        <div class="feat-desc">In your interview, PREPT AI listens to every question and feeds you a confident, personalized answer in under 3 seconds. Works on Zoom, Teams, or any video platform.</div>
+        <span class="feat-tag tag-new">Live mode</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-cy">📊</div>
+        <div class="feat-title">Post-Interview Debrief</div>
+        <div class="feat-desc">After every session: performance score, strengths, areas to improve, and a personalized thank-you email ready to send within 24 hours.</div>
+        <span class="feat-tag tag-pro">Auto-generated</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-gold">📄</div>
+        <div class="feat-title">ATS Match Scoring</div>
+        <div class="feat-desc">Know exactly where you stand before you apply. Section-by-section scores, benchmark comparison, and projected score after optimization.</div>
+        <span class="feat-tag tag-pro">PREPT AI Match</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-gold">✍️</div>
+        <div class="feat-title">Resume Rewriter</div>
+        <div class="feat-desc">AI rewrites your summary, skills, and bullet points using the exact language the ATS is scanning for — without sounding like a robot.</div>
+        <span class="feat-tag tag-pro">PREPT AI Match</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-vi">🎯</div>
+        <div class="feat-title">Cover Letter Generator</div>
+        <div class="feat-desc">One cover letter per job, written from your actual resume and the specific job description. Five tone options. Never generic.</div>
+        <span class="feat-tag tag-new">5 tones</span>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon fi-vi">💼</div>
+        <div class="feat-title">LinkedIn Optimizer</div>
+        <div class="feat-desc">Recruiters search LinkedIn before your ATS application. Get an optimized headline, About section, and skills list using the same keywords.</div>
+        <span class="feat-tag tag-new">Exclusive</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- COMPARISON -->
+<section id="compare">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">vs the competition</div>
+    <h2 class="section-title reveal">Every other tool tells you<br>what's wrong. We fix it.</h2>
+    <div class="reveal" style="overflow-x:auto">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Jobscan</th>
+            <th>Resumeworded</th>
+            <th>Teal</th>
+            <th class="us">PREPT AI ✦</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ATS keyword score</td>
+            <td><span class="chk-yes">✓</span></td>
+            <td><span class="chk-yes">✓</span></td>
+            <td><span class="chk-yes">✓</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Auto-rewrites resume sections</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Cover letter generator</td>
+            <td><span class="chk-part">Basic</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-part">Generic</span></td>
+            <td class="us"><span class="chk-yes">✓ Job-specific</span></td>
+          </tr>
+          <tr>
+            <td>LinkedIn optimizer</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Real-time interview coach</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓ Live mic</span></td>
+          </tr>
+          <tr>
+            <td>Before/after projected score</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Salary intelligence</td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td><span class="chk-no">✕</span></td>
+            <td class="us"><span class="chk-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Starting price</td>
+            <td>$29.95/mo</td>
+            <td>$19/mo</td>
+            <td>$29/mo</td>
+            <td class="us" style="color:var(--gold2);font-weight:700">$12/mo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--s1)">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Pricing</div>
+    <h2 class="section-title reveal">Less than one hour<br>with a career coach.</h2>
+    <p class="section-sub reveal">Career coaches charge $200/hour. PREPT AI gives you the same results, available 24/7, for less than $0.40 a day.</p>
+
+    <div class="new-pricing-grid reveal">
+
+      <!-- FREE -->
+      <div class="np-card free">
+        <div class="np-badge-wrap np-empty"><span class="np-badge">placeholder</span></div>
+        <div class="np-tier">Free</div>
+        <div class="np-price">
+          <span class="np-amount">$0</span>
+          <span class="np-mo">/mo</span>
+        </div>
+        <p class="np-desc">See what PREPT AI can do. No card required, no time limit.</p>
+        <ul class="np-features">
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            1 resume analysis/month
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Keyword score + top 3 gaps
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            3 interview questions/session
+          </li>
+          <li class="np-feature np-off">
+            <span class="np-icon np-x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            Resume rewrite
+          </li>
+          <li class="np-feature np-off">
+            <span class="np-icon np-x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            Cover letter generator
+          </li>
+          <li class="np-feature np-off">
+            <span class="np-icon np-x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            LinkedIn optimizer
+          </li>
+          <li class="np-feature np-off">
+            <span class="np-icon np-x"><svg viewBox="0 0 10 10"><line x1="2.5" y1="2.5" x2="7.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="7.5" y1="2.5" x2="2.5" y2="7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            Unlimited interviews
+          </li>
+        </ul>
+        <a href="/login.html" class="np-cta np-cta-free">Get started free</a>
+      </div>
+
+      <!-- PRO -->
+      <div class="np-card np-pro">
+        <div class="np-badge-wrap"><span class="np-badge">Most Popular</span></div>
+        <div class="np-tier">Pro</div>
+        <div class="np-trial-pill">7-day free trial — then $12/mo</div>
+        <div class="np-price">
+          <span class="np-amount">$12</span>
+          <span class="np-mo">/mo</span>
+        </div>
+        <p class="np-desc">Everything you need to land interviews and ace every call. 80% of subscribers live here.</p>
+        <ul class="np-features">
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Unlimited resume analyses
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Full keyword + rewrite engine
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Cover letter generator
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            LinkedIn headline + About optimizer
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Unlimited PREPT AI Live interviews
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Mock interview + grading
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Post-interview debrief + thank-you email
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Application tracker
+          </li>
+        </ul>
+        <a href="#" class="np-cta np-cta-pro">Start Pro — $12/mo →</a>
+      </div>
+
+      <!-- CAREER+ -->
+      <div class="np-card np-career">
+        <div class="np-badge-wrap np-empty"><span class="np-badge">placeholder</span></div>
+        <div class="np-tier">Career+</div>
+        <div class="np-trial-pill np-trial-career">7-day free trial — then $24/mo</div>
+        <div class="np-price">
+          <span class="np-amount">$24</span>
+          <span class="np-mo">/mo</span>
+        </div>
+        <p class="np-desc">For career changers and competitive roles. The full arsenal, nothing held back.</p>
+        <ul class="np-features">
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Everything in Pro
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Salary negotiation coaching
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Industry-specific playbooks
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            30-day job search strategy
+          </li>
+          <li class="np-feature">
+            <span class="np-icon np-check"><svg viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Priority feature access
+          </li>
+        </ul>
+        <a href="#" class="np-cta np-cta-career">Start Career+ — $24/mo →</a>
+      </div>
+
+    </div>
+
+    <p style="text-align:center;font-size:13px;color:var(--tx3);margin-top:20px">
+      <span style="color:#45de7a">●</span> &nbsp;No contracts &nbsp;·&nbsp; <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank" style="color:#8c89a6;text-decoration:underline">Cancel anytime via billing portal</a>
+    </p>
+    <p style="text-align:center;font-size:11px;color:var(--tx3);margin-top:8px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.6">
+      Free trial must be canceled at least 24 hours before the end of the 7-day trial period to avoid being charged.
+    </p>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="social-proof">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">Results</div>
+    <h2 class="section-title reveal">Real people. Real offers.</h2>
+    <div class="testimonials-grid reveal">
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-quote">I applied to 40 jobs and heard nothing. Added PREPT Match, optimized three resumes, and got <em>four callbacks in one week</em>. The ATS thing is real and I had no idea.</div>
+        <div class="tcard-person">
+          <div class="tcard-avatar" style="background:var(--vi)">M</div>
+          <div>
+            <div class="tcard-name">Marcus T.</div>
+            <div class="tcard-role">Now: Logistics Coordinator, Dallas TX</div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-quote">The interview coach on the second screen during my Zoom call is <em>genuinely unfair to the other candidates</em>. I sounded prepared for questions I had never thought about.</div>
+        <div class="tcard-person">
+          <div class="tcard-avatar" style="background:var(--gold)">J</div>
+          <div>
+            <div class="tcard-name">Jasmine R.</div>
+            <div class="tcard-role">Now: Customer Success Manager, remote</div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <div class="tcard-quote">Career changer from retail to tech. PREPT AI rewrote my resume to speak the language of the industry I was targeting. <em>Got into a role I thought was out of reach.</em></div>
+        <div class="tcard-person">
+          <div class="tcard-avatar" style="background:var(--cy)">D</div>
+          <div>
+            <div class="tcard-name">David K.</div>
+            <div class="tcard-role">Now: Technical Support Specialist</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--s1)">
+  <div class="section-inner">
+    <div class="section-eyebrow reveal">FAQ</div>
+    <h2 class="section-title reveal">Common questions.</h2>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is this actually legal to use during an interview?</div>
+        <div class="faq-a">Yes. Using PREPT Live during a virtual interview is no different from having notes next to your monitor — which every interviewer knows candidates do. You are not fabricating credentials or deceiving anyone about your abilities. You are using a tool to articulate what you already know. Interviewers regularly use checklists and scripts during calls themselves.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Will the resume rewriter make my resume sound generic?</div>
+        <div class="faq-a">No — and this is specifically what we designed against. PREPT AI rewrites using your actual experience as the foundation. It inserts the keywords the ATS is scanning for, but threads them into sentences built around your real background, not templates. The summary and bullets still sound like you — just you with the right vocabulary for the job.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How does PREPT AI actually work during a Zoom call?</div>
+        <div class="faq-a">You open PREPT AI on a second monitor, a tablet, or your phone — somewhere the interviewer's camera cannot see it. The mic button listens to the interviewer's question (or you can type it manually), and within 2-3 seconds you get a coached answer tailored to your profile, sector, and the specific company you're interviewing at. You glance at it and speak naturally. No one can tell.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is my resume data stored or shared?</div>
+        <div class="faq-a">No. Your resume content and job description are processed in real time to generate your analysis and rewrites. They are not stored on our servers, sold, or used to train AI models. The analysis exists only for your session.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</div>
+        <div class="faq-a">Yes. No contracts, no cancellation fees. Cancel from your account settings and your access continues until the end of your billing period. We want you to stay because PREPT AI works, not because canceling is difficult.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What sectors does PREPT Live cover?</div>
+        <div class="faq-a">14 sectors currently: General, Legal, Healthcare, Technology, Retail, Hospitality, Logistics, Finance, Education, Remote Work, Customer Service, Skilled Trades, Sales, and Admin/Office. Within each sector you can specify your exact job title for even more targeted coaching. More sectors are added regularly.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-inner">
+    <h2 class="cta-title">Your next offer is<br><span class="gold">one interview away.</span></h2>
+    <p class="cta-sub">Start free. No credit card. Open PREPT AI Live in your next interview.</p>
+    <div class="cta-actions">
+      <a href="/login.html" class="btn-hero">Try PREPT AI Live free →</a>
+    </div>
+    <div style="margin-top:16px;font-size:13px;color:var(--tx3)">
+      <span style="color:#45de7a">●</span> &nbsp;Free tier always available &nbsp;·&nbsp; Upgrade only when you see the value
+    </div>
+  </div>
 </div>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-bar-inner">
+    <div class="trust-item">
+      <div class="tp-logo">
+        <div class="tp-logo-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.9 9.1H22.5L16.8 13.8L18.9 21L12 16.9L5.1 21L7.2 13.8L1.5 9.1H9.1L12 2Z" fill="white"/></svg>
+        </div>
+        <div>
+          <div class="tp-logo-text">Trustpilot</div>
+          <div class="trust-stars">★★★★★</div>
+        </div>
+      </div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Excellent</div>
+        <div class="trust-item-label">Early user rating</div>
+      </div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-item-icon">👥</div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Job seekers trust PREPT AI</div>
+        <div class="trust-item-label">To get past the algorithm</div>
+      </div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-item-icon" style="color:#635bff">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg>
+      </div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Secured by Stripe</div>
+        <div class="trust-item-label">256-bit SSL encryption</div>
+      </div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-item-icon">🔒</div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Your data stays private</div>
+        <div class="trust-item-label">Never stored or shared</div>
+      </div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-item-icon">🌐</div>
+      <div class="trust-item-text">
+        <div style="font-weight:600;color:var(--tx)">Used in 50+ industries</div>
+        <div class="trust-item-label">From legal to logistics</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-logo">PREPT AI</div>
+      <div class="footer-tagline">The AI career suite that gets you past the algorithm and through the interview.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <div class="footer-links">
+        <a href="/prept_match_v2.html">PREPT AI Match</a>
+        <a href="/prept_v2.html">PREPT AI Live</a>
+        <a href="#pricing">Pricing</a>
+        <a href="/changelog.html">Changelog</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a href="/about.html">About</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/careers.html">Careers</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <div class="footer-links">
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms of Service</a>
+        <a href="/cookie-policy.html">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 PREPT AI. Built in San Antonio, TX.</div>
+    <div class="footer-badges">
+      <div class="fbadge"><span>🔒</span> SOC 2 Ready</div>
+      <div class="fbadge"><span>🛡</span> No data stored</div>
+      
+    </div>
+  </div>
+</footer>
 
 <script>
-const SECTORS = ['General','Technology','Healthcare','Legal','Finance','Sales','Retail','Logistics','Education','Hospitality','Customer Service','Skilled Trades','Admin/Office','Remote Work'];
-let currentSector = 'General';
-let currentMode = 'live';
-let questionCount = 0;
-const FREE_LIMIT = 3;
-let mockQuestions = [];
-let mockIndex = 0;
-let sessionAnswers = [];
-
-// ── SUPABASE AUTH ─────────────────────────────────────────────────────────────
-const SUPABASE_URL      = 'https://lfxfwhitegsjeowlcvqk.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmeGZ3aGl0ZWdzamVvd2xjdnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODM3ODMsImV4cCI6MjA4OTg1OTc4M30.f67zZLrSbaLbTgWZtvx2AIr4aCGVRxuynEFm1_CKvWs';
-
-let user      = null;
-let userPlan  = 'free';
-let authReady = false;
-let _sbClient = null;
-
-function getSB() {
-  if (!_sbClient) {
-    const { createClient } = supabase;
-    _sbClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
-  return _sbClient;
-}
-
-async function initAuth() {
-  try {
-    const sb = getSB();
-
-    // First let Supabase process any OAuth tokens in the URL hash
-    // This is critical after Google redirect — without it getSession() returns null
-    await new Promise(resolve => {
-      const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          user = session.user;
-          sessionStorage.setItem('preptai_user', JSON.stringify({ email: user.email, plan: userPlan }));
-        }
-        if (event === 'SIGNED_OUT') {
-          user = null;
-          userPlan = 'free';
-          sessionStorage.removeItem('preptai_user');
-        }
-        resolve();
-      });
-      // Fallback resolve after 800ms if no auth event fires
-      setTimeout(resolve, 800);
-    });
-
-    // Now get the session — tokens have been processed
-    const { data: { session } } = await sb.auth.getSession();
-
-    if (session?.user) {
-      user = session.user;
-
-      // Get plan from subscribers table
-      const { data: sub } = await sb
-        .from('subscribers')
-        .select('plan')
-        .eq('email', user.email)
-        .single();
-
-      userPlan = sub?.plan || 'free';
-
-      // Ensure subscriber record exists
-      if (!sub) {
-        await sb.from('subscribers').upsert(
-          { email: user.email, plan: 'free' },
-          { onConflict: 'email' }
-        );
-      }
-
-      sessionStorage.setItem('preptai_user', JSON.stringify({ email: user.email, plan: userPlan }));
-
-    } else {
-      // No Supabase session — try sessionStorage fallback
-      const userRaw = sessionStorage.getItem('preptai_user');
-      if (userRaw) {
-        try {
-          const stored = JSON.parse(userRaw);
-          user     = stored;
-          userPlan = stored.plan || 'free';
-        } catch(e) {}
-      }
-    }
-
-  } catch(e) {
-    console.error('Auth init error:', e);
-    const userRaw = sessionStorage.getItem('preptai_user');
-    if (userRaw) {
-      try {
-        const stored = JSON.parse(userRaw);
-        user     = stored;
-        userPlan = stored.plan || 'free';
-      } catch(err) {}
-    }
-  }
-
-  // ── TIME-BASED GREETING ──────────────────────────────────────────────────
-  const hour       = new Date().getHours();
-  const timeGreet  = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-  const firstName  = user?.user_metadata?.full_name?.split(' ')[0]
-    || user?.email?.split('@')[0]
-    || null;
-  const greetName  = firstName ? ', ' + firstName : '';
-
-  // Mark auth as ready before showing greeting
-  authReady = true;
-
-  // Update My Account button — clicking shows account panel
-  const accountBtn = document.getElementById('accountBtn');
-  if (accountBtn && user) {
-    const name = user.user_metadata?.full_name?.split(' ')[0] || user.email?.split('@')[0] || 'Account';
-    accountBtn.textContent = '👤 ' + name;
-    accountBtn.removeAttribute('href');
-    accountBtn.style.cursor = 'pointer';
-    accountBtn.onclick = () => toggleAccountPanel(user, userPlan);
-  }
-
-  setTimeout(() => {
-    if (user) {
-      const planLabel = userPlan.charAt(0).toUpperCase() + userPlan.slice(1);
-      const planColor = ['pro','career'].includes(userPlan) ? '#45de7a' : '#e6c668';
-      const planExtra = userPlan === 'free'
-        ? ' · <span style="color:#f5a52a">' + (FREE_LIMIT - questionCount) + ' free questions remaining</span>'
-        : ' · Unlimited';
-      addMsg('system', timeGreet + greetName + '! 👋',
-        'Signed in as <strong>' + user.email + '</strong> · Plan: <strong style="color:' + planColor + '">' + planLabel + '</strong>' + planExtra
-        + ' · <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank" style="color:#8c89a6">Manage billing</a>'
-        + ' · <a href="#" onclick="handleSignOut(event)" style="color:#8c89a6">Sign out</a>');
-    } else {
-      addMsg('system', 'Welcome to PREPT AI Live 👋',
-        'Start by typing an interview question below, or use the mic. <a href="/login.html" style="color:#7b6df4">Sign in</a> to use your free questions.');
-    }
-  }, 400);
-}
-
-function toggleAccountPanel(user, plan) {
-  const panel = document.getElementById('accountPanel');
-  if (!panel) return;
-  if (panel.style.display !== 'none') {
-    panel.style.display = 'none';
-    return;
-  }
-  // Populate panel
-  document.getElementById('panelEmail').textContent = user.email;
-  const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
-  const planColor = ['pro','career'].includes(plan) ? '#45de7a' : '#e6c668';
-  document.getElementById('panelPlan').innerHTML = `Plan: <strong style="color:${planColor}">${planLabel}</strong>`;
-  const FREE_LIMIT = 3;
-  const usageText = plan === 'free'
-    ? `${FREE_LIMIT - questionCount} of ${FREE_LIMIT} free interview questions remaining this month`
-    : `Unlimited interview questions · Resets monthly`;
-  document.getElementById('panelUsage').textContent = usageText;
-  panel.style.display = 'block';
-  // Close when clicking outside
-  setTimeout(() => {
-    document.addEventListener('click', function close(e) {
-      if (!panel.contains(e.target) && e.target.id !== 'accountBtn') {
-        panel.style.display = 'none';
-        document.removeEventListener('click', close);
-      }
-    });
-  }, 100);
-}
-
-async function handleSignOut(e) {
-  e.preventDefault();
-  try {
-    const sb = getSB();
-    await sb.auth.signOut();
-    sessionStorage.removeItem('preptai_user');
-    window.location.href = '/login.html';
-  } catch(err) {
-    window.location.href = '/login.html';
-  }
-}
-
-initAuth();
-
-// Build sector grid
-const grid = document.getElementById('sectorGrid');
-SECTORS.forEach(s => {
-  const btn = document.createElement('button');
-  btn.className = 'sector-btn' + (s === 'General' ? ' on' : '');
-  btn.textContent = s;
-  btn.onclick = () => {
-    document.querySelectorAll('.sector-btn').forEach(b => b.classList.remove('on'));
-    btn.classList.add('on');
-    currentSector = s;
-  };
-  grid.appendChild(btn);
+// Navbar scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
 });
 
-function setMode(mode) {
-  currentMode = mode;
-  ['live','mock','debrief'].forEach(m => {
-    document.getElementById('tab' + m.charAt(0).toUpperCase() + m.slice(1)).classList.toggle('on', m === mode);
+// Reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// FAQ toggle
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+// How it works steps
+const steps = document.querySelectorAll('.how-step');
+steps.forEach((s, i) => {
+  s.addEventListener('click', () => {
+    steps.forEach(x => x.classList.remove('active'));
+    s.classList.add('active');
   });
-  if (mode === 'mock') {
-    if (authReady) {
-      startMock();
-    } else {
-      setTimeout(() => startMock(), 1500);
-    }
-  }
-  if (mode === 'debrief') showDebrief();
+});
+
+// Animate stats counter
+function animateCounter(el, target, suffix = '') {
+  let current = 0;
+  const increment = target / 60;
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= target) { current = target; clearInterval(timer); }
+    el.textContent = Math.floor(current) + suffix;
+  }, 16);
 }
+</script>
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
-}
-
-function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendQuestion(); }
-}
-
-function useStarter(el) {
-  const input = document.getElementById('questionInput');
-  input.value = el.textContent;
-  // Hide empty state but keep chips accessible via scroll
-  const empty = document.getElementById('emptyState');
-  if (empty) empty.style.display = 'none';
-  input.focus();
-  el.style.background = 'rgba(123,109,244,0.15)';
-  el.style.borderColor = 'rgba(123,109,244,0.4)';
-  el.style.color = '#a498ff';
-  setTimeout(() => {
-    el.style.background = '';
-    el.style.borderColor = '';
-    el.style.color = '';
-  }, 800);
-  sendQuestion();
-}
-
-function addMsg(type, labelText, content, meta = null) {
-  const area = document.getElementById('chatArea');
-  const empty = document.getElementById('emptyState');
-  if (empty) empty.style.display = 'none';
-
-  const wrap = document.createElement('div');
-  wrap.className = `msg msg-${type}`;
-
-  const label = document.createElement('div');
-  label.className = 'msg-label';
-  label.textContent = labelText;
-
-  const bubble = document.createElement('div');
-  bubble.className = 'msg-bubble';
-  bubble.innerHTML = content;
-
-  wrap.appendChild(label);
-  wrap.appendChild(bubble);
-
-  if (meta) {
-    const metaRow = document.createElement('div');
-    metaRow.className = 'answer-meta';
-    metaRow.innerHTML = meta;
-    wrap.appendChild(metaRow);
-  }
-
-  area.appendChild(wrap);
-  area.scrollTop = area.scrollHeight;
-  return wrap;
-}
-
-function showThinking() {
-  const area = document.getElementById('chatArea');
-  const el = document.createElement('div');
-  el.id = 'thinking';
-  el.className = 'thinking';
-  el.innerHTML = '<div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div><span class="think-label">Coaching your answer...</span>';
-  area.appendChild(el);
-  area.scrollTop = area.scrollHeight;
-}
-
-function removeThinking() {
-  document.getElementById('thinking')?.remove();
-}
-
-async function sendQuestion() {
-  const input = document.getElementById('questionInput');
-  const q = input.value.trim();
-  if (!q) return;
-
-  // Wait for auth to finish resolving before allowing any API call
-  if (!authReady) {
-    await new Promise(resolve => {
-      const check = setInterval(() => {
-        if (authReady) { clearInterval(check); resolve(); }
-      }, 100);
-      setTimeout(() => { clearInterval(check); resolve(); }, 3000);
-    });
-  }
-
-  if (userPlan === 'free' && questionCount >= FREE_LIMIT) {
-    document.getElementById('upgradeBanner').style.display = 'block';
-    return;
-  }
-
-  input.value = '';
-  input.style.height = 'auto';
-  document.getElementById('sendBtn').disabled = true;
-
-  addMsg('q', '🎙 Interviewer asked', q);
-  showThinking();
-
-  const company = document.getElementById('companyInput').value.trim();
-  const role = document.getElementById('roleInput').value.trim();
-  const style = document.getElementById('styleSelect').value;
-
-  const systemPrompt = `You are PREPT AI, an expert interview coach. The user is in a live job interview right now and needs a coached answer immediately.
-
-Context:
-- Industry/Sector: ${currentSector}
-- Role: ${role || 'not specified'}
-- Company: ${company || 'not specified'}
-- Answer style: ${style}
-
-Rules:
-- Give a confident, natural-sounding answer the user can speak aloud
-- Use the STAR method for behavioral questions (Situation, Task, Action, Result)
-- Keep it conversational — not robotic or overly formal
-- Length: 30-60 seconds when spoken aloud (roughly 80-130 words)
-- After the answer, add a brief "💡 Delivery tip:" on a new line with one coaching note
-- Do NOT say "Here is your answer" or any preamble — go straight into the answer`;
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function() {
   try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-session-count': questionCount.toString() },
-      body: JSON.stringify({
-        message: `Interview question: "${q}"\n\nPlease provide a coached answer I can speak naturally.`,
-        mode: 'chat',
-        userEmail: (user?.email || user?.user_metadata?.email) || null,
-        systemPrompt
-      })
+    const { createClient } = supabase;
+    const sb = createClient('https://lfxfwhitegsjeowlcvqk.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmeGZ3aGl0ZWdzamVvd2xjdnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODM3ODMsImV4cCI6MjA4OTg1OTc4M30.f67zZLrSbaLbTgWZtvx2AIr4aCGVRxuynEFm1_CKvWs');
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session?.user) return;
+
+    const user = session.user;
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const firstName = user.user_metadata?.full_name?.split(' ')[0]
+      || user.email?.split('@')[0]
+      || '';
+
+    // Swap the "Log in" nav button to a non-clickable greeting span
+    document.querySelectorAll('a[href="/login.html"]').forEach(btn => {
+      const txt = btn.textContent.trim();
+      if (txt === 'Log in' || txt === 'Login') {
+        // Replace anchor with a span so it's not clickable
+        const span = document.createElement('span');
+        span.textContent = greet + ', ' + firstName + ' ✓';
+        // Match exact height of the btn-primary next to it
+        const btnPrimary = btn.parentNode?.parentNode?.querySelector('.btn-primary');
+        const h = btnPrimary ? btnPrimary.offsetHeight : 36;
+        span.style.cssText = 'background:rgba(69,222,122,0.12);color:#45de7a;border:1px solid rgba(69,222,122,0.25);padding:0 18px;border-radius:8px;font-weight:600;font-size:13px;cursor:default;display:inline-flex;align-items:center;height:' + h + 'px';
+        btn.parentNode.replaceChild(span, btn);
+      }
     });
 
-    const data = await res.json();
-    removeThinking();
+    // Show logout button in nav
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) logoutBtn.style.display = 'block';
 
-    if (res.status === 403 && data.error === 'free_limit_reached') {
-      document.getElementById('upgradeBanner').style.display = 'block';
-      document.getElementById('sendBtn').disabled = false;
-      return;
-    }
-
-    if (res.status === 403 && data.error === 'login_required') {
-      removeThinking();
-      addMsg('system', '🔒 Sign in required',
-        `Please <a href="/login.html" style="color:#7b6df4">sign in</a> to use PREPT AI Live. Free to start.`);
-      document.getElementById('sendBtn').disabled = false;
-      return;
-    }
-
-    if (!res.ok) throw new Error(data.message || data.error || 'Something went wrong');
-
-    const answer = data.answer || data.content?.[0]?.text || 'No response received.';
-    const formatted = answer.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-    const wordCount = answer.split(' ').length;
-    const speakTime = Math.round(wordCount / 130 * 60);
-    const meta = `<span class="meta-badge meta-time">⏱ ~${speakTime}s to speak</span><span class="meta-badge meta-copy" onclick="copyAnswer(this, '${encodeURIComponent(answer)}')">📋 Copy</span>`;
-
-    addMsg('a', '💬 Coached answer', formatted, meta);
-    sessionAnswers.push({ question: q, answer });
-    questionCount++;
-
-    if (userPlan === 'free' && questionCount >= FREE_LIMIT) {
-      document.getElementById('upgradeBanner').style.display = 'block';
-    }
-
-  } catch (err) {
-    removeThinking();
-    addMsg('error', '⚠️ Error', err.message || 'Something went wrong. Please try again.');
+  } catch(e) {
+    console.log('Session check skipped:', e.message);
   }
+})();
 
-  document.getElementById('sendBtn').disabled = false;
-}
-
-function copyAnswer(btn, encoded) {
-  const text = decodeURIComponent(encoded);
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '✓ Copied';
-    setTimeout(() => btn.textContent = '📋 Copy', 2000);
-  });
-}
-
-// Mock interview
-const MOCK_QUESTIONS = [
-  "Tell me about yourself and your background.",
-  "What's your greatest professional strength?",
-  "Describe a time you had to work under pressure to meet a deadline.",
-  "Tell me about a conflict with a coworker and how you resolved it.",
-  "Why are you interested in this role?",
-  "Where do you see yourself in 3-5 years?",
-  "What's your greatest weakness and what are you doing about it?",
-  "Describe your most significant professional accomplishment."
-];
-
-function startMock() {
-  mockIndex = 0;
-  mockQuestions = [...MOCK_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 5);
-  sessionAnswers = [];
-  document.getElementById('chatArea').innerHTML = '';
-  addMsg('system', '📋 Mock Interview', `Starting a ${mockQuestions.length}-question mock interview. Answer each question as naturally as you can. You will get a full debrief with scoring at the end.<br><br><strong>Question 1 of ${mockQuestions.length}:</strong><br>${mockQuestions[0]}`);
-  document.getElementById('questionInput').placeholder = 'Type your answer to the mock question...';
-}
-
-function showDebrief() {
-  if (sessionAnswers.length === 0) {
-    addMsg('system', '📊 Debrief', 'Complete a mock interview or live session first — then come back here for your full performance breakdown.');
-    return;
+async function handleLogout(e) {
+  e.preventDefault();
+  try {
+    const { createClient } = supabase;
+    const sb = createClient('https://lfxfwhitegsjeowlcvqk.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmeGZ3aGl0ZWdzamVvd2xjdnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODM3ODMsImV4cCI6MjA4OTg1OTc4M30.f67zZLrSbaLbTgWZtvx2AIr4aCGVRxuynEFm1_CKvWs');
+    await sb.auth.signOut();
+    sessionStorage.removeItem('preptai_user');
+    window.location.reload();
+  } catch(err) {
+    console.error('Logout error:', err);
+    window.location.reload();
   }
-  const score = Math.min(95, 65 + sessionAnswers.length * 6);
-  const grade = score >= 85 ? 'A' : score >= 75 ? 'B' : 'C';
-  const gradeClass = score >= 85 ? 'score-a' : score >= 75 ? 'score-b' : 'score-c';
-  addMsg('system', '📊 Session Debrief', `
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
-      <div class="debrief-score ${gradeClass}">${score}</div>
-      <div>
-        <div style="font-size:18px;font-weight:700;color:#edeaf7">Grade ${grade} — ${score >= 85 ? 'Strong performance' : score >= 75 ? 'Good progress' : 'Keep practicing'}</div>
-        <div style="font-size:13px;color:#8c89a6;margin-top:3px">${sessionAnswers.length} question${sessionAnswers.length !== 1 ? 's' : ''} answered this session</div>
-      </div>
-    </div>
-    <div style="font-size:13px;color:#8c89a6;line-height:1.7">
-      <strong style="color:#45de7a">✓ Strengths:</strong> You engaged with every question and provided structured responses.<br>
-      <strong style="color:#e6c668">→ Focus area:</strong> Practice delivering answers without looking at the screen — aim to internalize the structure so it sounds fully natural.<br>
-      <strong style="color:#a498ff">💡 Next step:</strong> Run another mock interview and try answering from memory before checking the coached response.
-    </div>
-  `);
 }
-
-// Mic / speech recognition
-let recognition = null;
-let isListening = false;
-
-function toggleMic() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    addMsg('system', '🎤 Mic not supported',
-      'Speech recognition requires Chrome or Edge. Please type your question instead.');
-    return;
-  }
-  if (isListening) {
-    recognition?.stop();
-    return;
-  }
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  recognition.lang = 'en-US';
-
-  recognition.onstart = () => {
-    isListening = true;
-    document.getElementById('micBtn').classList.add('listening');
-    document.getElementById('micBtn').textContent = '⏹';
-    document.getElementById('questionInput').placeholder = 'Listening...';
-  };
-
-  recognition.onresult = (e) => {
-    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
-    document.getElementById('questionInput').value = transcript;
-    autoResize(document.getElementById('questionInput'));
-    if (e.results[e.results.length - 1].isFinal) {
-      recognition.stop();
-    }
-  };
-
-  recognition.onend = () => {
-    isListening = false;
-    document.getElementById('micBtn').classList.remove('listening');
-    document.getElementById('micBtn').textContent = '🎤';
-    document.getElementById('questionInput').placeholder = "Type the interviewer's question here... or tap the mic to speak";
-    const val = document.getElementById('questionInput').value.trim();
-    if (val) sendQuestion();
-  };
-
-  recognition.onerror = () => {
-    isListening = false;
-    document.getElementById('micBtn').classList.remove('listening');
-    document.getElementById('micBtn').textContent = '🎤';
-  };
-
-  recognition.start();
-}
-
-function clearChat() {
-  document.getElementById('chatArea').innerHTML = '<div class="empty-state" id="emptyState"><div class="empty-icon">🎙</div><div class="empty-title">Session cleared.</div><div class="empty-sub">Ready for your next question.</div></div>';
-  questionCount = 0;
-  sessionAnswers = [];
-  document.getElementById('upgradeBanner').style.display = 'none';
-}
-
-// Greeting handled inside initAuth()
 </script>
 </body>
 </html>
