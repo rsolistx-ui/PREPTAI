@@ -12,8 +12,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:#06060d;color:#edeaf7;font-family:'Outfit',sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;transition:background 0.3s,color 0.3s}
-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;padding:0 48px;height:60px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(6,6,13,0.95);backdrop-filter:blur(20px)}
+html,body{background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased;transition:background 0.3s,color 0.3s}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;padding:0 48px;height:60px;border-bottom:1px solid rgba(255,255,255,0.06);background:var(--nav-bg,rgba(6,6,13,0.95));backdrop-filter:blur(20px)}
 .nav-logo{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:#e6c668;text-decoration:none;display:flex;align-items:center;gap:8px}
 .nav-dot{width:6px;height:6px;border-radius:50%;background:#e6c668;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}

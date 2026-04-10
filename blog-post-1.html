@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How ATS Systems Actually Work in 2026 (And How to Beat Them) | PREPT AI</title>
+<meta name="description" content="75% of resumes never reach a human. Here is exactly how Applicant Tracking Systems filter candidates and what you can do to get past them.">
+<meta property="og:title" content="How ATS Systems Actually Work in 2026">
+<meta property="og:description" content="75% of resumes never reach a human. Here is exactly how ATS filters work and how to beat them.">
+<meta property="og:url" content="https://www.preptai.co/blog-post-1.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{transition:background 0.3s,color 0.3s;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;padding:0 48px;height:60px;border-bottom:1px solid rgba(255,255,255,0.06);background:var(--nav-bg,rgba(6,6,13,0.95));backdrop-filter:blur(20px)}
+.nav-logo{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:#e6c668;text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:#e6c668}
+.nav-cta{margin-left:auto;padding:8px 20px;background:#e6c668;color:#06060d;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;transition:opacity 0.2s}
+.nav-cta:hover{opacity:0.85}
+article{max-width:720px;margin:0 auto;padding:60px 24px 100px}
+.article-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#7b6df4;margin-bottom:16px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(30px,5vw,48px);font-weight:800;letter-spacing:-1.5px;color:#edeaf7;line-height:1.1;margin-bottom:20px}
+.article-meta{font-size:13px;color:#8a87a0;margin-bottom:40px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,0.06)}
+h2{font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:800;color:#edeaf7;letter-spacing:-0.5px;margin:48px 0 16px}
+h3{font-size:18px;font-weight:700;color:#edeaf7;margin:32px 0 12px}
+p{font-size:16px;color:#ccc9e0;line-height:1.8;margin-bottom:20px}
+strong{color:#edeaf7}
+.callout{background:rgba(123,109,244,0.07);border:1px solid rgba(123,109,244,0.2);border-radius:12px;padding:20px 24px;margin:28px 0}
+.callout p{margin:0;color:#a498ff}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:28px 0}
+.stat-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px;text-align:center}
+.stat-n{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:#e6c668;line-height:1}
+.stat-l{font-size:12px;color:#8a87a0;margin-top:6px}
+.tip-box{background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.15);border-radius:10px;padding:16px 20px;margin:20px 0}
+.tip-box p{color:#e6c668;margin:0;font-size:14px}
+.cta-box{background:rgba(123,109,244,0.08);border:1px solid rgba(123,109,244,0.2);border-radius:16px;padding:32px;text-align:center;margin-top:60px}
+.cta-box h3{margin:0 0 10px;font-size:22px}
+.cta-box p{margin:0 0 20px;font-size:15px;color:#ccc9e0}
+.cta-box a{display:inline-block;padding:13px 28px;background:#e6c668;color:#06060d;border-radius:10px;font-weight:800;font-size:15px;text-decoration:none}
+@media(max-width:600px){nav{padding:0 20px}.stat-row{grid-template-columns:1fr}}
+:root{
+  --bg:#06060d;--s1:#0a0a14;--s2:#0f0f1c;
+  --tx:#edeaf7;--tx2:#ccc9e0;--tx3:#8a87a0;
+  --inp-bg:#111120;--inp-border:rgba(255,255,255,0.09);
+  --card-bg:#0f0f1c;--card-border:rgba(255,255,255,0.08);
+  --nav-bg:rgba(6,6,13,0.95);--placeholder:#3a3858;
+}
+:root.light{
+  --bg:#f4f4f8;--s1:#eaeaf0;--s2:#ffffff;
+  --tx:#0f0f1c;--tx2:#3a3858;--tx3:#8a87a0;
+  --inp-bg:#ffffff;--inp-border:rgba(0,0,0,0.12);
+  --card-bg:#ffffff;--card-border:rgba(0,0,0,0.08);
+  --nav-bg:rgba(244,244,248,0.97);--placeholder:#9090a8;
+}
+html,body{transition:background 0.3s,color 0.3s;transition:background 0.3s,color 0.3s}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/blog.html" style="margin-left:auto;font-size:13px;color:#ccc9e0;text-decoration:none">← All posts</a>
+  <a href="/" class="nav-logo"><div class="nav-dot"></div>PREPT AI</a>
+  <a href="/prept_match_v2.html" class="nav-cta">Optimize my resume →</a>
+</nav>
+<article>
+  <div class="article-eyebrow">Job Search Strategy</div>
+  <h1>How ATS Systems Actually Work in 2026 (And How to Beat Them)</h1>
+  <div class="article-meta">By PREPT AI · April 2026 · 7 min read</div>
+
+  <p>You spent three hours tailoring your resume. You hit submit. You never heard back. No rejection email, no callback, nothing. You have probably wondered what happened.</p>
+
+  <p>Here is the answer most job seekers never find out: <strong>your resume never reached a human.</strong> It was filtered out automatically by software before any recruiter ever opened it.</p>
+
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-n">75%</div><div class="stat-l">Resumes filtered before a human sees them</div></div>
+    <div class="stat-box"><div class="stat-n">6s</div><div class="stat-l">Average human review time if it gets through</div></div>
+    <div class="stat-box"><div class="stat-n">99%</div><div class="stat-l">Fortune 500 companies use ATS systems</div></div>
+  </div>
+
+  <h2>What an ATS actually is</h2>
+  <p>An Applicant Tracking System is software that companies use to collect, sort, and filter job applications. Think of it as a bouncer at the door. Its job is to let in the candidates who match what the company is looking for and turn away everyone else before a human has to get involved.</p>
+  <p>The most common ATS platforms you are probably being filtered by right now include Workday, Greenhouse, Lever, iCIMS, and Taleo. Each has slightly different filtering logic, but they all share the same core mechanism: keyword matching.</p>
+
+  <h2>How the filtering actually works</h2>
+  <h3>Step 1: Parsing</h3>
+  <p>Before the ATS can evaluate anything, it has to read your resume. This is called parsing. The system extracts your contact information, work history, education, and skills into a structured database record. If your resume uses complex formatting, tables, columns, graphics, or unusual fonts, the parser can misread it or skip entire sections entirely.</p>
+  <div class="callout"><p><strong>What this means for you:</strong> Use a clean, single-column layout. Save as a text-based PDF or Word document. Never put important information in headers, footers, or text boxes. The ATS cannot read them.</p></div>
+
+  <h3>Step 2: Keyword scoring</h3>
+  <p>Once your resume is parsed, the ATS compares it to the job description. It looks for specific keywords, phrases, job titles, and skills that the recruiter flagged as important. Your resume gets a match score. Too low, and you are filtered out automatically without anyone ever making a judgment call.</p>
+  <p>The keywords that matter most are not generic terms like "team player" or "hard worker." They are the specific technical skills, tools, certifications, and role-specific language from the job description itself. If the job posting says "Salesforce CRM" and your resume says "customer relationship software," the ATS may not make that connection.</p>
+
+  <h3>Step 3: Ranking</h3>
+  <p>After scoring, the ATS ranks all candidates. Recruiters typically only review the top 10-20% of applications. Everyone below that threshold is rejected without a human decision being made.</p>
+
+  <h2>The five most common reasons resumes get filtered out</h2>
+  <p><strong>1. Missing exact keywords.</strong> The job description uses specific terminology. Your resume uses synonyms. The ATS does not know they mean the same thing.</p>
+  <p><strong>2. Job title mismatch.</strong> If the job title on your resume does not match or closely resemble the title in the posting, your score drops significantly.</p>
+  <p><strong>3. Formatting that breaks the parser.</strong> Tables, columns, graphics, and unusual fonts confuse the parsing engine and cause it to miss key information.</p>
+  <p><strong>4. Missing required qualifications.</strong> If the job description lists a certification or specific skill as required and it is not on your resume, you are typically filtered automatically.</p>
+  <p><strong>5. Generic resume submitted to multiple jobs.</strong> A one-size-fits-all resume will almost never have the specific keyword density needed to score well against any individual job description.</p>
+
+  <h2>How to beat the ATS</h2>
+  <h3>Mirror the language exactly</h3>
+  <p>Go through the job description line by line and identify every specific skill, tool, technology, and qualification mentioned. Then audit your resume to make sure you are using the exact same language where it accurately describes your experience. Not synonyms. The exact words.</p>
+
+  <div class="tip-box"><p>💡 If the job description says "project management" and you have been doing project management for ten years but your resume says "program coordination," add "project management" to your resume. It is not dishonest. It is translation.</p></div>
+
+  <h3>Fix your job title</h3>
+  <p>If your official title at your last company was something unusual like "Client Solutions Architect" but the job you are applying to says "Account Manager," consider adding the industry-standard title in parentheses next to your official title. Many resumes do this and it significantly improves ATS scoring.</p>
+
+  <h3>Use a clean format</h3>
+  <p>Single column. Standard fonts. No tables, no text boxes, no graphics. Save as a PDF exported from Word or Google Docs, not from design tools like Canva. When in doubt, simpler is better.</p>
+
+  <h3>Customize for every application</h3>
+  <p>This is the part nobody wants to hear but it is the one that makes the biggest difference. Each application should have a version of your resume tailored to that specific job description. You do not have to rewrite everything, but the summary, skills section, and the first bullet point of each job should reflect the specific language of the role you are applying to.</p>
+
+  <h2>The shortcut</h2>
+  <p>Manually identifying every missing keyword, rewriting your summary, and updating your skills section for every single application is time-consuming. That is exactly what PREPT AI Match was built to eliminate.</p>
+  <p>Paste your resume and the job description. PREPT AI scores your match, shows every missing keyword, and rewrites your summary and bullet points using the exact language the ATS is scanning for. What used to take 45 minutes takes about 3.</p>
+
+  <div class="cta-box">
+    <h3>See your ATS score right now</h3>
+    <p>Paste your resume and any job description. Get your score, your missing keywords, and a rewritten summary in under 60 seconds.</p>
+    <a href="/prept_match_v2.html">Check my resume free →</a>
+  </div>
+</article>
+<script>
+// Light/dark mode
+let isLight = localStorage.getItem('preptTheme') === 'light';
+function applyTheme() {
+  document.documentElement.classList.toggle('light', isLight);
+  const btn = document.getElementById('themeBtn');
+  const icon = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  if (icon) icon.textContent = isLight ? '☀️' : '🌙';
+  if (label) label.textContent = isLight ? 'Dark mode' : 'Light mode';
+  if (btn) {
+    btn.style.background = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
+    btn.style.borderColor = isLight ? 'rgba(200,168,75,0.3)' : 'rgba(123,109,244,0.3)';
+    btn.style.color = isLight ? '#c8a84b' : '#a498ff';
+    btn.onmouseover = () => btn.style.background = isLight ? 'rgba(200,168,75,0.22)' : 'rgba(123,109,244,0.22)';
+    btn.onmouseout  = () => btn.style.background = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
+  }
+}
+function toggleTheme() { isLight = !isLight; localStorage.setItem('preptTheme', isLight ? 'light' : 'dark'); applyTheme(); }
+applyTheme();
+</script>
+</body>
+</html>
+// ── LIGHT / DARK MODE TOGGLE ────────────────────────────────────────────────
+let isLight = localStorage.getItem('preptTheme') === 'light';
+
+function applyTheme() {
+  document.documentElement.classList.toggle('light', isLight);
+  const btn = document.getElementById('themeBtn');
+  const icon = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  if (icon) icon.textContent = isLight ? '☀️' : '🌙';
+  if (label) label.textContent = isLight ? 'Dark mode' : 'Light mode';
+  if (btn) {
+    btn.style.background = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
+    btn.style.borderColor = isLight ? 'rgba(200,168,75,0.3)' : 'rgba(123,109,244,0.3)';
+    btn.style.color = isLight ? '#c8a84b' : '#a498ff';
+    btn.onmouseover = () => btn.style.background = isLight ? 'rgba(200,168,75,0.22)' : 'rgba(123,109,244,0.22)';
+    btn.onmouseout  = () => btn.style.background = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
+  }
+}
+
+function toggleTheme() {
+  isLight = !isLight;
+  localStorage.setItem('preptTheme', isLight ? 'light' : 'dark');
+  applyTheme();
+}
+
+applyTheme();
+
