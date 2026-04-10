@@ -881,7 +881,7 @@ footer {
 /* Live coach section */
 :root.light .live-section { background: #eaeaf0; }
 /* Phone companion section light mode */
-:root.light section[style*="rgba(160,148,255"] { background: linear-gradient(120deg,rgba(123,109,244,0.07) 0%,rgba(200,168,75,0.04) 50%,rgba(240,240,248,0) 100%) !important; border-top-color: rgba(123,109,244,0.15) !important; border-bottom-color: rgba(123,109,244,0.08) !important; }
+:root.light section[style*="rgba(18,16,38"] { background: linear-gradient(120deg,rgba(123,109,244,0.07) 0%,rgba(200,168,75,0.04) 50%,rgba(240,240,248,0) 100%) !important; border-top-color: rgba(123,109,244,0.15) !important; border-bottom-color: rgba(123,109,244,0.08) !important; }
 :root.light .live-title { color: #0f0f1c !important; }
 :root.light .live-sub { color: #2d2b45 !important; }
 :root.light .ls-text { color: #2d2b45 !important; }
@@ -1315,8 +1315,11 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
   </div>
 </section>
 <!-- PHONE COMPANION MODE CALLOUT -->
-<section style="position:relative;z-index:1;background:linear-gradient(120deg,rgba(160,148,255,0.18) 0%,rgba(123,109,244,0.10) 30%,rgba(40,36,80,0.85) 65%,rgba(12,11,24,0.97) 100%);border-top:1px solid rgba(123,109,244,0.2);border-bottom:1px solid rgba(123,109,244,0.1)">
-  <div class="section-inner" style="padding:72px 24px;display:flex;align-items:center;gap:60px;flex-wrap:wrap">
+<section style="position:relative;z-index:1;background:linear-gradient(180deg,#0a0a14 0%,rgba(18,16,38,0.98) 15%,rgba(28,24,58,0.96) 32%,rgba(38,33,72,0.94) 48%,rgba(32,28,64,0.96) 64%,rgba(20,18,42,0.98) 80%,#0a0a14 100%);border-top:1px solid rgba(123,109,244,0.12);border-bottom:1px solid rgba(123,109,244,0.08)">
+  <!-- Soft glow orb -->
+  <div style="position:absolute;top:50%;left:35%;transform:translate(-50%,-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(100,88,200,0.12) 0%,transparent 70%);pointer-events:none;z-index:0"></div>
+  <div style="position:absolute;top:40%;right:10%;width:300px;height:300px;background:radial-gradient(ellipse,rgba(123,109,244,0.07) 0%,transparent 65%);pointer-events:none;z-index:0"></div>
+  <div class="section-inner" style="padding:72px 24px;display:flex;align-items:center;gap:60px;flex-wrap:wrap;position:relative;z-index:1">
     <div style="flex:1;min-width:280px">
       <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(123,109,244,0.15);border:1px solid rgba(123,109,244,0.35);border-radius:20px;padding:6px 14px;margin-bottom:16px">
         <span style="width:8px;height:8px;border-radius:50%;background:#45de7a;animation:pulse 2s ease-in-out infinite;flex-shrink:0"></span>
