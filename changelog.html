@@ -3,83 +3,288 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Changelog — PREPT AI</title>
+<title>Changelog ,  PREPT AI</title>
+<meta name="description" content="What's new in PREPT AI. Release notes, new features, bug fixes, and improvements.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100%;background:#07070e;color:#edeaf7;font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6}
-body::before{content:'';position:fixed;top:-20%;left:20%;width:600px;height:500px;background:radial-gradient(ellipse,rgba(123,109,244,0.05) 0%,transparent 65%);pointer-events:none;z-index:0}
-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;padding:0 48px;height:62px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(7,7,14,0.95);backdrop-filter:blur(24px)}
-.nav-logo{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:#e6c668;letter-spacing:-0.5px;text-decoration:none}
-.nav-back{margin-left:auto;font-size:13px;color:#8c89a6;text-decoration:none;padding:6px 16px;border:1px solid rgba(255,255,255,0.09);border-radius:8px;transition:all 0.2s}
-.nav-back:hover{color:#edeaf7;border-color:rgba(255,255,255,0.16)}
-.wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:64px 24px 100px}
-.eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#c8a84b;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.eyebrow::before{content:'';display:block;width:24px;height:1px;background:#c8a84b}
-h1{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-2px;color:#edeaf7;line-height:1.1;margin-bottom:20px}
-h1 .gold{color:#e6c668}
-.lead{font-size:18px;color:#8c89a6;line-height:1.7;margin-bottom:48px;max-width:600px}
-h2{font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:700;color:#edeaf7;margin:48px 0 14px;letter-spacing:-0.5px}
-h3{font-size:17px;font-weight:700;color:#edeaf7;margin:32px 0 10px}
-p{font-size:15px;color:#8c89a6;line-height:1.8;margin-bottom:16px}
-p strong{color:#edeaf7;font-weight:600}
-.card{background:#0f0f1c;border:1px solid rgba(255,255,255,0.09);border-radius:14px;padding:28px 32px;margin-bottom:20px}
-.rule{height:1px;background:rgba(255,255,255,0.06);margin:40px 0}
-footer{position:relative;z-index:1;text-align:center;padding:28px 24px;border-top:1px solid rgba(255,255,255,0.06);font-size:13px;color:#4d4a66}
-footer a{color:#c8a84b;text-decoration:none}
+html,body{background:#06060d;color:#edeaf7;font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;transition:background 0.3s,color 0.3s}
+:root{--bg:#06060d;--s1:#0a0a14;--s2:#0f0f1c;--tx:#edeaf7;--tx2:#ccc9e0;--tx3:#8a87a0;--card-bg:#0f0f1c;--card-border:rgba(255,255,255,0.08);--nav-bg:rgba(6,6,13,0.95)}
+:root.light{--bg:#f4f4f8;--s1:#eaeaf0;--s2:#ffffff;--tx:#0f0f1c;--tx2:#2d2b45;--tx3:#6b6882;--card-bg:#ffffff;--card-border:rgba(0,0,0,0.08);--nav-bg:rgba(244,244,248,0.97)}
+:root.light body{background:var(--bg);color:var(--tx)}
+:root.light .card{background:var(--card-bg);border-color:var(--card-border)}
+:root.light .entry-desc{color:var(--tx2)}
+:root.light .entry-date{color:var(--tx3)}
+:root.light .tag{opacity:0.9}
+:root.light nav{background:var(--nav-bg)}
+:root.light .nav-logo{color:#c8a84b}
+:root.light p{color:var(--tx2)}
+
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;padding:0 48px;height:62px;border-bottom:1px solid rgba(255,255,255,0.06);background:var(--nav-bg);backdrop-filter:blur(28px)}
+.nav-logo{font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:800;color:#e6c668;text-decoration:none;display:flex;align-items:center;gap:8px}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:#e6c668;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+.nav-right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.nav-btn{padding:8px 20px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;text-decoration:none;transition:all 0.2s;border:1px solid rgba(255,255,255,0.1);color:#ccc9e0;background:transparent}
+.nav-btn:hover{color:#edeaf7;border-color:rgba(255,255,255,0.2)}
+.nav-btn-gold{background:#e6c668;color:#06060d;border:none}
+.nav-btn-gold:hover{opacity:0.88}
+.theme-btn{display:flex;align-items:center;gap:7px;padding:7px 14px;background:rgba(123,109,244,0.12);border:1px solid rgba(123,109,244,0.3);border-radius:20px;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:#a498ff;transition:all 0.2s;white-space:nowrap}
+.theme-btn:hover{background:rgba(123,109,244,0.22)}
+
+.hero{max-width:800px;margin:0 auto;padding:64px 24px 48px;text-align:center}
+.hero-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#7b6df4;margin-bottom:16px}
+.hero h1{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-1.5px;color:#edeaf7;line-height:1.1;margin-bottom:14px}
+.hero p{font-size:15px;color:#ccc9e0;line-height:1.7}
+:root.light .hero h1{color:#0f0f1c}
+
+.changelog{max-width:760px;margin:0 auto;padding:0 24px 100px}
+
+/* Release entry */
+.release{display:grid;grid-template-columns:160px 1fr;gap:0;margin-bottom:0;position:relative}
+.release::before{content:'';position:absolute;left:160px;top:0;bottom:0;width:1px;background:rgba(123,109,244,0.15);z-index:0}
+.release:last-child::before{display:none}
+.release-meta{padding:32px 28px 32px 0;text-align:right;position:relative;z-index:1}
+.release-date{font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a87a0;margin-bottom:6px}
+.release-version{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#7b6df4}
+.release-dot{position:absolute;right:-6px;top:38px;width:11px;height:11px;border-radius:50%;background:#7b6df4;border:2px solid var(--bg, #06060d);z-index:2}
+.release-dot.major{background:#e6c668;width:13px;height:13px;right:-7px;top:37px}
+
+.release-content{padding:32px 0 32px 32px}
+.release-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:#edeaf7;letter-spacing:-0.3px;margin-bottom:6px}
+.release-sub{font-size:13px;color:#8a87a0;margin-bottom:20px}
+:root.light .release-title{color:#0f0f1c}
+:root.light .release-sub{color:#6b6882}
+:root.light .release-date{color:#6b6882}
+:root.light .release-dot{border-color:#f4f4f8}
+
+.entries{display:flex;flex-direction:column;gap:10px}
+.entry{background:#0f0f1c;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
+.entry-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.entry-body{flex:1}
+.entry-title{font-size:14px;font-weight:700;color:#edeaf7;margin-bottom:3px;line-height:1.4}
+.entry-desc{font-size:13px;color:#ccc9e0;line-height:1.6}
+:root.light .entry{background:#ffffff;border-color:rgba(0,0,0,0.08)}
+:root.light .entry-title{color:#0f0f1c}
+:root.light .entry-desc{color:#2d2b45}
+
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px}
+.tag-new{background:rgba(123,109,244,0.12);color:#a498ff;border:1px solid rgba(123,109,244,0.2)}
+.tag-fix{background:rgba(239,95,95,0.1);color:#ef5f5f;border:1px solid rgba(239,95,95,0.2)}
+.tag-improve{background:rgba(69,222,122,0.1);color:#45de7a;border:1px solid rgba(69,222,122,0.2)}
+.tag-launch{background:rgba(200,168,75,0.12);color:#e6c668;border:1px solid rgba(200,168,75,0.25)}
+.tag-security{background:rgba(56,217,192,0.1);color:#38d9c0;border:1px solid rgba(56,217,192,0.2)}
+
+@media(max-width:640px){
+  nav{padding:0 20px}
+  .release{grid-template-columns:1fr}
+  .release::before{display:none}
+  .release-meta{text-align:left;padding:24px 0 0}
+  .release-dot{display:none}
+  .release-content{padding:12px 0 24px}
+}
 </style>
 </head>
 <body>
+
 <nav>
-  <a class="nav-logo" href="/">PREPT AI</a>
-  <a class="nav-back" href="/">← Back to home</a>
+  <a href="/" class="nav-logo"><div class="nav-dot"></div>PREPT AI</a>
+  <div class="nav-right">
+    <button onclick="toggleTheme()" id="themeBtn" class="theme-btn">
+      <span id="themeIcon">🌙</span>
+      <span id="themeLabel">Light mode</span>
+    </button>
+    <a href="/prept_v2.html" class="nav-btn nav-btn-gold">Try free →</a>
+  </div>
 </nav>
 
-<div class="wrap">
-  <div class="eyebrow">Changelog</div>
-  <h1>What's new in <span class="gold">PREPT AI</span></h1>
-  <p class="lead">Every update, improvement, and fix — in plain English. No technical jargon.</p>
-
-  <div class="card">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
-      <div>
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#7b6df4;margin-bottom:6px">Latest release</div>
-        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:#e6c668;letter-spacing:-0.5px">Version 1.0 — Public Launch</div>
-      </div>
-      <div style="background:rgba(69,222,122,0.1);border:1px solid rgba(69,222,122,0.2);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:700;color:#45de7a;white-space:nowrap">March 24, 2026</div>
-    </div>
-    <div style="height:1px;background:rgba(255,255,255,0.06);margin-bottom:20px"></div>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:6px;height:6px;border-radius:50%;background:#45de7a;margin-top:8px;flex-shrink:0"></div>
-        <div><strong style="color:#edeaf7;font-size:14px">PREPT AI Match — ATS Resume Optimizer</strong><br><span style="font-size:13px;color:#8c89a6">Full resume scoring, keyword gap analysis, AI-powered section rewrites, cover letter generator, LinkedIn optimizer, salary intelligence, and one-click download.</span></div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:6px;height:6px;border-radius:50%;background:#45de7a;margin-top:8px;flex-shrink:0"></div>
-        <div><strong style="color:#edeaf7;font-size:14px">PREPT AI Live — Real-Time Interview Coach</strong><br><span style="font-size:13px;color:#8c89a6">Live mic input with auto-submit, 14 industry sectors, STAR-structured answers, confidence scoring, delivery coaching, mock interview mode with grading, and post-interview debrief.</span></div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:6px;height:6px;border-radius:50%;background:#45de7a;margin-top:8px;flex-shrink:0"></div>
-        <div><strong style="color:#edeaf7;font-size:14px">Application Tracker</strong><br><span style="font-size:13px;color:#8c89a6">Track every job application with status updates, follow-up date reminders, and notes — all saved locally to your browser.</span></div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:6px;height:6px;border-radius:50%;background:#45de7a;margin-top:8px;flex-shrink:0"></div>
-        <div><strong style="color:#edeaf7;font-size:14px">Google Sign-In</strong><br><span style="font-size:13px;color:#8c89a6">One-click account creation with your existing Google account. No new password required.</span></div>
-      </div>
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="width:6px;height:6px;border-radius:50%;background:#45de7a;margin-top:8px;flex-shrink:0"></div>
-        <div><strong style="color:#edeaf7;font-size:14px">Free tier</strong><br><span style="font-size:13px;color:#8c89a6">3 live interview questions and 1 resume analysis per month — no credit card required to get started.</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div style="background:rgba(123,109,244,0.07);border:1px solid rgba(123,109,244,0.15);border-radius:12px;padding:20px 24px;margin-top:32px">
-    <div style="font-size:13px;font-weight:700;color:#a498ff;margin-bottom:6px">Coming in Version 1.1</div>
-    <p style="margin:0;font-size:13px;color:#8c89a6">Saved resume history · Multi-language support · Interview session replay · Team/recruiter accounts · Mobile app (iOS + Android)</p>
-  </div>
+<div class="hero">
+  <div class="hero-eyebrow">Product Updates</div>
+  <h1>Changelog</h1>
+  <p>Every feature, fix, and improvement to PREPT AI ,  in order, with context. Built in San Antonio, TX.</p>
 </div>
 
-<footer>© 2026 PREPT AI · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="mailto:richard@solisequityholdings.com">Contact</a></footer>
+<div class="changelog">
+
+  <!-- LAUNCH DAY -->
+  <div class="release">
+    <div class="release-meta">
+      <div class="release-date">Apr 10, 2026</div>
+      <div class="release-version">v1.0</div>
+      <div class="release-dot major"></div>
+    </div>
+    <div class="release-content">
+      <div class="release-title">Launch Day</div>
+      <div class="release-sub">PREPT AI goes live at preptai.co</div>
+      <div class="tags">
+        <span class="tag tag-launch">Launch</span>
+        <span class="tag tag-new">New</span>
+      </div>
+      <div class="entries">
+        <div class="entry"><div class="entry-icon">🎙</div><div class="entry-body"><div class="entry-title">PREPT AI Live ,  Real-Time Interview Coach</div><div class="entry-desc">Listens during Zoom, Teams, or Meet interviews and delivers coached STAR-structured answers in under 3 seconds. Continuous listen mode, no tapping required. 16 sectors including Real Estate and Property Management.</div></div></div>
+        <div class="entry"><div class="entry-icon">📄</div><div class="entry-body"><div class="entry-title">PREPT AI Match ,  ATS Resume Optimizer</div><div class="entry-desc">Scores your resume against any job description, identifies missing keywords, rewrites your summary and bullet points, generates a job-specific cover letter, and optimizes your LinkedIn headline and About section.</div></div></div>
+        <div class="entry"><div class="entry-icon">💰</div><div class="entry-body"><div class="entry-title">Salary Negotiation Coach</div><div class="entry-desc">Enter your offer, role, and experience level. Get a specific counter-offer range, a word-for-word negotiation script, and three power phrases backed by compensation data. Career+ feature.</div></div></div>
+        <div class="entry"><div class="entry-icon">🤝</div><div class="entry-body"><div class="entry-title">Duo Mode ,  Remote Coach Assist</div><div class="entry-desc">Invite a coach, mentor, or family member to see your interview questions in real time and send notes directly to your screen. No install required for your helper. Career+ feature.</div></div></div>
+        <div class="entry"><div class="entry-icon">📹</div><div class="entry-body"><div class="entry-title">One-Way Video Interview Coach</div><div class="entry-desc">Coaches you to build and memorize answers before recording HireVue-style asynchronous interviews. 60% of Fortune 500 companies use one-way video screening.</div></div></div>
+        <div class="entry"><div class="entry-icon">📈</div><div class="entry-body"><div class="entry-title">Progress Tracking Dashboard</div><div class="entry-desc">Every coaching session logged. See your score trend, filler word count, and improvement over time. The only tool at this price point with session-by-session progress tracking.</div></div></div>
+        <div class="entry"><div class="entry-icon">🗣</div><div class="entry-body"><div class="entry-title">Filler Word Detection</div><div class="entry-desc">Flags um, uh, like, you know, and other filler words from your answers after each session. Shows count and trend so you can track improvement over time.</div></div></div>
+        <div class="entry"><div class="entry-icon">📧</div><div class="entry-body"><div class="entry-title">Post-Interview Thank-You Email Generator</div><div class="entry-desc">Generates a personalized thank-you email from what was discussed in the session, ready to send within 60 seconds of ending the call.</div></div></div>
+        <div class="entry"><div class="entry-icon">📋</div><div class="entry-body"><div class="entry-title">Application Tracker</div><div class="entry-desc">Log every application with company, role, date, and status. Syncs to your account so you never lose track of follow-ups.</div></div></div>
+        <div class="entry"><div class="entry-icon">🎯</div><div class="entry-body"><div class="entry-title">Skills Gap Analysis</div><div class="entry-desc">Paste any job description and get your readiness score, every missing qualification, quick wins you can address in days, and a verdict on whether to apply now or upskill first.</div></div></div>
+        <div class="entry"><div class="entry-icon">📱</div><div class="entry-body"><div class="entry-title">Phone Companion Mode</div><div class="entry-desc">Full-screen stealth mode optimized for use on your phone during a live interview. Includes auto-dim after 8 seconds, double-tap decoy timer screen, continuous listen mode, and wake lock so the screen stays on. Undetectable by any screen sharing software.</div></div></div>
+        <div class="entry"><div class="entry-icon">🔒</div><div class="entry-body"><div class="entry-title">Zero Data Storage Policy</div><div class="entry-desc">Resume content, interview answers, and job descriptions are processed in real time and discarded the moment your session ends. No transcripts saved, no data sold, no training on your content.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFRASTRUCTURE -->
+  <div class="release">
+    <div class="release-meta">
+      <div class="release-date">Apr 10, 2026</div>
+      <div class="release-version">v1.0.1</div>
+      <div class="release-dot"></div>
+    </div>
+    <div class="release-content">
+      <div class="release-title">Infrastructure & Auth</div>
+      <div class="release-sub">Backend stability, OAuth fix, email system</div>
+      <div class="tags">
+        <span class="tag tag-fix">Fix</span>
+        <span class="tag tag-security">Security</span>
+        <span class="tag tag-improve">Improve</span>
+      </div>
+      <div class="entries">
+        <div class="entry"><div class="entry-icon">🔐</div><div class="entry-body"><div class="entry-title">Google OAuth Reliability Fix</div><div class="entry-desc">Replaced the single getSession() check on login with a dual-track system: onAuthStateChange listener fires the redirect the moment the OAuth token is processed, and getSession() handles returning users. Eliminated intermittent login failures where the session was missed due to timing.</div></div></div>
+        <div class="entry"><div class="entry-icon">✉️</div><div class="entry-body"><div class="entry-title">Resend Email Integration</div><div class="entry-desc">Wired RESEND_API_KEY for transactional email. Free-limit follow-up emails now send automatically when a free user hits their session limit. Contact form sends confirmation to user and notification to support@preptai.co.</div></div></div>
+        <div class="entry"><div class="entry-icon">⚡</div><div class="entry-body"><div class="entry-title">JS Syntax Crash Fixed</div><div class="entry-desc">A single extra closing brace in the showWelcomeMessage function was crashing the entire prept_v2.html script on load ,  industries never appeared, auth never ran. Fixed.</div></div></div>
+        <div class="entry"><div class="entry-icon">🏗</div><div class="entry-body"><div class="entry-title">View Panel Layout Fix</div><div class="entry-desc">Duo, Salary, Progress, and Video view panels were rendered outside the main layout container. All tabs now function correctly.</div></div></div>
+        <div class="entry"><div class="entry-icon">🛡</div><div class="entry-body"><div class="entry-title">Security Headers</div><div class="entry-desc">Added X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, and Referrer-Policy headers via vercel.json across all routes.</div></div></div>
+        <div class="entry"><div class="entry-icon">📩</div><div class="entry-body"><div class="entry-title">Contact Page with Jenn AI Assistant</div><div class="entry-desc">Built full contact page at preptai.co/contact.html with form routing to support@preptai.co, country code dropdown for 33 countries, and Jenn ,  an AI support assistant powered by Claude ,  for instant 24/7 answers about the product.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOMEPAGE & MARKETING -->
+  <div class="release">
+    <div class="release-meta">
+      <div class="release-date">Apr 10, 2026</div>
+      <div class="release-version">v1.0.2</div>
+      <div class="release-dot"></div>
+    </div>
+    <div class="release-content">
+      <div class="release-title">Homepage & Positioning</div>
+      <div class="release-sub">Competitive table, pricing corrections, copy</div>
+      <div class="tags">
+        <span class="tag tag-improve">Improve</span>
+        <span class="tag tag-fix">Fix</span>
+      </div>
+      <div class="entries">
+        <div class="entry"><div class="entry-icon">📊</div><div class="entry-body"><div class="entry-title">Competitor Comparison Table Rebuilt</div><div class="entry-desc">Replaced Jobscan, Resumeworded, and Teal (resume-only tools) with the actual competitive set: Final Round AI ($149/mo), LockedIn AI ($70/mo), and InterviewMan ($30/mo). 10-feature comparison showing PREPT AI winning 8 outright.</div></div></div>
+        <div class="entry"><div class="entry-icon">💳</div><div class="entry-body"><div class="entry-title">Pricing Card Corrections</div><div class="entry-desc">Free tier now shows 3 real features with checkmarks and 3 Pro-only features crossed out, creating accurate upgrade motivation. Career+ removed unbuilt features (industry playbooks, 30-day strategy) and replaced with real features (Duo Mode, video coach).</div></div></div>
+        <div class="entry"><div class="entry-icon">🏷</div><div class="entry-body"><div class="entry-title">7-Day Trial Removed</div><div class="entry-desc">Removed all trial language from pricing cards and fine print. Subscription starts immediately at the listed price.</div></div></div>
+        <div class="entry"><div class="entry-icon">🔢</div><div class="entry-body"><div class="entry-title">16 Sectors Updated Throughout</div><div class="entry-desc">Fixed hero stat, FAQ, and in-app sector list from 14 to 16, adding Real Estate and Property Management with full coaching context.</div></div></div>
+        <div class="entry"><div class="entry-icon">📱</div><div class="entry-body"><div class="entry-title">Phone Companion Mode Section Added</div><div class="entry-desc">Added dedicated homepage section with animated phone mockup cycling through 4 interview scenarios with typewriter effect. Section includes prominent badge, purple border, and four benefit checkmarks.</div></div></div>
+        <div class="entry"><div class="entry-icon">🔒</div><div class="entry-body"><div class="entry-title">SOC 2 Claim Removed</div><div class="entry-desc">Removed "SOC 2 Ready" from footer ,  uncertified compliance claim. Replaced with accurate "256-bit SSL encrypted" badge.</div></div></div>
+        <div class="entry"><div class="entry-icon">🌐</div><div class="entry-body"><div class="entry-title">Trust Bar Updated</div><div class="entry-desc">Replaced empty Trustpilot badge and "Your data stays private" duplicate with: Trustpilot, Job seekers trust PREPT AI, Secured by Stripe, Privacy First (0 data breaches), Used in 50+ industries.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UI & DESIGN -->
+  <div class="release">
+    <div class="release-meta">
+      <div class="release-date">Apr 10, 2026</div>
+      <div class="release-version">v1.0.3</div>
+      <div class="release-dot"></div>
+    </div>
+    <div class="release-content">
+      <div class="release-title">UI, Design & Accessibility</div>
+      <div class="release-sub">Light mode, text contrast, Google login redesign</div>
+      <div class="tags">
+        <span class="tag tag-new">New</span>
+        <span class="tag tag-improve">Improve</span>
+      </div>
+      <div class="entries">
+        <div class="entry"><div class="entry-icon">🌙</div><div class="entry-body"><div class="entry-title">Light / Dark Mode Toggle</div><div class="entry-desc">Added site-wide light/dark mode toggle in the nav bar on every page. Preference persists across sessions via localStorage. Full CSS variable system with comprehensive light mode overrides for all elements.</div></div></div>
+        <div class="entry"><div class="entry-icon">🎨</div><div class="entry-body"><div class="entry-title">Text Contrast Improvements</div><div class="entry-desc">Bumped secondary text from #8c89a6 through #b0adc6 to #ccc9e0. Label text from #4d4a66 to #8a87a0. Placeholder text from #3a3858 to #6d6a85. All sections now readable in both modes.</div></div></div>
+        <div class="entry"><div class="entry-icon">🔑</div><div class="entry-body"><div class="entry-title">Google Login Button Redesigned</div><div class="entry-desc">Replaced flat ghost button with dark pill design matching modern auth UI conventions. Added loading state, prompt: select_account, and specific error messages for email-not-confirmed and network failures.</div></div></div>
+        <div class="entry"><div class="entry-icon">📞</div><div class="entry-body"><div class="entry-title">Phone Number Added Sitewide</div><div class="entry-desc">(855) 477-3780 added to footer, contact page, Jenn assistant responses, and auto-reply emails. Marked as call or text.</div></div></div>
+        <div class="entry"><div class="entry-icon">🌍</div><div class="entry-body"><div class="entry-title">Country Code Dropdown on Contact Form</div><div class="entry-desc">Replaced native select (which strips emoji) with a fully custom dropdown showing flag emoji, country name, and dial code for 33 countries. Closes on outside click, animates open/close.</div></div></div>
+        <div class="entry"><div class="entry-icon">✍️</div><div class="entry-body"><div class="entry-title">Em Dash Elimination</div><div class="entry-desc">Removed all em dashes and en dashes across every file sitewide per brand voice guidelines.</div></div></div>
+        <div class="entry"><div class="entry-icon">📍</div><div class="entry-body"><div class="entry-title">Brand Voice Update</div><div class="entry-desc">"Built in San Antonio, TX" updated to "Created with love in San Antonio, TX" across all pages, emails, and API responses.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOG -->
+  <div class="release">
+    <div class="release-meta">
+      <div class="release-date">Apr 10, 2026</div>
+      <div class="release-version">v1.0.4</div>
+      <div class="release-dot"></div>
+    </div>
+    <div class="release-content">
+      <div class="release-title">Blog & Content</div>
+      <div class="release-sub">Three articles and a launch day post</div>
+      <div class="tags">
+        <span class="tag tag-new">New</span>
+      </div>
+      <div class="entries">
+        <div class="entry"><div class="entry-icon">📝</div><div class="entry-body"><div class="entry-title">Blog Index Page</div><div class="entry-desc">Built blog.html ,  a proper index showing all posts as cards with colored top bars, category eyebrows, read times, and a CTA section. Blog footer link now routes to the index instead of directly to post 1.</div></div></div>
+        <div class="entry"><div class="entry-icon">📖</div><div class="entry-body"><div class="entry-title">How ATS Systems Actually Work in 2026</div><div class="entry-desc">Explains how applicant tracking systems filter resumes before a human ever reads them, with actionable steps to optimize for keyword matching.</div></div></div>
+        <div class="entry"><div class="entry-icon">📖</div><div class="entry-body"><div class="entry-title">The 10 Most Common Interview Questions in 2026</div><div class="entry-desc">STAR-structured answers for the questions every recruiter asks, with delivery guidance and what interviewers are actually evaluating.</div></div></div>
+        <div class="entry"><div class="entry-icon">📖</div><div class="entry-body"><div class="entry-title">How to Negotiate Your Salary in 2026</div><div class="entry-desc">Research-backed salary negotiation scripts with specific phrasing, timing guidance, and counter-offer strategy.</div></div></div>
+        <div class="entry"><div class="entry-icon">📖</div><div class="entry-body"><div class="entry-title">We're Launching Today (Behind the Scenes)</div><div class="entry-desc">An honest look at the final 24 hours before launch ,  the bugs found and fixed, the decisions made, and what PREPT AI is actually built to do.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMING NEXT -->
+  <div class="release">
+    <div class="release-meta">
+      <div class="release-date">Coming soon</div>
+      <div class="release-version">v1.1</div>
+      <div class="release-dot" style="background:#2c2a44;border-color:#4d4a66"></div>
+    </div>
+    <div class="release-content">
+      <div class="release-title">What's Next</div>
+      <div class="release-sub">On the roadmap</div>
+      <div class="tags">
+        <span class="tag tag-new">Upcoming</span>
+      </div>
+      <div class="entries">
+        <div class="entry" style="opacity:0.6"><div class="entry-icon">🔍</div><div class="entry-body"><div class="entry-title">PREPT AI Scout</div><div class="entry-desc">Job search intelligence tool. The third product in the PREPT AI suite ,  closing the full loop from job discovery to offer.</div></div></div>
+        <div class="entry" style="opacity:0.6"><div class="entry-icon">🏢</div><div class="entry-body"><div class="entry-title">Company Research Briefing</div><div class="entry-desc">Paste a company URL before your interview and get a one-page prep brief: likely questions, culture signals, recent news, and what to ask them.</div></div></div>
+        <div class="entry" style="opacity:0.6"><div class="entry-icon">🎓</div><div class="entry-body"><div class="entry-title">University & Bootcamp Dashboard</div><div class="entry-desc">Admin dashboard for institutional accounts. Usage analytics, cohort progress tracking, and bulk license management.</div></div></div>
+        <div class="entry" style="opacity:0.6"><div class="entry-icon">🌍</div><div class="entry-body"><div class="entry-title">Annual Billing Plans</div><div class="entry-desc">Pro at $120/yr and Career+ at $240/yr ,  equivalent to 10 months, two months free. Stripe links in progress.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let isLight = localStorage.getItem('preptTheme') === 'light';
+function applyTheme() {
+  document.documentElement.classList.toggle('light', isLight);
+  const icon = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  const btn = document.getElementById('themeBtn');
+  if (icon) icon.textContent = isLight ? '☀️' : '🌙';
+  if (label) label.textContent = isLight ? 'Dark mode' : 'Light mode';
+  if (btn) {
+    btn.style.background = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
+    btn.style.borderColor = isLight ? 'rgba(200,168,75,0.3)' : 'rgba(123,109,244,0.3)';
+    btn.style.color = isLight ? '#c8a84b' : '#a498ff';
+  }
+}
+function toggleTheme() {
+  isLight = !isLight;
+  localStorage.setItem('preptTheme', isLight ? 'light' : 'dark');
+  applyTheme();
+}
+applyTheme();
+</script>
 </body>
 </html>
