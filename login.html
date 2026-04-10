@@ -298,24 +298,34 @@ const sb = createClient(SB_URL, SB_KEY);
 (function() {
   const redirect = new URLSearchParams(window.location.search).get('redirect') || '/prept_v2.html';
 
-  // STEP 1: Listen for auth state changes (catches OAuth callback tokens)
-  sb.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session?.user) {
-      // Small delay to ensure Supabase has fully processed the session
-      setTimeout(() => { window.location.href = redirect; }, 100);
-    }
-    if (event === 'SIGNED_OUT') {
-      // Clear any stale state
-      sessionStorage.removeItem('preptai_user');
-    }
-  });
-
-  // STEP 2: Also check if session already exists (returning user, page refresh)
+  // Sequential auth: getSession first, then listener
+  // Running both simultaneously causes Supabase lock contention warnings
   sb.auth.getSession().then(({ data: { session } }) => {
     if (session?.user) {
+      // Existing session found - redirect immediately
       window.location.href = redirect;
+      return;
     }
-  }).catch(() => {}); // silent fail - listener above will still catch it
+    // No existing session - now set up OAuth callback listener
+    // 50ms gap ensures getSession has released the auth lock
+    setTimeout(() => {
+      sb.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          setTimeout(() => { window.location.href = redirect; }, 80);
+        }
+        if (event === 'SIGNED_OUT') {
+          sessionStorage.removeItem('preptai_user');
+        }
+      });
+    }, 50);
+  }).catch(() => {
+    // getSession failed - fall back to listener only
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        setTimeout(() => { window.location.href = redirect; }, 80);
+      }
+    });
+  });
 })();
 
 function showMsg(text, type) {
