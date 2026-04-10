@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREPT AI ,  Sign In</title>
+<meta name="description" content="Sign in or create your free PREPT AI account. Start with 3 free interview coaching sessions and 1 free resume analysis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;background:#06060d;font-family:'Outfit',sans-serif;color:#edeaf7;-webkit-font-smoothing:antialiased}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 30% 20%,rgba(123,109,244,0.07) 0%,transparent 60%),
+             radial-gradient(ellipse at 75% 80%,rgba(200,168,75,0.05) 0%,transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;padding:0 32px;height:56px;border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(6,6,13,0.9);backdrop-filter:blur(20px)}
+.nav-logo{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:#e6c668;letter-spacing:-0.5px;display:flex;align-items:center;gap:8px;text-decoration:none}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:#e6c668;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+
+/* CARD */
+.card{width:100%;max-width:420px;background:#0f0f1c;border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:36px 32px;box-shadow:0 24px 60px rgba(0,0,0,0.4)}
+
+/* TABS */
+.tabs{display:flex;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:3px;gap:3px;margin-bottom:28px}
+.tab{flex:1;padding:9px;border-radius:8px;border:none;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;background:transparent;color:#4d4a66}
+.tab.on{background:#edeaf7;color:#06060d}
+
+/* GOOGLE BTN */
+.btn-google{width:100%;padding:14px 20px;border:none;border-radius:100px;background:#2d2d2d;color:#fff;font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:grid;grid-template-columns:24px 1fr 24px;align-items:center;gap:0;transition:all 0.2s;margin-bottom:16px;position:relative}
+.btn-google:hover{background:#3a3a3a;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,0.4)}
+.btn-google:active{transform:translateY(0)}
+.btn-google svg{justify-self:start}
+.btn-google .btn-google-text{text-align:center}
+.btn-google svg{flex-shrink:0}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.divider-line{flex:1;height:1px;background:rgba(255,255,255,0.07)}
+.divider-text{font-size:12px;color:#2c2a44;font-weight:500;white-space:nowrap}
+
+/* FORM */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#4d4a66;margin-bottom:6px}
+.field input{width:100%;padding:11px 14px;background:#1a1a2e;border:1px solid rgba(255,255,255,0.08);border-radius:9px;color:#edeaf7;font-family:'Outfit',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s}
+.field input:focus{border-color:#7b6df4;box-shadow:0 0 0 3px rgba(123,109,244,0.1)}
+.field input::placeholder{color:#2c2a44}
+
+/* SUBMIT */
+.btn-submit{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#c8a84b 0%,#e6c668 100%);color:#06060d;font-family:'Outfit',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.2s;letter-spacing:0.2px;margin-top:6px}
+.btn-submit:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(200,168,75,0.3)}
+.btn-submit:disabled{opacity:0.5;cursor:default;transform:none}
+
+/* MESSAGES */
+.msg{padding:10px 14px;border-radius:9px;font-size:13px;line-height:1.5;margin-bottom:14px;display:none}
+.msg.err{background:rgba(239,95,95,0.08);border:1px solid rgba(239,95,95,0.2);color:#ef5f5f}
+.msg.ok{background:rgba(69,222,122,0.08);border:1px solid rgba(69,222,122,0.2);color:#45de7a}
+.msg.show{display:block}
+
+/* FOOTER */
+.card-footer{margin-top:20px;text-align:center;font-size:12px;color:#2c2a44}
+.card-footer a{color:#4d4a66;text-decoration:none;transition:color 0.2s}
+.card-footer a:hover{color:#8c89a6}
+
+/* FREE NOTE */
+.free-note{font-size:12px;color:#2c2a44;text-align:center;margin-top:14px;line-height:1.6}
+.free-note strong{color:#4d4a66}
+
+@media(max-width:480px){.card{padding:28px 20px}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">
+    <div class="nav-dot"></div>
+    PREPT AI
+  </a>
+</nav>
+
+<div class="page">
+  <div class="card">
+
+    <div class="tabs">
+      <button class="tab on" id="tabLogin" onclick="switchTab('login')">Log in</button>
+      <button class="tab" id="tabSignup" onclick="switchTab('signup')">Sign up free</button>
+    </div>
+
+    <!-- GOOGLE -->
+    <button class="btn-google" onclick="signInGoogle()">
+      <svg width="20" height="20" viewBox="0 0 18 18" style="flex-shrink:0">
+        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z"/>
+        <path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/>
+        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.961L3.964 7.293C4.672 5.163 6.656 3.58 9 3.58z"/>
+      </svg>
+      <span class="btn-google-text">Continue with Google</span>
+    </button>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-text">or continue with email</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div id="msgBox" class="msg"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="formLogin">
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="loginEmail" placeholder="you@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()">
+      </div>
+      <button class="btn-submit" id="loginBtn" onclick="submitLogin()">Log in →</button>
+      <div style="text-align:center;margin-top:12px">
+        <a href="#" onclick="showForgot(event)" style="font-size:12px;color:#4d4a66;text-decoration:none">Forgot password?</a>
+      </div>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="formSignup" style="display:none">
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="signupEmail" placeholder="you@email.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="signupPassword" placeholder="8+ characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitSignup()">
+      </div>
+      <button class="btn-submit" id="signupBtn" onclick="submitSignup()">Create free account →</button>
+      <div class="free-note">Free account includes <strong>3 interview coaching sessions</strong> and <strong>1 resume analysis</strong>. Upgrade to Pro anytime.</div>
+    </div>
+
+    <!-- FORGOT PASSWORD FORM -->
+    <div id="formForgot" style="display:none">
+      <div style="font-size:14px;color:#8c89a6;margin-bottom:16px;line-height:1.6">Enter your email and we will send you a reset link.</div>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="forgotEmail" placeholder="you@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')submitForgot()">
+      </div>
+      <button class="btn-submit" id="forgotBtn" onclick="submitForgot()">Send reset link →</button>
+      <div style="text-align:center;margin-top:12px">
+        <a href="#" onclick="showLogin(event)" style="font-size:12px;color:#4d4a66;text-decoration:none">← Back to login</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card-footer" style="margin-top:20px">
+    <a href="/">← Back to preptai.co</a>
+    &nbsp;·&nbsp;
+    <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank">Manage billing</a>
+    &nbsp;·&nbsp;
+    <a href="mailto:support@preptai.co">Help</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL = 'https://lfxfwhitegsjeowlcvqk.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmeGZ3aGl0ZWdzamVvd2xjdnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODM3ODMsImV4cCI6MjA4OTg1OTc4M30.f67zZLrSbaLbTgWZtvx2AIr4aCGVRxuynEFm1_CKvWs';
+const { createClient } = supabase;
+const sb = createClient(SB_URL, SB_KEY);
+
+// Check if already logged in and redirect
+// Robust OAuth handler - listens for SIGNED_IN event AND checks existing session
+// This fixes intermittent Google login failures where the token arrives after getSession()
+(function() {
+  const redirect = new URLSearchParams(window.location.search).get('redirect') || '/prept_v2.html';
+
+  // STEP 1: Listen for auth state changes (catches OAuth callback tokens)
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_IN' && session?.user) {
+      // Small delay to ensure Supabase has fully processed the session
+      setTimeout(() => { window.location.href = redirect; }, 100);
+    }
+    if (event === 'SIGNED_OUT') {
+      // Clear any stale state
+      sessionStorage.removeItem('preptai_user');
+    }
+  });
+
+  // STEP 2: Also check if session already exists (returning user, page refresh)
+  sb.auth.getSession().then(({ data: { session } }) => {
+    if (session?.user) {
+      window.location.href = redirect;
+    }
+  }).catch(() => {}); // silent fail - listener above will still catch it
+})();
+
+function showMsg(text, type) {
+  const el = document.getElementById('msgBox');
+  el.textContent = text;
+  el.className = 'msg show ' + type;
+}
+function clearMsg() {
+  const el = document.getElementById('msgBox');
+  el.className = 'msg';
+}
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  if (loading) btn.textContent = 'Please wait...';
+}
+
+function switchTab(tab) {
+  clearMsg();
+  document.getElementById('tabLogin').classList.toggle('on', tab === 'login');
+  document.getElementById('tabSignup').classList.toggle('on', tab === 'signup');
+  document.getElementById('formLogin').style.display   = tab === 'login'  ? 'block' : 'none';
+  document.getElementById('formSignup').style.display  = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('formForgot').style.display  = 'none';
+}
+
+function showForgot(e) {
+  e.preventDefault(); clearMsg();
+  document.getElementById('formLogin').style.display  = 'none';
+  document.getElementById('formForgot').style.display = 'block';
+}
+function showLogin(e) {
+  e.preventDefault(); clearMsg();
+  document.getElementById('formForgot').style.display = 'none';
+  document.getElementById('formLogin').style.display  = 'block';
+}
+
+async function signInGoogle() {
+  clearMsg();
+  const btn = document.querySelector('.btn-google');
+  if (btn) { btn.disabled = true; btn.querySelector('.btn-google-text').textContent = 'Redirecting to Google...'; }
+  const redirect = new URLSearchParams(window.location.search).get('redirect') || '/prept_v2.html';
+  try {
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + redirect,
+        queryParams: { access_type: 'offline', prompt: 'select_account' }
+      }
+    });
+    if (error) {
+      showMsg(error.message, 'err');
+      if (btn) { btn.disabled = false; btn.querySelector('.btn-google-text').textContent = 'Continue with Google'; }
+    }
+    // If successful, browser redirects ,  button stays disabled intentionally
+  } catch(err) {
+    showMsg('Could not connect to Google. Please try again.', 'err');
+    if (btn) { btn.disabled = false; btn.querySelector('.btn-google-text').textContent = 'Continue with Google'; }
+  }
+}
+
+async function submitLogin() {
+  clearMsg();
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  if (!email || !password) { showMsg('Please enter your email and password.', 'err'); return; }
+  if (!email.includes('@')) { showMsg('Please enter a valid email address.', 'err'); return; }
+  setLoading('loginBtn', true);
+  try {
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      const msg = error.message === 'Invalid login credentials'
+        ? 'Incorrect email or password.'
+        : error.message === 'Email not confirmed'
+        ? 'Please check your email and confirm your account first.'
+        : error.message;
+      showMsg(msg, 'err');
+      document.getElementById('loginBtn').disabled = false;
+      document.getElementById('loginBtn').textContent = 'Log in →';
+    } else {
+      showMsg('Signed in! Redirecting...', 'ok');
+      const redirect = new URLSearchParams(window.location.search).get('redirect') || '/prept_v2.html';
+      setTimeout(() => window.location.href = redirect, 500);
+    }
+  } catch(err) {
+    showMsg('Connection error. Please check your internet and try again.', 'err');
+    document.getElementById('loginBtn').disabled = false;
+    document.getElementById('loginBtn').textContent = 'Log in →';
+  }
+}
+
+async function submitSignup() {
+  clearMsg();
+  const email    = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  if (!email) { showMsg('Please enter your email address.', 'err'); return; }
+  if (password.length < 8) { showMsg('Password must be at least 8 characters.', 'err'); return; }
+  setLoading('signupBtn', true);
+  const { error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin + '/prept_v2.html' } });
+  if (error) {
+    showMsg(error.message, 'err');
+    document.getElementById('signupBtn').disabled = false;
+    document.getElementById('signupBtn').textContent = 'Create free account →';
+  } else {
+    showMsg('Account created! Check your email to confirm, then sign in.', 'ok');
+    document.getElementById('signupBtn').textContent = 'Check your email';
+  }
+}
+
+async function submitForgot() {
+  clearMsg();
+  const email = document.getElementById('forgotEmail').value.trim();
+  if (!email) { showMsg('Please enter your email address.', 'err'); return; }
+  setLoading('forgotBtn', true);
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login.html' });
+  if (error) {
+    showMsg(error.message, 'err');
+    document.getElementById('forgotBtn').disabled = false;
+    document.getElementById('forgotBtn').textContent = 'Send reset link →';
+  } else {
+    showMsg('Reset link sent. Check your email.', 'ok');
+    document.getElementById('forgotBtn').textContent = 'Email sent';
+  }
+}
+</script>
+</body>
+</html>
