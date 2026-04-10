@@ -860,6 +860,11 @@ footer {
 :root.light .form-group input, :root.light .form-group select, :root.light .form-group textarea { color: #0f0f1c; }
 :root.light .tp-logo-text { color: #0f0f1c; }
 :root.light .trust-divider { background: rgba(0,0,0,0.1); }
+/* Review section */
+:root.light [style*="rgba(0,182,122,0.06)"] h2 { color: #0f0f1c !important; }
+:root.light [style*="rgba(0,182,122,0.06)"] p { color: #2d2b45 !important; }
+:root.light [style*="rgba(0,182,122,0.06)"] { background: linear-gradient(135deg,rgba(0,182,122,0.05) 0%,rgba(123,109,244,0.04) 100%) !important; border-color: rgba(0,182,122,0.2) !important; }
+:root.light [style*="color:#edeaf7"][style*="Bricolage"] { color: #0f0f1c !important; }
 :root.light .prod-title { color: #0f0f1c !important; }
 :root.light .prod-desc { color: #2d2b45 !important; }
 /* B2B section */
@@ -1709,6 +1714,43 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- LEAVE A REVIEW -->
+<section style="position:relative;z-index:1;background:var(--s1);padding:72px 24px;overflow:hidden">
+  <!-- Background glow -->
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(0,182,122,0.07) 0%,transparent 65%);pointer-events:none"></div>
+  <div style="max-width:780px;margin:0 auto;position:relative;z-index:1">
+    <!-- Card -->
+    <div style="background:linear-gradient(135deg,rgba(0,182,122,0.06) 0%,rgba(123,109,244,0.06) 100%);border:1px solid rgba(0,182,122,0.25);border-radius:24px;padding:48px 40px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.3)">
+      <!-- Trustpilot stars -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px">
+        <div style="width:28px;height:28px;background:#00b67a;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.9 9.1H22.5L16.8 13.8L18.9 21L12 16.9L5.1 21L7.2 13.8L1.5 9.1H9.1L12 2Z" fill="white"/></svg>
+        </div>
+        <div style="font-size:18px;font-weight:900;color:#edeaf7;font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-0.3px">Trustpilot</div>
+        <div style="display:flex;gap:3px">
+          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
+          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
+          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
+          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
+          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
+        </div>
+      </div>
+      <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-1px;color:#edeaf7;line-height:1.1;margin-bottom:14px">Did PREPT AI help you land the role?</h2>
+      <p style="font-size:16px;color:#ccc9e0;line-height:1.7;max-width:520px;margin:0 auto 32px">Your review helps other job seekers find the tool that gives them the same advantage. It takes 60 seconds and means everything to us.</p>
+      <!-- CTA Button -->
+      <a href="https://www.trustpilot.com/review/preptai.co" target="_blank" rel="noopener"
+        style="display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:#00b67a;color:#ffffff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;text-decoration:none;transition:all 0.2s;box-shadow:0 6px 24px rgba(0,182,122,0.35);letter-spacing:0.2px"
+        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 32px rgba(0,182,122,0.5)'"
+        onmouseout="this.style.transform='';this.style.boxShadow='0 6px 24px rgba(0,182,122,0.35)'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.9 9.1H22.5L16.8 13.8L18.9 21L12 16.9L5.1 21L7.2 13.8L1.5 9.1H9.1L12 2Z" fill="white"/></svg>
+        Leave a review on Trustpilot
+      </a>
+      <div style="margin-top:16px;font-size:12px;color:#8a87a0">Takes 60 seconds &nbsp;·&nbsp; Helps other job seekers find PREPT AI</div>
     </div>
   </div>
 </section>
