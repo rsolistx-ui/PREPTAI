@@ -151,6 +151,7 @@ nav.scrolled { background: var(--nav-bg, rgba(6,6,13,0.97)); border-color: var(-
   cursor: pointer; text-decoration: none;
   transition: all 0.2s;
   display: inline-flex; align-items: center;
+  white-space: nowrap;
 }
 .btn-ghost:hover { border-color: var(--b3); color: var(--tx); }
 .btn-primary {
@@ -166,6 +167,7 @@ nav.scrolled { background: var(--nav-bg, rgba(6,6,13,0.97)); border-color: var(-
   transition: all 0.2s;
   letter-spacing: 0.2px;
   display: inline-flex; align-items: center;
+  white-space: nowrap;
 }
 .btn-primary:hover { background: var(--gold2); transform: translateY(-1px); }
 
@@ -659,6 +661,7 @@ footer {
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 
+/* ── EXISTING RESPONSIVE (900px) ── */
 @media (max-width: 900px) {
   nav { padding: 0 20px; }
   .nav-links { display: none; }
@@ -772,32 +775,13 @@ footer {
 .np-cta-career { background: rgba(160,141,232,0.15); color: #a08de8; border: 1px solid rgba(160,141,232,0.25); }
 @media(max-width:900px){ .new-pricing-grid { flex-direction: column; gap: 16px; } }
 
-/* Product card hover */
 .prod-card-link { transition: transform 0.2s, border-color 0.2s; }
 .prod-card-link:hover { transform: translateY(-3px); }
 
 /* ── LIGHT MODE OVERRIDES ── */
 :root.light body { color: #1a1a2e; }
-:root.light .section-sub,
-:root.light .live-sub,
-:root.light .ls-text,
-:root.light .feat-desc,
-:root.light .pc-desc,
-:root.light .hs-desc,
-:root.light .hero-sub,
-:root.light .tcard-quote,
-:root.light .faq-a,
-:root.light .footer-tagline,
-:root.light .np-desc,
-:root.light p { color: #2d2b45; }
-:root.light .feat-title,
-:root.light .section-title,
-:root.light .hero-title,
-:root.light .cta-title,
-:root.light .tcard-name,
-:root.light h1, :root.light h2, :root.light h3,
-:root.light .hs-title,
-:root.light .pc-label { color: #0f0f1c; }
+:root.light .section-sub,:root.light .live-sub,:root.light .ls-text,:root.light .feat-desc,:root.light .pc-desc,:root.light .hs-desc,:root.light .hero-sub,:root.light .tcard-quote,:root.light .faq-a,:root.light .footer-tagline,:root.light .np-desc,:root.light p { color: #2d2b45; }
+:root.light .feat-title,:root.light .section-title,:root.light .hero-title,:root.light .cta-title,:root.light .tcard-name,:root.light h1,:root.light h2,:root.light h3,:root.light .hs-title,:root.light .pc-label { color: #0f0f1c; }
 :root.light .feat-card { background: #ffffff; }
 :root.light .feat-card:hover { background: #f0f0f8; }
 :root.light .problem-card { background: #ffffff; }
@@ -854,79 +838,15 @@ footer {
 :root.light .nav-links a:hover { color: #0f0f1c; }
 :root.light .btn-ghost { border-color: rgba(0,0,0,0.15); color: #3a3858; }
 :root.light .btn-ghost:hover { color: #0f0f1c; border-color: rgba(0,0,0,0.3); }
-:root.light .chip, :root.light .quick-chip { color: #5a50c4; }
-:root.light .info-label { color: #6b6882; }
-:root.light .info-value { color: #0f0f1c; }
-:root.light .info-note { color: #6b6882; }
-:root.light .jenn-role { color: #5a50c4; }
-:root.light .online-ind { color: #2a9e4f; }
-:root.light .msg-u { background: rgba(123,109,244,0.12); color: #0f0f1c; }
-:root.light .msg-j { background: #f0f0f8; color: #1a1a2e; border-color: rgba(0,0,0,0.08); }
-:root.light .j-send { background: #7b6df4; color: #fff; }
-:root.light .form-title { color: #0f0f1c; }
-:root.light .form-sub { color: #3a3858; }
-:root.light .form-group label { color: #6b6882; }
-:root.light .form-group input, :root.light .form-group select, :root.light .form-group textarea { color: #0f0f1c; }
-:root.light .tp-logo-text { color: #0f0f1c; }
-:root.light .trust-divider { background: rgba(0,0,0,0.1); }
-:root.light [style*="Used by job seekers"] { color: #6b6882 !important; }
-:root.light [style*="No credit card"] { color: #6b6882 !important; }
-:root.light [style*="Cancel anytime"] { color: #6b6882 !important; }
-:root.light [style*="One offer. Lifetime ROI"] { color: #0f0f1c !important; }
-/* Billing toggle */
-:root.light #billingToggleWrap { background: rgba(0,0,0,0.06) !important; border-color: rgba(0,0,0,0.2) !important; }
-:root.light #monthlyLabel { color: #06060d !important; }
-:root.light #annualLabel { }
-:root.light [style*="Final Round AI charges"] { color: #2d2b45 !important; }
-/* Review section */
-:root.light [style*="rgba(0,182,122,0.06)"] h2 { color: #0f0f1c !important; }
-:root.light [style*="rgba(0,182,122,0.06)"] p { color: #2d2b45 !important; }
-:root.light [style*="rgba(0,182,122,0.06)"] { background: linear-gradient(135deg,rgba(0,182,122,0.05) 0%,rgba(123,109,244,0.04) 100%) !important; border-color: rgba(0,182,122,0.2) !important; }
-:root.light [style*="color:#edeaf7"][style*="Bricolage"] { color: #0f0f1c !important; }
-:root.light .prod-title { color: #0f0f1c !important; }
-:root.light .prod-desc { color: #2d2b45 !important; }
-:root.light [style*="rgba(200,168,75,0.08)"] { background: rgba(200,168,75,0.06) !important; }
-:root.light [style*="rgba(200,168,75,0.08)"] div[style*="color:#e6c668"] { color: #c8a84b !important; }
-:root.light [style*="rgba(200,168,75,0.08)"] div[style*="color:#8a87a0"] { color: #6b6882 !important; }
-/* B2B section */
-:root.light #b2bCard { background: linear-gradient(135deg,rgba(123,109,244,0.06) 0%,rgba(200,168,75,0.05) 100%) !important; border-color: rgba(0,0,0,0.08) !important; }
-:root.light .b2b-eyebrow { color: #5a50c4 !important; }
-:root.light .b2b-title { color: #0f0f1c !important; }
-:root.light .b2b-desc { color: #2d2b45 !important; }
-/* General rule - any hardcoded light text in light mode */
-:root.light [style*="color:#edeaf7"] { color: #0f0f1c !important; }
-:root.light [style*="color:#ccc9e0"] { color: #2d2b45 !important; }
-:root.light [style*="color:#8c89a6"] { color: #3a3858 !important; }
-:root.light [style*="color:#a498ff"]:not(.section-eyebrow):not(.live-badge) { color: #5a50c4 !important; }
-:root.light [style*="color:#b0adc6"] { color: #2d2b45 !important; }
-/* Live coach section */
 :root.light .live-section { background: #eaeaf0; }
-/* Phone companion section light mode */
-:root.light section[style*="rgba(18,16,38"] { background: linear-gradient(120deg,rgba(123,109,244,0.07) 0%,rgba(200,168,75,0.04) 50%,rgba(240,240,248,0) 100%) !important; border-top-color: rgba(123,109,244,0.15) !important; border-bottom-color: rgba(123,109,244,0.08) !important; }
 :root.light .live-title { color: #0f0f1c !important; }
 :root.light .live-sub { color: #2d2b45 !important; }
 :root.light .ls-text { color: #2d2b45 !important; }
 :root.light .ls-text strong { color: #0f0f1c !important; }
 :root.light .ls-num { background: rgba(123,109,244,0.15); border-color: rgba(123,109,244,0.3); color: #5a50c4 !important; }
-:root.light .live-badge { background: rgba(123,109,244,0.1); border-color: rgba(123,109,244,0.25); }
-:root.light .live-badge .live-badge-dot { background: #5a50c4; }
-:root.light .demo-screen { background: #ffffff; border-color: rgba(0,0,0,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
-:root.light .demo-topbar { background: #f4f4f8; border-color: rgba(0,0,0,0.08); }
-:root.light .demo-title { color: #3a3858; }
-:root.light .demo-question { background: #f0f0f8; border-color: rgba(0,0,0,0.08); color: #2d2b45; }
-:root.light .demo-question-label { color: #8a87a0; }
-:root.light .demo-answer { background: rgba(123,109,244,0.06); border-color: rgba(123,109,244,0.2); }
-:root.light .demo-answer-label { color: #5a50c4; }
-:root.light .demo-answer-text { color: #0f0f1c; }
-:root.light .demo-float-1 { background: #ffffff; border-color: rgba(200,168,75,0.3); color: #c8a84b; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-:root.light .demo-float-2 { background: #ffffff; border-color: rgba(69,222,122,0.3); color: #2a9e4f; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-:root.light .think-dot { background: #7b6df4; }
-/* Problem section */
 :root.light .problem-section { background: #eaeaf0; }
-:root.light .pc-number { opacity: 0.9; }
 :root.light .pc-desc { color: #2d2b45 !important; }
 :root.light .pc-label { color: #0f0f1c !important; }
-/* How it works */
 :root.light .hs-desc { color: #2d2b45 !important; }
 :root.light .hs-title { color: #0f0f1c !important; }
 :root.light .hv-title { color: #6b6882; }
@@ -934,27 +854,186 @@ footer {
 :root.light .ring-info-sub { color: #3a3858; }
 :root.light .hv-issue { color: #2d2b45; }
 :root.light .hv-issue .fix { color: #38b2a0; }
-:root.light #prodCardLive { background: rgba(123,109,244,0.06) !important; }
-:root.light #prodCardMatch { background: rgba(200,168,75,0.06) !important; }
-/* Product cards */
-:root.light #prodCardLive,
-:root.light #prodCardMatch { color: #0f0f1c; }
-:root.light #prodCardLive div[style*="color:#edeaf7"],
-:root.light #prodCardMatch div[style*="color:#edeaf7"] { color: #0f0f1c !important; }
-:root.light #prodCardLive div[style*="color:#ccc9e0"],
-:root.light #prodCardMatch div[style*="color:#ccc9e0"] { color: #2d2b45 !important; }
-:root.light #prodCardLive div[style*="color:#8c89a6"],
-:root.light #prodCardMatch div[style*="color:#8c89a6"] { color: #2d2b45 !important; }
-
-
-/* Social buttons dark mode */
-@media (prefers-color-scheme: no-preference) {}
+:root.light .cta-banner { background: #eaeaf0; }
+:root.light .cta-sub { color: #2d2b45; }
+:root.light [style*="color:#edeaf7"] { color: #0f0f1c !important; }
+:root.light [style*="color:#ccc9e0"] { color: #2d2b45 !important; }
 html:not(.light) a[title="X"] svg, html:not(.light) a[title="TikTok"] svg { fill: #edeaf7; }
-html:not(.light) a[title="YouTube"] { background: rgba(255,0,0,0.06) !important; }
 html:not(.light) a[title="X"] span { color: #edeaf7 !important; }
 html:not(.light) a[title="TikTok"] span { color: #edeaf7 !important; }
 html:not(.light) a[title="X"] { background: rgba(255,255,255,0.05) !important; border-color: rgba(255,255,255,0.1) !important; }
 html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !important; border-color: rgba(255,255,255,0.09) !important; }
+
+/* ==========================================================
+   MOBILE LAYOUT FIXES — added April 2026
+   Fixes: nav overflow, section spacing, grid collapsing,
+          phone mockup width, sticky bar, trust bar
+   ========================================================== */
+
+/* ── 768px: tablets & most phones ── */
+@media (max-width: 768px) {
+
+  /* NAV */
+  nav { padding: 0 14px; height: 54px; gap: 6px; }
+  .nav-logo { font-size: 17px; white-space: nowrap; flex-shrink: 0; }
+  .nav-logo-dot { display: none; }
+  .nav-cta { gap: 5px; flex-shrink: 0; }
+  #themeLabel { display: none !important; }
+  #themeBtn {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+    min-width: 0 !important;
+    gap: 4px !important;
+  }
+  .btn-ghost { padding: 0 12px; font-size: 13px; height: 34px; }
+  .btn-primary { padding: 0 14px; font-size: 13px; height: 34px; }
+
+  /* HERO */
+  .hero { padding: 80px 16px 40px; }
+  .hero-title { letter-spacing: -1.5px; }
+  .hero-sub { font-size: 15px; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .btn-hero, .btn-hero-ghost { text-align: center; width: 100%; }
+
+  /* HERO STATS — 2x2 grid, contained */
+  .hero-stats {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    border: 1px solid var(--b1) !important;
+    background: var(--s2) !important;
+    border-radius: 14px !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+  }
+  .hstat {
+    flex: 1 1 50% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 14px 16px !important;
+    border-right: 1px solid var(--b1) !important;
+    border-bottom: 1px solid var(--b1) !important;
+    min-width: 0 !important;
+  }
+  .hstat:nth-child(2) { border-right: none !important; }
+  .hstat:nth-child(3) { border-bottom: none !important; }
+  .hstat:nth-child(4) { border-right: none !important; border-bottom: none !important; }
+  .hstat-n { font-size: 22px; }
+  .hstat-l { font-size: 11px; }
+
+  /* SECTIONS — tighter vertical rhythm */
+  section { padding: 52px 16px; }
+  .live-section { padding: 52px 16px; }
+  .cta-banner { padding: 60px 16px; }
+  .section-title { font-size: clamp(24px, 7vw, 36px); letter-spacing: -0.8px; }
+
+  /* LIVE SECTION */
+  .live-inner { gap: 36px; }
+
+  /* PROBLEM GRID */
+  .problem-card { padding: 28px 20px; }
+  .pc-number { font-size: 40px; }
+
+  /* PRODUCT CARDS: 2-col inline grid -> 1-col */
+  .features-section > .section-inner > div[style*="grid-template-columns:1fr 1fr"],
+  div[style*="grid-template-columns:1fr 1fr"][style*="gap:16px"][style*="margin-bottom:56px"] {
+    grid-template-columns: 1fr !important;
+  }
+  .features-grid { grid-template-columns: 1fr !important; }
+
+  /* HOW VISUAL */
+  .how-visual { padding: 20px; }
+
+  /* PHONE MOCKUP — prevent overflow */
+  div[style*="width:320px"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+  div[style*="width:280px"][style*="flex-shrink:0"] {
+    width: 100% !important;
+    flex-shrink: 1 !important;
+  }
+
+  /* TRUST BAR */
+  .trust-bar-inner {
+    flex-wrap: wrap !important;
+    gap: 14px !important;
+    justify-content: center !important;
+  }
+  .trust-divider { display: none !important; }
+
+  /* PRICING */
+  .new-pricing-grid { flex-direction: column; gap: 12px; }
+
+  /* COMPARISON TABLE */
+  .compare-table { font-size: 11px; }
+  .compare-table th, .compare-table td { padding: 8px 8px; }
+
+  /* TESTIMONIALS */
+  .testimonials-grid { grid-template-columns: 1fr !important; }
+
+  /* FOOTER */
+  footer { padding: 40px 20px 24px; }
+
+  /* STICKY BAR */
+  #stickyBar { padding: 10px 14px; gap: 10px; }
+  #stickyBar > div:first-child { font-size: 12px; white-space: nowrap; }
+  #stickyBar a { padding: 8px 14px !important; font-size: 12px !important; }
+
+  /* PRIVACY SECTION */
+  div[style*="display:flex;align-items:flex-start;gap:28px;flex-wrap:wrap"] {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  /* REFERRAL */
+  div[style*="max-width:360px"] { max-width: 100% !important; width: 100% !important; }
+
+  /* CTA BANNER */
+  .cta-actions { flex-direction: column; align-items: stretch; }
+  .cta-actions .btn-hero,
+  .cta-actions .btn-hero-ghost { text-align: center; width: 100%; }
+
+  /* B2B CARD */
+  #b2bCard { flex-direction: column !important; gap: 20px !important; }
+
+  /* SOCIAL BUTTONS — allow wrap */
+  div[style*="flex-wrap:nowrap"][style*="gap:6px"][style*="overflow-x:auto"] {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+  }
+
+  /* PHONE COMPANION section inline padding override */
+  .section-inner[style*="padding:72px"] {
+    padding: 40px 0 !important;
+  }
+}
+
+/* ── 480px: small phones ── */
+@media (max-width: 480px) {
+
+  /* Nav: hide login on tiny screens */
+  #loginBtn { display: none !important; }
+  .nav-logo { font-size: 16px; }
+  #themeBtn { padding: 5px 8px !important; font-size: 11px !important; }
+  #themeIcon { font-size: 13px !important; }
+  .btn-primary { padding: 0 12px; font-size: 12px; height: 32px; }
+
+  /* Hero */
+  .hero { padding: 72px 16px 32px; }
+
+  /* Sticky bar stacks on tiny screens */
+  #stickyBar { flex-wrap: wrap !important; }
+  #stickyBar > div:first-child { width: 100%; }
+
+  /* Pricing toggle */
+  #annualLabel { font-size: 12px !important; }
+  #monthlyLabel { font-size: 12px !important; }
+
+  /* Hero eyebrow — shorter on tiny screens */
+  .hero-eyebrow { font-size: 10px; padding: 5px 12px; letter-spacing: 1px; }
+}
 </style>
   <link rel="canonical" href="https://www.preptai.co/">
 </head>
@@ -1012,13 +1091,11 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     <div class="hstat"><div class="hstat-n">2min</div><div class="hstat-l">To your first session</div></div>
   </div>
 
-  <!-- ── DUAL CTAs ── -->
   <div class="hero-actions">
     <a href="/prept_v2.html" class="btn-hero">Try the live coach free →</a>
     <a href="/prept_match_v2.html" class="btn-hero-ghost" style="border-color:rgba(200,168,75,0.35);color:#e6c668">Optimize my resume →</a>
   </div>
 
-  <!-- Hero social proof trust line -->
   <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;margin-bottom:8px;flex-wrap:wrap">
     <span style="color:#45de7a;font-size:14px;letter-spacing:1px">★★★★★</span>
     <span style="font-size:13px;color:#8a87a0">Used by job seekers across 16 industries</span>
@@ -1028,7 +1105,6 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     <span style="font-size:13px;color:#8a87a0">Cancel anytime</span>
   </div>
 
-  <!-- Product labels -->
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;justify-content:center;animation:fadeup 0.6s 0.32s ease both">
     <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;background:rgba(123,109,244,0.08);border:1px solid rgba(123,109,244,0.18);color:#a498ff;font-size:12px;font-weight:600">🎙 PREPT AI Live real-time interview coach</span>
     <span style="color:#2c2a44;font-weight:700">+</span>
@@ -1040,7 +1116,6 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     No credit card required &nbsp;·&nbsp; Works on your phone, no install &nbsp;·&nbsp; Cancel anytime
   </div>
 
-  <!-- PRODUCT PREVIEW -->
   <div class="hero-preview" style="margin-top:48px">
     <div class="preview-frame">
       <div class="preview-topbar">
@@ -1260,7 +1335,6 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 <section id="features" class="features-section">
   <div class="section-inner">
 
-    <!-- TWO PRODUCT CARDS -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:56px" class="reveal">
       <a id="prodCardLive" href="/prept_v2.html" style="text-decoration:none;display:flex;flex-direction:column;gap:14px;background:rgba(123,109,244,0.06);border:1px solid rgba(123,109,244,0.2);border-radius:16px;padding:28px;transition:transform 0.2s,border-color 0.2s" onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='rgba(123,109,244,0.45)'" onmouseout="this.style.transform='';this.style.borderColor='rgba(123,109,244,0.2)'">
         <div style="display:flex;align-items:center;gap:12px">
@@ -1290,69 +1364,24 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     <div class="section-eyebrow reveal">What you get</div>
     <h2 class="section-title reveal">Every tool you need.<br>Nothing you have to pay extra for elsewhere.</h2>
     <div class="features-grid reveal" style="grid-template-columns:repeat(3,1fr)">
-      <div class="feat-card">
-        <div class="feat-icon fi-cy">🎙</div>
-        <div class="feat-title">Real-Time Live Coach</div>
-        <div class="feat-desc">During your interview, PREPT AI listens and feeds you a confident coached answer in under 3 seconds. Continuous listen mode. No tapping required.</div>
-        <span class="feat-tag tag-new">Live mode</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon fi-vi">💰</div>
-        <div class="feat-title">Salary Negotiation Coach</div>
-        <div class="feat-desc">Enter your offer, role, and experience. Get a specific counter-offer range, a word-for-word negotiation script, and 3 power phrases backed by real compensation data.</div>
-        <span class="feat-tag tag-pro">Career+</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon fi-gold">🎯</div>
-        <div class="feat-title">Skills Gap Analysis</div>
-        <div class="feat-desc">Paste any job description. Get your readiness score, every missing qualification, quick wins you can address in days, and a verdict: apply now or upskill first.</div>
-        <span class="feat-tag tag-new">PREPT Match</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon fi-cy">📈</div>
-        <div class="feat-title">Progress Tracking Dashboard</div>
-        <div class="feat-desc">Every session logged. See your score trend, filler word count, and improvement over time. The only tool in your price range that shows you getting better session by session.</div>
-        <span class="feat-tag tag-pro">Exclusive</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon fi-vi">🗣</div>
-        <div class="feat-title">Filler Word Detection</div>
-        <div class="feat-desc">After every session, PREPT AI flags "um," "uh," "like," "you know," and other filler words from your answers. Shows a count and trend so you can track yourself improving.</div>
-        <span class="feat-tag tag-new">Exclusive at $12</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon fi-gold">📹</div>
-        <div class="feat-title">One-Way Video Coach</div>
-        <div class="feat-desc">60% of Fortune 500 use HireVue and similar platforms for first-round screening. PREPT AI coaches you to build and memorize your answer before you hit record. No second screen needed.</div>
-        <span class="feat-tag tag-new">New</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon fi-vi">🤝</div>
-        <div class="feat-title">Duo Mode: Remote Coach Assist</div>
-        <div class="feat-desc">Invite a coach, mentor, or family member to see your questions in real time and send notes to your screen. Web-based, no install required for your helper.</div>
-        <span class="feat-tag tag-pro">Career+</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon fi-gold">📄</div>
-        <div class="feat-title">ATS Resume Optimizer</div>
-        <div class="feat-desc">Score your resume against any job. See every missing keyword, get rewritten summary and bullets, and download the optimized version in minutes.</div>
-        <span class="feat-tag tag-pro">PREPT Match</span>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon fi-cy">✍️</div>
-        <div class="feat-title">Cover Letter + LinkedIn</div>
-        <div class="feat-desc">One job-specific cover letter and a full LinkedIn headline, About, and skills list. Generated from your resume and the exact job description you are targeting.</div>
-        <span class="feat-tag tag-new">5 tones</span>
-      </div>
+      <div class="feat-card"><div class="feat-icon fi-cy">🎙</div><div class="feat-title">Real-Time Live Coach</div><div class="feat-desc">During your interview, PREPT AI listens and feeds you a confident coached answer in under 3 seconds. Continuous listen mode. No tapping required.</div><span class="feat-tag tag-new">Live mode</span></div>
+      <div class="feat-card"><div class="feat-icon fi-vi">💰</div><div class="feat-title">Salary Negotiation Coach</div><div class="feat-desc">Enter your offer, role, and experience. Get a specific counter-offer range, a word-for-word negotiation script, and 3 power phrases backed by real compensation data.</div><span class="feat-tag tag-pro">Career+</span></div>
+      <div class="feat-card"><div class="feat-icon fi-gold">🎯</div><div class="feat-title">Skills Gap Analysis</div><div class="feat-desc">Paste any job description. Get your readiness score, every missing qualification, quick wins you can address in days, and a verdict: apply now or upskill first.</div><span class="feat-tag tag-new">PREPT Match</span></div>
+      <div class="feat-card"><div class="feat-icon fi-cy">📈</div><div class="feat-title">Progress Tracking Dashboard</div><div class="feat-desc">Every session logged. See your score trend, filler word count, and improvement over time. The only tool in your price range that shows you getting better session by session.</div><span class="feat-tag tag-pro">Exclusive</span></div>
+      <div class="feat-card"><div class="feat-icon fi-vi">🗣</div><div class="feat-title">Filler Word Detection</div><div class="feat-desc">After every session, PREPT AI flags "um," "uh," "like," "you know," and other filler words from your answers. Shows a count and trend so you can track yourself improving.</div><span class="feat-tag tag-new">Exclusive at $12</span></div>
+      <div class="feat-card"><div class="feat-icon fi-gold">📹</div><div class="feat-title">One-Way Video Coach</div><div class="feat-desc">60% of Fortune 500 use HireVue and similar platforms for first-round screening. PREPT AI coaches you to build and memorize your answer before you hit record. No second screen needed.</div><span class="feat-tag tag-new">New</span></div>
+      <div class="feat-card"><div class="feat-icon fi-vi">🤝</div><div class="feat-title">Duo Mode: Remote Coach Assist</div><div class="feat-desc">Invite a coach, mentor, or family member to see your questions in real time and send notes to your screen. Web-based, no install required for your helper.</div><span class="feat-tag tag-pro">Career+</span></div>
+      <div class="feat-card"><div class="feat-icon fi-gold">📄</div><div class="feat-title">ATS Resume Optimizer</div><div class="feat-desc">Score your resume against any job. See every missing keyword, get rewritten summary and bullets, and download the optimized version in minutes.</div><span class="feat-tag tag-pro">PREPT Match</span></div>
+      <div class="feat-card"><div class="feat-icon fi-cy">✍️</div><div class="feat-title">Cover Letter + LinkedIn</div><div class="feat-desc">One job-specific cover letter and a full LinkedIn headline, About, and skills list. Generated from your resume and the exact job description you are targeting.</div><span class="feat-tag tag-new">5 tones</span></div>
     </div>
   </div>
 </section>
+
 <!-- PHONE COMPANION MODE CALLOUT -->
 <section style="position:relative;z-index:1;background:linear-gradient(180deg,#0a0a14 0%,rgba(18,16,38,0.98) 15%,rgba(28,24,58,0.96) 32%,rgba(38,33,72,0.94) 48%,rgba(32,28,64,0.96) 64%,rgba(20,18,42,0.98) 80%,#0a0a14 100%);border-top:1px solid rgba(123,109,244,0.12);border-bottom:1px solid rgba(123,109,244,0.08)">
-  <!-- Soft glow orb -->
   <div style="position:absolute;top:50%;left:35%;transform:translate(-50%,-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(100,88,200,0.12) 0%,transparent 70%);pointer-events:none;z-index:0"></div>
   <div style="position:absolute;top:40%;right:10%;width:300px;height:300px;background:radial-gradient(ellipse,rgba(123,109,244,0.07) 0%,transparent 65%);pointer-events:none;z-index:0"></div>
-  <div class="section-inner" style="padding:72px 24px;display:flex;align-items:center;gap:60px;flex-wrap:wrap;position:relative;z-index:1">
+  <div class="section-inner" style="padding:64px 24px;display:flex;align-items:center;gap:60px;flex-wrap:wrap;position:relative;z-index:1">
     <div style="flex:1;min-width:280px">
       <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(123,109,244,0.15);border:1px solid rgba(123,109,244,0.35);border-radius:20px;padding:6px 14px;margin-bottom:16px">
         <span style="width:8px;height:8px;border-radius:50%;background:#45de7a;animation:pulse 2s ease-in-out infinite;flex-shrink:0"></span>
@@ -1367,9 +1396,8 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
         <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tx2)"><span style="color:#45de7a;font-weight:700">✓</span> Undetectable by any proctoring software</div>
       </div>
     </div>
-    <div style="flex-shrink:0;width:280px">
-      <div style="background:#0f0f1c;border:1px solid rgba(123,109,244,0.25);border-radius:24px;padding:20px;box-shadow:0 32px 80px rgba(0,0,0,0.6);width:320px;flex-shrink:0">
-        <!-- Animated phone mockup -->
+    <div style="flex-shrink:0;width:100%;max-width:340px">
+      <div style="background:#0f0f1c;border:1px solid rgba(123,109,244,0.25);border-radius:24px;padding:20px;box-shadow:0 32px 80px rgba(0,0,0,0.6)">
         <div style="background:#111120;border-radius:14px;padding:16px;margin-bottom:12px;min-height:220px">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
             <span style="font-size:11px;color:#8a87a0;font-weight:700;letter-spacing:1px">PREPT AI · Stealth</span>
@@ -1378,9 +1406,7 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
               <span style="font-size:10px;background:rgba(255,255,255,0.05);color:#8a87a0;padding:2px 8px;border-radius:6px">Exit</span>
             </div>
           </div>
-          <!-- Question being asked (fades in) -->
           <div id="phoneMockQ" style="font-size:11px;color:#8a87a0;font-style:italic;margin-bottom:10px;min-height:16px;transition:opacity 0.4s"></div>
-          <!-- Typing indicator -->
           <div id="phoneMockTyping" style="display:none;margin-bottom:8px">
             <span style="display:inline-flex;gap:4px;align-items:center">
               <span style="width:6px;height:6px;border-radius:50%;background:#7b6df4;animation:typeDot 1s ease-in-out infinite"></span>
@@ -1389,7 +1415,6 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
               <span style="font-size:11px;color:#7b6df4;margin-left:6px;font-weight:600">Coaching answer...</span>
             </span>
           </div>
-          <!-- Answer typed out -->
           <div id="phoneMockAnswer" style="font-size:13px;color:#edeaf7;line-height:1.7;min-height:120px"></div>
           <div style="height:1px;background:rgba(255,255,255,0.06);margin:12px 0"></div>
           <div style="display:flex;gap:6px">
@@ -1403,6 +1428,9 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
 <style>
 @keyframes typeDot { 0%,80%,100%{transform:scale(0.6);opacity:0.4} 40%{transform:scale(1);opacity:1} }
@@ -1412,144 +1440,22 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 <script>
 (function(){
   var scenarios = [
-    {
-      q: '"Tell me about yourself."',
-      parts: [
-        {label:'Summary', color:'#e6c668', text:"Results-driven logistics manager with 8 years building high-performance teams. I've led operations scaling from 40 to 200 employees and consistently deliver 20%+ efficiency gains."},
-        {label:'Why here', color:'#a498ff', text:"I'm drawn to this role because of your supply chain innovation work. I want to bring my cross-functional leadership directly to that challenge."}
-      ]
-    },
-    {
-      q: '"What’s your greatest weakness?"',
-      parts: [
-        {label:'Honest gap', color:'#e6c668', text:"Early in my career I over-committed the team without validating capacity. Projects slipped."},
-        {label:'What I did', color:'#45de7a', text:"I built a sprint-based capacity model. For the past 3 years, on-time delivery has stayed above 94%. I track it every sprint."}
-      ]
-    },
-    {
-      q: '"Describe a challenge you overcame."',
-      parts: [
-        {label:'Situation', color:'#e6c668', text:"A key supplier failed 2 weeks before our largest delivery of the year."},
-        {label:'Action', color:'#a498ff', text:"I activated 3 backup suppliers, renegotiated timelines with the client, and ran daily standups to keep the team focused on solutions."},
-        {label:'Result', color:'#45de7a', text:"We delivered on time. The client renewed for 3 years. The backup network is now standard procedure."}
-      ]
-    },
-    {
-      q: '"Where do you see yourself in 5 years?"',
-      parts: [
-        {label:'Direction', color:'#e6c668', text:"Leading an operations or supply chain function at a company scaling through a major growth phase."},
-        {label:'Why here', color:'#a498ff', text:"This role puts me on exactly that path. Your expansion into 3 new markets over the next 2 years is precisely the kind of complexity I want to help solve."}
-      ]
-    }
+    { q: '"Tell me about yourself."', parts: [{label:'Summary',color:'#e6c668',text:"Results-driven logistics manager with 8 years building high-performance teams. I've led operations scaling from 40 to 200 employees and consistently deliver 20%+ efficiency gains."},{label:'Why here',color:'#a498ff',text:"I'm drawn to this role because of your supply chain innovation work. I want to bring my cross-functional leadership directly to that challenge."}] },
+    { q: '"What\'s your greatest weakness?"', parts: [{label:'Honest gap',color:'#e6c668',text:"Early in my career I over-committed the team without validating capacity. Projects slipped."},{label:'What I did',color:'#45de7a',text:"I built a sprint-based capacity model. For the past 3 years, on-time delivery has stayed above 94%. I track it every sprint."}] },
+    { q: '"Describe a challenge you overcame."', parts: [{label:'Situation',color:'#e6c668',text:"A key supplier failed 2 weeks before our largest delivery of the year."},{label:'Action',color:'#a498ff',text:"I activated 3 backup suppliers, renegotiated timelines with the client, and ran daily standups to keep the team focused on solutions."},{label:'Result',color:'#45de7a',text:"We delivered on time. The client renewed for 3 years. The backup network is now standard procedure."}] },
+    { q: '"Where do you see yourself in 5 years?"', parts: [{label:'Direction',color:'#e6c668',text:"Leading an operations or supply chain function at a company scaling through a major growth phase."},{label:'Why here',color:'#a498ff',text:"This role puts me on exactly that path. Your expansion into 3 new markets over the next 2 years is precisely the kind of complexity I want to help solve."}] }
   ];
-
-  var qEl = document.getElementById('phoneMockQ');
-  var typingEl = document.getElementById('phoneMockTyping');
-  var ansEl = document.getElementById('phoneMockAnswer');
-  var statusEl = document.getElementById('phoneMockStatus');
-  if(!qEl || !typingEl || !ansEl || !statusEl) return;
-
-  var current = 0;
-  var running = false;
-
-  function sleep(ms){ return new Promise(function(r){setTimeout(r,ms)}); }
-
-  function typeText(el, html, speed){
-    return new Promise(function(resolve){
-      var i = 0;
-      var text = html;
-      var out = '';
-      // Type plain text, insert HTML tags instantly
-      var inTag = false;
-      function tick(){
-        if(i >= text.length){ resolve(); return; }
-        var ch = text[i];
-        if(ch === '<') inTag = true;
-        if(inTag){
-          // Flush entire tag at once
-          var tagEnd = text.indexOf('>', i);
-          out += text.slice(i, tagEnd+1);
-          i = tagEnd+1;
-          inTag = false;
-          el.innerHTML = out;
-          setTimeout(tick, 0);
-        } else {
-          out += ch;
-          i++;
-          el.innerHTML = out;
-          setTimeout(tick, speed);
-        }
-      }
-      tick();
-    });
-  }
-
-  async function runScenario(s){
-    running = true;
-    // Show question
-    qEl.style.opacity = '0';
-    await sleep(300);
-    qEl.textContent = s.q;
-    qEl.style.opacity = '1';
-    statusEl.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#45de7a;display:inline-block;animation:pulse 2s ease-in-out infinite;margin-right:6px;vertical-align:middle"></span>Listening...';
-
-    await sleep(1400);
-
-    // Show typing dots
-    ansEl.innerHTML = '';
-    typingEl.style.display = 'block';
-    statusEl.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#7b6df4;display:inline-block;animation:pulse 1s ease-in-out infinite;margin-right:6px;vertical-align:middle"></span>Coaching answer...';
-    await sleep(1000);
-    typingEl.style.display = 'none';
-
-    // Type each part
-    for(var p = 0; p < s.parts.length; p++){
-      var part = s.parts[p];
-      var prefix = '<strong style="color:'+part.color+'">'+part.label+':</strong> ';
-      if(p > 0) ansEl.innerHTML += '<br><br>';
-      var startHtml = ansEl.innerHTML;
-      await typeText(ansEl, startHtml + prefix + part.text, 18);
-      await sleep(200);
-    }
-
-    statusEl.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#45de7a;display:inline-block;animation:pulse 2s ease-in-out infinite;margin-right:6px;vertical-align:middle"></span>Listening for next question';
-
-    // Hold, then fade out
-    await sleep(4000);
-    ansEl.style.transition = 'opacity 0.5s';
-    ansEl.style.opacity = '0';
-    qEl.style.opacity = '0';
-    await sleep(600);
-    ansEl.innerHTML = '';
-    ansEl.style.opacity = '1';
-    running = false;
-  }
-
-  async function loop(){
-    while(true){
-      await runScenario(scenarios[current % scenarios.length]);
-      current++;
-      await sleep(500);
-    }
-  }
-
-  // Start when section is in view
-  var obs = new IntersectionObserver(function(entries){
-    if(entries[0].isIntersecting && !running){
-      loop();
-      obs.disconnect();
-    }
-  }, {threshold: 0.3});
-  var section = qEl.closest('section');
-  if(section) obs.observe(section);
-  else loop();
+  var qEl=document.getElementById('phoneMockQ'),typingEl=document.getElementById('phoneMockTyping'),ansEl=document.getElementById('phoneMockAnswer'),statusEl=document.getElementById('phoneMockStatus');
+  if(!qEl||!typingEl||!ansEl||!statusEl) return;
+  var current=0,running=false;
+  function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+  function typeText(el,html,speed){return new Promise(function(resolve){var i=0,text=html,out='',inTag=false;function tick(){if(i>=text.length){resolve();return;}var ch=text[i];if(ch==='<')inTag=true;if(inTag){var tagEnd=text.indexOf('>',i);out+=text.slice(i,tagEnd+1);i=tagEnd+1;inTag=false;el.innerHTML=out;setTimeout(tick,0);}else{out+=ch;i++;el.innerHTML=out;setTimeout(tick,speed);}}tick();})}
+  async function runScenario(s){running=true;qEl.style.opacity='0';await sleep(300);qEl.textContent=s.q;qEl.style.opacity='1';statusEl.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#45de7a;display:inline-block;animation:pulse 2s ease-in-out infinite;margin-right:6px;vertical-align:middle"></span>Listening...';await sleep(1400);ansEl.innerHTML='';typingEl.style.display='block';statusEl.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#7b6df4;display:inline-block;animation:pulse 1s ease-in-out infinite;margin-right:6px;vertical-align:middle"></span>Coaching answer...';await sleep(1000);typingEl.style.display='none';for(var p=0;p<s.parts.length;p++){var part=s.parts[p];var prefix='<strong style="color:'+part.color+'">'+part.label+':</strong> ';if(p>0)ansEl.innerHTML+='<br><br>';var startHtml=ansEl.innerHTML;await typeText(ansEl,startHtml+prefix+part.text,18);await sleep(200);}statusEl.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#45de7a;display:inline-block;animation:pulse 2s ease-in-out infinite;margin-right:6px;vertical-align:middle"></span>Listening for next question';await sleep(4000);ansEl.style.transition='opacity 0.5s';ansEl.style.opacity='0';qEl.style.opacity='0';await sleep(600);ansEl.innerHTML='';ansEl.style.opacity='1';running=false;}
+  async function loop(){while(true){await runScenario(scenarios[current%scenarios.length]);current++;await sleep(500);}}
+  var obs=new IntersectionObserver(function(entries){if(entries[0].isIntersecting&&!running){loop();obs.disconnect();}},{threshold:0.3});
+  var section=qEl.closest('section');if(section)obs.observe(section);else loop();
 })();
 </script>
-    </div>
-  </div>
-</section>
-
-
 
 <!-- PRIVACY TRUST SECTION -->
 <section style="position:relative;z-index:1;background:var(--bg);padding:60px 24px">
@@ -1588,16 +1494,16 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
           </tr>
         </thead>
         <tbody>
-                    <tr><td>Real-time interview coaching</td><td><span class="chk-yes">✓</span></td><td><span class="chk-yes">✓</span></td><td><span class="chk-yes">✓</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
-                    <tr><td>ATS resume optimizer</td><td><span class="chk-part">Basic</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓ Full rewrite</span></td></tr>
-                    <tr><td>Cover letter generator</td><td><span class="chk-part">Generic</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓ Job-specific</span></td></tr>
-                    <tr><td>LinkedIn optimizer</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
-                    <tr><td>Salary negotiation coach</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
-                    <tr><td>Progress tracking dashboard</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
-                    <tr><td>Filler word detection</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
-                    <tr><td>Duo remote coach assist</td><td><span class="chk-no">✕</span></td><td><span class="chk-yes">✓</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
-                    <tr><td>Works on phone, no install</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
-                    <tr><td>Zero data stored ever</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
+          <tr><td>Real-time interview coaching</td><td><span class="chk-yes">✓</span></td><td><span class="chk-yes">✓</span></td><td><span class="chk-yes">✓</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
+          <tr><td>ATS resume optimizer</td><td><span class="chk-part">Basic</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓ Full rewrite</span></td></tr>
+          <tr><td>Cover letter generator</td><td><span class="chk-part">Generic</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓ Job-specific</span></td></tr>
+          <tr><td>LinkedIn optimizer</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
+          <tr><td>Salary negotiation coach</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
+          <tr><td>Progress tracking dashboard</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
+          <tr><td>Filler word detection</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
+          <tr><td>Duo remote coach assist</td><td><span class="chk-no">✕</span></td><td><span class="chk-yes">✓</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
+          <tr><td>Works on phone, no install</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
+          <tr><td>Zero data stored ever</td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td><span class="chk-no">✕</span></td><td class="us"><span class="chk-yes">✓</span></td></tr>
           <tr>
             <td>Monthly price</td>
             <td style="color:#ef5f5f;font-weight:700">$149/mo</td>
@@ -1620,7 +1526,6 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 
     <div style="height:12px"></div>
 
-    <!-- BILLING TOGGLE -->
     <div style="display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:36px;margin-top:48px" class="reveal">
       <div id="billingToggleWrap" style="display:flex;align-items:center;gap:6px;padding:4px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:40px">
         <button onclick="if(isAnnual)toggleBilling()" id="monthlyLabel"
@@ -1643,7 +1548,6 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     </div>
 
     <div class="new-pricing-grid reveal">
-      <!-- FREE -->
       <div class="np-card">
         <div class="np-badge-wrap np-empty"></div>
         <div class="np-tier">Free</div>
@@ -1659,12 +1563,9 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
         </ul>
         <a href="/login.html" class="np-cta np-cta-free">Start free no card needed</a>
       </div>
-
-      <!-- PRO -->
       <div class="np-card np-pro">
         <div class="np-badge-wrap"><span class="np-badge">Most Popular</span></div>
         <div class="np-tier">Pro</div>
-        
         <div class="np-price"><span class="np-amount" data-monthly="12" data-annual="10">$12</span><span class="np-mo" data-annual-note='/mo <span style="font-size:11px;color:#45de7a">(billed $120/yr)</span>'>/mo</span></div>
         <p class="np-desc">Everything you need to land interviews and ace every call. 80% of subscribers live here.</p>
         <ul class="np-features">
@@ -1679,12 +1580,9 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
         </ul>
         <a href="https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00" class="np-cta np-cta-pro" id="proCta">Start Pro $12/mo →</a>
       </div>
-
-      <!-- CAREER+ -->
       <div class="np-card">
         <div class="np-badge-wrap np-empty"></div>
         <div class="np-tier">Career+</div>
-        
         <div class="np-price"><span class="np-amount" data-monthly="24" data-annual="20">$24</span><span class="np-mo" data-annual-note='/mo <span style="font-size:11px;color:#45de7a">(billed $240/yr)</span>'>/mo</span></div>
         <p class="np-desc">For career changers and competitive roles. The full arsenal, nothing held back.</p>
         <ul class="np-features">
@@ -1702,7 +1600,6 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
       <span style="color:#45de7a">●</span> &nbsp;No contracts &nbsp;·&nbsp; <a href="https://billing.stripe.com/p/login/bJe4gAdlkddX92gfLycbC00" target="_blank" style="color:#ccc9e0;text-decoration:underline">Cancel anytime via billing portal</a>
     </p>
 
-    <!-- B2B / INSTITUTIONAL ROW -->
     <div id="b2bCard" style="margin-top:32px;background:linear-gradient(135deg,rgba(123,109,244,0.07) 0%,rgba(200,168,75,0.07) 100%);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:28px 32px;display:flex;align-items:center;gap:28px;flex-wrap:wrap" class="reveal">
       <div style="flex:1;min-width:260px">
         <div class="b2b-eyebrow" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#a498ff;margin-bottom:10px">For Universities, Bootcamps & Career Centers</div>
@@ -1715,7 +1612,6 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
       </div>
     </div>
 
-    <!-- Pricing objection handler -->
     <div style="max-width:680px;margin:32px auto 0;text-align:center;padding:0 24px">
       <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px 28px">
         <div style="font-size:15px;font-weight:700;color:#edeaf7;margin-bottom:8px">One offer. Lifetime ROI.</div>
@@ -1737,10 +1633,7 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
         <div class="tcard-quote">"Submitted 34 applications over 6 weeks. Zero callbacks. Ran my resume through PREPT Match and found out I was missing 11 keywords the ATS was scanning for. Fixed it in 20 minutes. <em>Got 3 callbacks in the next 10 days.</em>"</div>
         <div class="tcard-person">
           <div class="tcard-avatar" style="background:var(--vi)">R</div>
-          <div>
-            <div class="tcard-name">Rolando M. San Antonio, TX</div>
-            <div class="tcard-role">Hired: Logistics Operations Coordinator</div>
-          </div>
+          <div><div class="tcard-name">Rolando M. San Antonio, TX</div><div class="tcard-role">Hired: Logistics Operations Coordinator</div></div>
         </div>
       </div>
       <div class="tcard">
@@ -1749,10 +1642,7 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
         <div class="tcard-quote">"Had a final round at a healthcare company I really wanted. Used PREPT Live on my tablet during the Zoom. When they asked about a challenge I overcame an answer that always tripped me up <em>the coached answer came up in 2 seconds and it was exactly right.</em> Got the offer."</div>
         <div class="tcard-person">
           <div class="tcard-avatar" style="background:var(--gold)">A</div>
-          <div>
-            <div class="tcard-name">Amara J. Houston, TX</div>
-            <div class="tcard-role">Hired: Patient Care Coordinator, $58K</div>
-          </div>
+          <div><div class="tcard-name">Amara J. Houston, TX</div><div class="tcard-role">Hired: Patient Care Coordinator, $58K</div></div>
         </div>
       </div>
       <div class="tcard">
@@ -1761,41 +1651,25 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
         <div class="tcard-quote">"I was transitioning from warehouse management to corporate supply chain. PREPT Match rewrote my entire resume to use operations language instead of floor language. <em>Two companies told me my resume stood out specifically.</em> First corporate role at 38."</div>
         <div class="tcard-person">
           <div class="tcard-avatar" style="background:var(--cy)">D</div>
-          <div>
-            <div class="tcard-name">Derek W. Atlanta, GA</div>
-            <div class="tcard-role">Hired: Supply Chain Analyst, +$22K salary increase</div>
-          </div>
+          <div><div class="tcard-name">Derek W. Atlanta, GA</div><div class="tcard-role">Hired: Supply Chain Analyst, +$22K salary increase</div></div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-
 <!-- LEAVE A REVIEW -->
 <section style="position:relative;z-index:1;background:var(--s1);padding:72px 24px;overflow:hidden">
-  <!-- Background glow -->
   <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(0,182,122,0.07) 0%,transparent 65%);pointer-events:none"></div>
   <div style="max-width:780px;margin:0 auto;position:relative;z-index:1">
-    <!-- Card -->
     <div style="background:linear-gradient(135deg,rgba(0,182,122,0.06) 0%,rgba(123,109,244,0.06) 100%);border:1px solid rgba(0,182,122,0.25);border-radius:24px;padding:48px 40px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.3)">
-      <!-- Trustpilot stars -->
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px">
-        <div style="width:28px;height:28px;background:#00b67a;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.9 9.1H22.5L16.8 13.8L18.9 21L12 16.9L5.1 21L7.2 13.8L1.5 9.1H9.1L12 2Z" fill="white"/></svg>
-        </div>
+        <div style="width:28px;height:28px;background:#00b67a;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.9 9.1H22.5L16.8 13.8L18.9 21L12 16.9L5.1 21L7.2 13.8L1.5 9.1H9.1L12 2Z" fill="white"/></svg></div>
         <div style="font-size:18px;font-weight:900;color:#edeaf7;font-family:'Bricolage Grotesque',sans-serif;letter-spacing:-0.3px">Trustpilot</div>
-        <div style="display:flex;gap:3px">
-          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
-          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
-          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
-          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
-          <span style="color:#00b67a;font-size:22px;line-height:1">★</span>
-        </div>
+        <div style="display:flex;gap:3px"><span style="color:#00b67a;font-size:22px;line-height:1">★</span><span style="color:#00b67a;font-size:22px;line-height:1">★</span><span style="color:#00b67a;font-size:22px;line-height:1">★</span><span style="color:#00b67a;font-size:22px;line-height:1">★</span><span style="color:#00b67a;font-size:22px;line-height:1">★</span></div>
       </div>
       <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-1px;color:#edeaf7;line-height:1.1;margin-bottom:14px">Did PREPT AI help you land the role?</h2>
       <p style="font-size:16px;color:#ccc9e0;line-height:1.7;max-width:520px;margin:0 auto 32px">Your review helps other job seekers find the tool that gives them the same advantage. It takes 60 seconds and means everything to us.</p>
-      <!-- CTA Button -->
       <a href="https://www.trustpilot.com/review/preptai.co" target="_blank" rel="noopener"
         style="display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:#00b67a;color:#ffffff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:800;text-decoration:none;transition:all 0.2s;box-shadow:0 6px 24px rgba(0,182,122,0.35);letter-spacing:0.2px"
         onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 32px rgba(0,182,122,0.5)'"
@@ -1814,62 +1688,28 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     <div class="section-eyebrow reveal">FAQ</div>
     <h2 class="section-title reveal">Common questions.</h2>
     <div class="faq-list reveal">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is this actually legal to use during an interview?</div><div class="faq-a">Yes and this question matters, so here's the honest answer. Using PREPT Live is equivalent to having notes next to your monitor, which interviewers know candidates do. You are not fabricating experience or misrepresenting yourself. You are using a tool to articulate what you already know clearly and confidently. Interviewers themselves use evaluation checklists, question scripts, and scoring rubrics during every call. The playing field was already unequal. PREPT AI levels it.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Will the resume rewriter make my resume sound generic?</div><div class="faq-a">No and this is specifically what we designed against. PREPT AI rewrites using your actual experience as the foundation. It inserts the keywords the ATS is scanning for, but threads them into sentences built around your real background, not templates. The summary and bullets still sound like you just you with the right vocabulary for the job.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How does PREPT AI actually work during a Zoom call?</div><div class="faq-a">You open PREPT AI on a second monitor, a tablet, or your phone somewhere the interviewer's camera cannot see it. Enable continuous listen mode and the mic stays hot automatically. When the interviewer finishes asking a question, it detects it and starts generating your answer immediately no tapping required. The coached answer appears in 2-3 seconds.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is my resume data stored or shared?</div><div class="faq-a">No. Your resume content and job description are processed in real time to generate your analysis and rewrites. They are not stored on our servers, sold, or used to train AI models. The analysis exists only for your session.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</div><div class="faq-a">Yes. No contracts, no cancellation fees. Cancel from your account settings and your access continues until the end of your billing period. We want you to stay because PREPT AI works, not because canceling is difficult.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What sectors does PREPT Live cover?</div><div class="faq-a">16 sectors currently: General, Technology, Healthcare, Legal, Finance, Sales, Real Estate, Property Management, Retail, Logistics, Education, Hospitality, Customer Service, Skilled Trades, Admin/Office, and Remote Work. Within each sector you can specify your exact job title for even more targeted coaching.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Can I use AI assistance during a live job interview?</div><div class="faq-a">Yes. Using notes, research, and reference material during an interview is standard practice. Interviewers use scoring rubrics and question scripts themselves. PREPT AI helps you articulate your genuine qualifications clearly and confidently. You are not fabricating experience ,  you are communicating it better. Phone Companion Mode runs on a separate physical device, which is invisible to any screen sharing software.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Is PREPT AI detectable during a Zoom, Teams, or Meet interview?</div><div class="faq-a">No. Phone Companion Mode runs on your physical phone placed beside your laptop. No screen sharing software, proctoring tool, or browser extension can detect a separate physical device. It is physically invisible by definition. If you use it on a second monitor or browser tab, that is your choice ,  but the phone is undetectable in all circumstances.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the difference between Pro and Career+?</div><div class="faq-a">Pro ($12/mo) includes everything: unlimited live coaching, ATS resume optimizer, cover letter generator, LinkedIn optimizer, mock interviews, progress tracking, filler word detection, and application tracker. Career+ ($24/mo) adds three advanced features on top: salary negotiation coaching with a word-for-word counter-offer script, Duo Mode (invite a coach or mentor to see your questions live), and one-way video interview coach for HireVue-style prep.</div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Does PREPT AI work on iPhone, Android, Mac, and Windows?</div><div class="faq-a">Yes. PREPT AI runs entirely in your web browser ,  no download or install required. It works on Chrome and Edge on any device. For Phone Companion Mode during interviews, iOS and Android are both fully supported. Safari on iPhone has limited Web Speech API support, so Chrome on iPhone or any Android browser is recommended for the live coach.</div></div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Is this actually legal to use during an interview?</div>
-        <div class="faq-a">Yes and this question matters, so here's the honest answer. Using PREPT Live is equivalent to having notes next to your monitor, which interviewers know candidates do. You are not fabricating experience or misrepresenting yourself. You are using a tool to articulate what you already know clearly and confidently. Interviewers themselves use evaluation checklists, question scripts, and scoring rubrics during every call. The playing field was already unequal. PREPT AI levels it.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">How do I optimize my resume for ATS in 2026?</div>
+        <div class="faq-a">Paste your resume and the job description into PREPT AI Match. It scores your match from 0-100, identifies every missing keyword the ATS is scanning for, rewrites your summary and bullet points using the right language, and shows your projected score after optimization. Most users go from a failing score to 80+ in under 20 minutes. The most common mistake is using the wrong job title ,  if the posting says "Logistics Coordinator" and your resume says "Logistics Specialist," you get filtered out automatically.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Will the resume rewriter make my resume sound generic?</div>
-        <div class="faq-a">No and this is specifically what we designed against. PREPT AI rewrites using your actual experience as the foundation. It inserts the keywords the ATS is scanning for, but threads them into sentences built around your real background, not templates. The summary and bullets still sound like you just you with the right vocabulary for the job.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">How does salary negotiation coaching work?</div>
+        <div class="faq-a">Enter your job offer, role, location, and years of experience. PREPT AI gives you a specific counter-offer range based on compensation data, a word-for-word script to deliver it, and three power phrases that shift the conversation in your favor. Career+ feature. The average user negotiates $8,000-$22,000 more than their initial offer when they go in with a specific number and a script rather than a vague ask.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How does PREPT AI actually work during a Zoom call?</div>
-        <div class="faq-a">You open PREPT AI on a second monitor, a tablet, or your phone somewhere the interviewer's camera cannot see it. Enable continuous listen mode and the mic stays hot automatically. When the interviewer finishes asking a question, it detects it and starts generating your answer immediately no tapping required. The coached answer appears in 2-3 seconds.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">What is STAR format and why does it matter?</div>
+        <div class="faq-a">STAR stands for Situation, Task, Action, Result. It is the structure that trained interviewers are explicitly scoring your answers against. Every behavioral question ,  "tell me about a time you," "describe a situation where you" ,  is designed to elicit a STAR response. PREPT AI structures every coached answer in STAR format automatically so your answers hit every point an interviewer is looking for, even under pressure.</div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Is my resume data stored or shared?</div>
-        <div class="faq-a">No. Your resume content and job description are processed in real time to generate your analysis and rewrites. They are not stored on our servers, sold, or used to train AI models. The analysis exists only for your session.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime?</div>
-        <div class="faq-a">Yes. No contracts, no cancellation fees. Cancel from your account settings and your access continues until the end of your billing period. We want you to stay because PREPT AI works, not because canceling is difficult.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What sectors does PREPT Live cover?</div>
-        <div class="faq-a">16 sectors currently: General, Technology, Healthcare, Legal, Finance, Sales, Real Estate, Property Management, Retail, Logistics, Education, Hospitality, Customer Service, Skilled Trades, Admin/Office, and Remote Work. Within each sector you can specify your exact job title for even more targeted coaching.</div>
-      </div>
-        <div class="faq-item">
-          <div class="faq-q">Can I use AI assistance during a live job interview?</div>
-          <div class="faq-a">Yes. Using notes, research, and reference material during an interview is standard practice. Interviewers use scoring rubrics and question scripts themselves. PREPT AI helps you articulate your genuine qualifications clearly and confidently. You are not fabricating experience ,  you are communicating it better. Phone Companion Mode runs on a separate physical device, which is invisible to any screen sharing software.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Is PREPT AI detectable during a Zoom, Teams, or Meet interview?</div>
-          <div class="faq-a">No. Phone Companion Mode runs on your physical phone placed beside your laptop. No screen sharing software, proctoring tool, or browser extension can detect a separate physical device. It is physically invisible by definition. If you use it on a second monitor or browser tab, that is your choice ,  but the phone is undetectable in all circumstances.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">What is the difference between Pro and Career+?</div>
-          <div class="faq-a">Pro ($12/mo) includes everything: unlimited live coaching, ATS resume optimizer, cover letter generator, LinkedIn optimizer, mock interviews, progress tracking, filler word detection, and application tracker. Career+ ($24/mo) adds three advanced features on top: salary negotiation coaching with a word-for-word counter-offer script, Duo Mode (invite a coach or mentor to see your questions live), and one-way video interview coach for HireVue-style prep.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">How do I optimize my resume for ATS in 2026?</div>
-          <div class="faq-a">Paste your resume and the job description into PREPT AI Match. It scores your match from 0-100, identifies every missing keyword the ATS is scanning for, rewrites your summary and bullet points using the right language, and shows your projected score after optimization. Most users go from a failing score to 80+ in under 20 minutes. The most common mistake is using the wrong job title ,  if the posting says "Logistics Coordinator" and your resume says "Logistics Specialist," you get filtered out automatically.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">Does PREPT AI work on iPhone, Android, Mac, and Windows?</div>
-          <div class="faq-a">Yes. PREPT AI runs entirely in your web browser ,  no download or install required. It works on Chrome and Edge on any device. For Phone Companion Mode during interviews, iOS and Android are both fully supported. Safari on iPhone has limited Web Speech API support, so Chrome on iPhone or any Android browser is recommended for the live coach.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">How does salary negotiation coaching work?</div>
-          <div class="faq-a">Enter your job offer, role, location, and years of experience. PREPT AI gives you a specific counter-offer range based on compensation data, a word-for-word script to deliver it, and three power phrases that shift the conversation in your favor. Career+ feature. The average user negotiates $8,000-$22,000 more than their initial offer when they go in with a specific number and a script rather than a vague ask.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">What is STAR format and why does it matter?</div>
-          <div class="faq-a">STAR stands for Situation, Task, Action, Result. It is the structure that trained interviewers are explicitly scoring your answers against. Every behavioral question ,  "tell me about a time you," "describe a situation where you" ,  is designed to elicit a STAR response. PREPT AI structures every coached answer in STAR format automatically so your answers hit every point an interviewer is looking for, even under pressure.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q">What is a one-way video interview and how does PREPT AI help?</div>
-          <div class="faq-a">One-way video interviews (HireVue, Spark Hire, Vidyard) ask you to record answers to questions on a deadline ,  no live interviewer. 60% of Fortune 500 companies now screen candidates this way before any human call. PREPT AI's video coach helps you build and rehearse strong answers before you record, so you go in with a memorized, polished response rather than improvising on camera.</div>
-        </div>
     </div>
   </div>
 </section>
@@ -1891,7 +1731,7 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     <div style="margin-top:16px;font-size:13px;color:var(--tx3)">
       <span style="color:#45de7a">●</span> &nbsp;Free tier always available &nbsp;·&nbsp; Upgrade only when you see the value
     </div>
-    </div>
+  </div>
 </div>
 
 <!-- TRUST BAR -->
@@ -1905,29 +1745,13 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
       <div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">Excellent</div><div class="trust-item-label">Rated by early users</div></div>
     </a>
     <div class="trust-divider"></div>
-    <div class="trust-item">
-      <div class="trust-item-icon">👥</div>
-      <div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">Job seekers trust PREPT AI</div><div class="trust-item-label">To get past the algorithm</div></div>
-    </div>
+    <div class="trust-item"><div class="trust-item-icon">👥</div><div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">Job seekers trust PREPT AI</div><div class="trust-item-label">To get past the algorithm</div></div></div>
     <div class="trust-divider"></div>
-    <div class="trust-item">
-      <div class="trust-item-icon" style="color:#635bff"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg></div>
-      <div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">Secured by Stripe</div><div class="trust-item-label">256-bit SSL encryption</div></div>
-    </div>
+    <div class="trust-item"><div class="trust-item-icon" style="color:#635bff"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg></div><div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">Secured by Stripe</div><div class="trust-item-label">256-bit SSL encryption</div></div></div>
     <div class="trust-divider"></div>
-    <div class="trust-item">
-      <div class="tp-logo">
-        <div class="tp-logo-icon" style="font-size:16px">🔒</div>
-        <div><div class="tp-logo-text">Privacy First</div><div class="trust-stars" style="font-size:11px;letter-spacing:0;color:#45de7a">Zero breaches</div></div>
-      </div>
-      <div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">0 data breaches, ever</div><div class="trust-item-label">No data stored on our servers</div></div>
-    </div>
+    <div class="trust-item"><div class="tp-logo"><div class="tp-logo-icon" style="font-size:16px">🔒</div><div><div class="tp-logo-text">Privacy First</div><div class="trust-stars" style="font-size:11px;letter-spacing:0;color:#45de7a">Zero breaches</div></div></div><div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">0 data breaches, ever</div><div class="trust-item-label">No data stored on our servers</div></div></div>
     <div class="trust-divider"></div>
-    <div class="trust-item">
-      <div class="trust-item-icon">🌐</div>
-      <div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">Used in 50+ industries</div><div class="trust-item-label">From legal to logistics</div></div>
-    </div>
-
+    <div class="trust-item"><div class="trust-item-icon">🌐</div><div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">Used in 50+ industries</div><div class="trust-item-label">From legal to logistics</div></div></div>
   </div>
 </div>
 
@@ -1937,59 +1761,14 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tx3);margin-bottom:14px">Follow PREPT AI</div>
     <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:var(--tx);letter-spacing:-0.5px;margin-bottom:8px">Stay in the loop.</div>
     <div style="font-size:14px;color:var(--tx2);margin-bottom:28px;line-height:1.6">Tips, feature updates, and career advice for job seekers.</div>
-    <svg width="0" height="0" style="position:absolute">
-      <defs>
-        <linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" style="stop-color:#f09433"/>
-          <stop offset="50%" style="stop-color:#dc2743"/>
-          <stop offset="100%" style="stop-color:#bc1888"/>
-        </linearGradient>
-      </defs>
-    </svg>
-    <div style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:nowrap;max-width:980px;margin:0 auto;overflow-x:auto;padding-bottom:4px">
-
-      <a href="https://www.linkedin.com/company/preptai" target="_blank" rel="noopener" title="LinkedIn"
-        style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(10,102,194,0.1);border:1px solid rgba(10,102,194,0.25);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0"
-        onmouseover="this.style.background='rgba(10,102,194,0.22)'" onmouseout="this.style.background='rgba(10,102,194,0.1)'">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#0a66c2">LinkedIn</span>
-      </a>
-
-      <a href="https://x.com/preptai" target="_blank" rel="noopener" title="X"
-        style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.07);border:1px solid rgba(0,0,0,0.15);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0"
-        onmouseover="this.style.background='rgba(0,0,0,0.13)'" onmouseout="this.style.background='rgba(0,0,0,0.07)'">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="#000000"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#000000">X</span>
-      </a>
-
-      <a href="https://www.instagram.com/preptai" target="_blank" rel="noopener" title="Instagram"
-        style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(225,48,108,0.08);border:1px solid rgba(225,48,108,0.25);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0"
-        onmouseover="this.style.background='rgba(225,48,108,0.18)'" onmouseout="this.style.background='rgba(225,48,108,0.08)'">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="url(#igGrad)"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-        <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#e1306c">Instagram</span>
-      </a>
-
-      <a href="https://www.facebook.com/preptai" target="_blank" rel="noopener" title="Facebook"
-        style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(24,119,242,0.08);border:1px solid rgba(24,119,242,0.25);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0"
-        onmouseover="this.style.background='rgba(24,119,242,0.18)'" onmouseout="this.style.background='rgba(24,119,242,0.08)'">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#1877f2">Facebook</span>
-      </a>
-
-      <a href="https://www.tiktok.com/@preptai" target="_blank" rel="noopener" title="TikTok"
-        style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.07);border:1px solid rgba(0,0,0,0.15);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0"
-        onmouseover="this.style.background='rgba(0,0,0,0.13)'" onmouseout="this.style.background='rgba(0,0,0,0.07)'">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="#000000"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
-        <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#000000">TikTok</span>
-      </a>
-
-      <a href="https://www.youtube.com/@PreptAILive" target="_blank" rel="noopener" title="YouTube"
-        style="display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:10px;background:rgba(255,0,0,0.08);border:1px solid rgba(255,0,0,0.22);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0"
-        onmouseover="this.style.background='rgba(255,0,0,0.18)'" onmouseout="this.style.background='rgba(255,0,0,0.08)'">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="#ff0000"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        <span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#ff0000">YouTube</span>
-      </a>
-
+    <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#f09433"/><stop offset="50%" style="stop-color:#dc2743"/><stop offset="100%" style="stop-color:#bc1888"/></linearGradient></defs></svg>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;max-width:980px;margin:0 auto">
+      <a href="https://www.linkedin.com/company/preptai" target="_blank" rel="noopener" title="LinkedIn" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(10,102,194,0.1);border:1px solid rgba(10,102,194,0.25);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0" onmouseover="this.style.background='rgba(10,102,194,0.22)'" onmouseout="this.style.background='rgba(10,102,194,0.1)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#0a66c2">LinkedIn</span></a>
+      <a href="https://x.com/preptai" target="_blank" rel="noopener" title="X" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.07);border:1px solid rgba(0,0,0,0.15);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0" onmouseover="this.style.background='rgba(0,0,0,0.13)'" onmouseout="this.style.background='rgba(0,0,0,0.07)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="#000000"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#000000">X</span></a>
+      <a href="https://www.instagram.com/preptai" target="_blank" rel="noopener" title="Instagram" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(225,48,108,0.08);border:1px solid rgba(225,48,108,0.25);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0" onmouseover="this.style.background='rgba(225,48,108,0.18)'" onmouseout="this.style.background='rgba(225,48,108,0.08)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="url(#igGrad)"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg><span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#e1306c">Instagram</span></a>
+      <a href="https://www.facebook.com/preptai" target="_blank" rel="noopener" title="Facebook" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(24,119,242,0.08);border:1px solid rgba(24,119,242,0.25);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0" onmouseover="this.style.background='rgba(24,119,242,0.18)'" onmouseout="this.style.background='rgba(24,119,242,0.08)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg><span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#1877f2">Facebook</span></a>
+      <a href="https://www.tiktok.com/@preptai" target="_blank" rel="noopener" title="TikTok" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.07);border:1px solid rgba(0,0,0,0.15);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0" onmouseover="this.style.background='rgba(0,0,0,0.13)'" onmouseout="this.style.background='rgba(0,0,0,0.07)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="#000000"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg><span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#000000">TikTok</span></a>
+      <a href="https://www.youtube.com/@PreptAILive" target="_blank" rel="noopener" title="YouTube" style="display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border-radius:10px;background:rgba(255,0,0,0.08);border:1px solid rgba(255,0,0,0.22);text-decoration:none;transition:all 0.2s;white-space:nowrap;flex-shrink:0" onmouseover="this.style.background='rgba(255,0,0,0.18)'" onmouseout="this.style.background='rgba(255,0,0,0.08)'"><svg width="15" height="15" viewBox="0 0 24 24" fill="#ff0000"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><span style="font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;color:#ff0000">YouTube</span></a>
     </div>
   </div>
 </section>
@@ -2001,7 +1780,7 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-1px;color:var(--tx);line-height:1.1;margin-bottom:14px">Know someone job hunting?<br><span style="color:var(--gold2)">Send them PREPT AI.</span></div>
     <div style="font-size:16px;color:var(--tx2);line-height:1.7;margin-bottom:28px">Share your personal link and help someone land their next role. Every referral means one more person with a fair shot.</div>
     <div style="display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;background:var(--s2);border:1px solid var(--b2);border-radius:10px;overflow:hidden;max-width:360px;width:100%">
+      <div style="display:flex;align-items:center;background:var(--s2);border:1px solid var(--b2);border-radius:10px;overflow:hidden;width:100%;max-width:400px">
         <span style="padding:12px 16px;font-size:13px;color:var(--tx3);font-family:'JetBrains Mono',monospace;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis" id="referralLink">Sign in to get your personal referral link</span>
         <button onclick="copyReferral()" style="padding:12px 18px;background:var(--gold);color:#06060d;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s" onmouseover="this.style.background='#e6c668'" onmouseout="this.style.background='var(--gold)'" id="referralCopyBtn">Copy link</button>
       </div>
@@ -2019,29 +1798,15 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     </div>
     <div>
       <div class="footer-col-title">Product</div>
-      <div class="footer-links">
-        <a href="/prept_v2.html">PREPT AI Live</a>
-        <a href="/prept_match_v2.html">PREPT AI Match</a>
-        <a href="#pricing">Pricing</a>
-        <a href="/changelog.html">Changelog</a>
-      </div>
+      <div class="footer-links"><a href="/prept_v2.html">PREPT AI Live</a><a href="/prept_match_v2.html">PREPT AI Match</a><a href="#pricing">Pricing</a><a href="/changelog.html">Changelog</a></div>
     </div>
     <div>
       <div class="footer-col-title">Company</div>
-      <div class="footer-links">
-        <a href="mailto:support@preptai.co?subject=About PREPT AI">About</a>
-        <a href="/blog.html">Blog</a>
-        <a href="/contact.html">Contact Us</a>
-        <a href="mailto:support@preptai.co?subject=Team%20Pricing">Team Pricing</a>
-      </div>
+      <div class="footer-links"><a href="mailto:support@preptai.co?subject=About PREPT AI">About</a><a href="/blog.html">Blog</a><a href="/contact.html">Contact Us</a><a href="mailto:support@preptai.co?subject=Team%20Pricing">Team Pricing</a></div>
     </div>
     <div>
       <div class="footer-col-title">Legal</div>
-      <div class="footer-links">
-        <a href="/privacy.html">Privacy Policy</a>
-        <a href="/terms.html">Terms of Service</a>
-        <a href="/privacy.html">Cookie Policy</a>
-      </div>
+      <div class="footer-links"><a href="/privacy.html">Privacy Policy</a><a href="/terms.html">Terms of Service</a><a href="/privacy.html">Cookie Policy</a></div>
     </div>
   </div>
   <div class="footer-bottom">
@@ -2058,42 +1823,19 @@ window.addEventListener('scroll', () => {
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
 });
 
-// Billing toggle
 let isAnnual = false;
 function toggleBilling() {
   isAnnual = !isAnnual;
-  const knob    = document.getElementById('billingKnob');
-  const toggle  = document.getElementById('billingToggle');
   const monthly = document.getElementById('monthlyLabel');
   const annual  = document.getElementById('annualLabel');
-  // Button pill style toggle
-  if (monthly) {
-    monthly.style.background = isAnnual ? 'transparent' : '#edeaf7';
-    monthly.style.color      = isAnnual ? '#6b6882' : '#06060d';
-  }
-  if (annual) {
-    annual.style.background = isAnnual ? '#7b6df4' : 'transparent';
-    annual.style.color      = isAnnual ? '#fff' : '#6b6882';
-  }
-  // Update prices
-  document.querySelectorAll('.np-amount[data-monthly]').forEach(el => {
-    el.textContent = '$' + (isAnnual ? el.dataset.annual : el.dataset.monthly);
-  });
-  // Update CTA links to annual or monthly Stripe checkout
-  const proLink    = document.getElementById('proCta');
+  if (monthly) { monthly.style.background = isAnnual ? 'transparent' : '#edeaf7'; monthly.style.color = isAnnual ? '#6b6882' : '#06060d'; }
+  if (annual)  { annual.style.background = isAnnual ? '#7b6df4' : 'transparent'; annual.style.color = isAnnual ? '#fff' : '#6b6882'; }
+  document.querySelectorAll('.np-amount[data-monthly]').forEach(el => { el.textContent = '$' + (isAnnual ? el.dataset.annual : el.dataset.monthly); });
+  const proLink = document.getElementById('proCta');
   const careerLink = document.getElementById('careerCta');
-  if (proLink) proLink.href = isAnnual
-    ? 'https://buy.stripe.com/6oUbJ26WWa1LcesdDqcbC03'
-    : 'https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00';
-  if (careerLink) careerLink.href = isAnnual
-    ? 'https://buy.stripe.com/aFaeVe2GGddX0vK7f2cbC01'
-    : 'https://buy.stripe.com/fZu00k8104Hr4M09nacbC04';
-  document.querySelectorAll('.np-mo[data-annual-note]').forEach(el => {
-    el.innerHTML = isAnnual ? el.dataset.annualNote : '/mo';
-  });
-  // Update trial pills
-
-  // Update CTA button text
+  if (proLink) proLink.href = isAnnual ? 'https://buy.stripe.com/6oUbJ26WWa1LcesdDqcbC03' : 'https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00';
+  if (careerLink) careerLink.href = isAnnual ? 'https://buy.stripe.com/aFaeVe2GGddX0vK7f2cbC01' : 'https://buy.stripe.com/fZu00k8104Hr4M09nacbC04';
+  document.querySelectorAll('.np-mo[data-annual-note]').forEach(el => { el.innerHTML = isAnnual ? el.dataset.annualNote : '/mo'; });
   const proCta = document.querySelector('.np-cta-pro');
   if (proCta) proCta.textContent = isAnnual ? 'Start Pro $120/yr →' : 'Start Pro →';
   const careerCta = document.querySelector('.np-cta-career');
@@ -2105,17 +1847,10 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-function toggleFaq(el) {
-  el.parentElement.classList.toggle('open');
-}
+function toggleFaq(el) { el.parentElement.classList.toggle('open'); }
 
 const steps = document.querySelectorAll('.how-step');
-steps.forEach(s => {
-  s.addEventListener('click', () => {
-    steps.forEach(x => x.classList.remove('active'));
-    s.classList.add('active');
-  });
-});
+steps.forEach(s => { s.addEventListener('click', () => { steps.forEach(x => x.classList.remove('active')); s.classList.add('active'); }); });
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2141,31 +1876,17 @@ steps.forEach(s => {
     });
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) logoutBtn.style.display = 'inline-flex';
-
-    // Personalize referral link with user identifier
     const refEl = document.getElementById('referralLink');
-    if (refEl && user.email) {
-      const refCode = btoa(user.email).replace(/=/g,'').slice(0,8);
-      refEl.textContent = 'https://preptai.co?ref=' + refCode;
-    }
+    if (refEl && user.email) { const refCode = btoa(user.email).replace(/=/g,'').slice(0,8); refEl.textContent = 'https://preptai.co?ref=' + refCode; }
   } catch(e) {}
 })();
 
 function copyReferral() {
   const btn = document.getElementById('referralCopyBtn');
   const refEl = document.getElementById('referralLink');
-  // Personalize with user email if signed in
-  if (window.__preptUser?.email) {
-    const code = btoa(window.__preptUser.email).replace(/[=+/]/g, '').slice(0, 12);
-    refEl.textContent = 'https://preptai.co?ref=' + code;
-  }
+  if (window.__preptUser?.email) { const code = btoa(window.__preptUser.email).replace(/[=+/]/g, '').slice(0, 12); refEl.textContent = 'https://preptai.co?ref=' + code; }
   const link = refEl.textContent.trim();
-  navigator.clipboard.writeText(link).then(() => {
-    btn.textContent = '✓ Copied!';
-    setTimeout(() => btn.textContent = 'Copy link', 2000);
-  }).catch(() => {
-    prompt('Copy this link:', link);
-  });
+  navigator.clipboard.writeText(link).then(() => { btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = 'Copy link', 2000); }).catch(() => { prompt('Copy this link:', link); });
 }
 
 async function handleLogout(e) {
@@ -2179,33 +1900,28 @@ async function handleLogout(e) {
   } catch(err) { window.location.reload(); }
 }
 </script>
+
 <div id="stickyBar" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(7,7,14,0.97);border-top:1px solid rgba(200,168,75,0.2);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;backdrop-filter:blur(20px);flex-wrap:wrap">
   <div style="font-size:14px;font-weight:600;color:#edeaf7">Start free no card required.</div>
-  <div style="display:flex;gap:10px;flex-shrink:0">
+  <div style="display:flex;gap:10px;flex-shrink:0;align-items:center">
     <a href="/prept_v2.html" style="padding:9px 20px;background:#7b6df4;color:#fff;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;transition:background 0.2s" onmouseover="this.style.background='#9488ff'" onmouseout="this.style.background='#7b6df4'">Try Live →</a>
     <a href="/prept_match_v2.html" style="padding:9px 20px;background:rgba(200,168,75,0.12);border:1px solid rgba(200,168,75,0.3);color:#e6c668;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap" onmouseover="this.style.background='rgba(200,168,75,0.22)'" onmouseout="this.style.background='rgba(200,168,75,0.12)'">Optimize Resume →</a>
-    <button onclick="document.getElementById('stickyBar').style.display='none';sessionStorage.setItem('barDismissed','1')" style="background:none;border:none;color:#8a87a0;cursor:pointer;font-size:20px;padding:0 4px;line-height:1">×</button>
+    <button onclick="document.getElementById('stickyBar').style.display='none';sessionStorage.setItem('barDismissed','1')" style="background:none;border:none;color:#8a87a0;cursor:pointer;font-size:20px;padding:0 4px;line-height:1;flex-shrink:0">×</button>
   </div>
 </div>
 <script>
-// Show sticky bar after scrolling past hero, hide near footer
 (function(){
   const bar = document.getElementById('stickyBar');
   if (!bar || sessionStorage.getItem('barDismissed')) return;
   let shown = false;
   window.addEventListener('scroll', () => {
     const scrollPct = window.scrollY / document.body.scrollHeight;
-    if (scrollPct > 0.18 && scrollPct < 0.88 && !shown) {
-      bar.style.display = 'flex';
-      shown = true;
-    } else if ((scrollPct <= 0.18 || scrollPct >= 0.88)) {
-      bar.style.display = 'none';
-    }
+    if (scrollPct > 0.18 && scrollPct < 0.88 && !shown) { bar.style.display = 'flex'; shown = true; }
+    else if ((scrollPct <= 0.18 || scrollPct >= 0.88)) { bar.style.display = 'none'; }
   }, { passive: true });
 })();
 </script>
 <script>
-// Light/dark mode toggle
 let isLight = localStorage.getItem('preptTheme') === 'light';
 function applyTheme() {
   document.documentElement.classList.toggle('light', isLight);
@@ -2222,11 +1938,7 @@ function applyTheme() {
     btn.onmouseout  = () => btn.style.background = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
   }
 }
-function toggleTheme() {
-  isLight = !isLight;
-  localStorage.setItem('preptTheme', isLight ? 'light' : 'dark');
-  applyTheme();
-}
+function toggleTheme() { isLight = !isLight; localStorage.setItem('preptTheme', isLight ? 'light' : 'dark'); applyTheme(); }
 applyTheme();
 </script>
 </body>
