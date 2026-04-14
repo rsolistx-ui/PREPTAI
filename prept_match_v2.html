@@ -389,6 +389,7 @@ footer span{color:var(--gold);font-weight:600}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module" id="pdfjs-script"></script>
   <link rel="canonical" href="https://www.preptai.co/prept_match_v2.html">
 </head>
 <body>
@@ -462,6 +463,12 @@ footer span{color:var(--gold);font-weight:600}
             <div class="ordiv">or paste text</div>
             <textarea class="bta" id="resumeText" placeholder="Paste your full resume here contact info, summary, experience, education, skills..." oninput="updateCC('resumeText','rcc')"></textarea>
             <div class="cc" id="rcc">0 characters</div>
+            <!-- RESUME VERSIONING -->
+            <div style="display:flex;gap:6px;margin-top:8px">
+              <button onclick="saveResumeVersion()" style="flex:1;padding:7px 10px;background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.25);color:#a498ff;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(123,109,244,0.18)'" onmouseout="this.style.background='rgba(123,109,244,0.1)'">💾 Save version</button>
+              <button onclick="toggleVersionsPanel()" id="versionsToggle" style="padding:7px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:#8a87a0;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.color='#edeaf7'" onmouseout="this.style.color='#8a87a0'">📂 Saved</button>
+            </div>
+            <div id="versionsPanel" style="display:none;margin-top:8px"></div>
           </div>
         </div>
         <div class="ucard">
@@ -473,6 +480,12 @@ footer span{color:var(--gold);font-weight:600}
             <textarea class="bta" id="jobText" placeholder="Paste the complete job description title, responsibilities, requirements, preferred qualifications, company overview..." oninput="updateCC('jobText','jcc')" style="min-height:300px;flex:1"></textarea>
             <div class="cc" id="jcc">0 characters</div>
             <div class="pro-tip"><strong style="color:var(--am)">💡 Pro tip:</strong> Copy the entire posting including the company section. ATS systems often pull keywords from the company description, not just the requirements list.</div>
+            <!-- COMPANY RESEARCH IN MATCH PAGE -->
+            <div style="margin-top:10px;display:flex;gap:6px;align-items:center">
+              <input id="matchCompanyInput" placeholder="Company name (for cover letter intel)" type="text" style="flex:1;background:var(--inp-bg,#111120);border:1px solid rgba(255,255,255,0.09);color:#edeaf7;font-family:'Outfit',sans-serif;font-size:12px;padding:7px 10px;border-radius:7px;outline:none" oninput="matchClearIntel()"/>
+              <button onclick="matchResearchCompany()" id="matchResearchBtn" style="padding:7px 11px;background:rgba(56,217,192,0.08);border:1px solid rgba(56,217,192,0.22);color:#38d9c0;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;border-radius:7px;cursor:pointer;white-space:nowrap">🔍 Research</button>
+            </div>
+            <div id="matchIntelCard" style="display:none;margin-top:6px;padding:10px 12px;background:rgba(56,217,192,0.05);border:1px solid rgba(56,217,192,0.18);border-radius:8px;font-size:12px;color:#ccc9e0;line-height:1.6"></div>
           </div>
         </div>
       </div>
@@ -485,6 +498,7 @@ footer span{color:var(--gold);font-weight:600}
         <div class="analyze-note">🔒 Your resume is never stored or shared. Processed in real time, discarded immediately after.</div>
       </div>
     </div>
+    <div id="analysisHistory" style="display:none;max-width:800px;margin:0 auto 32px;padding:0 24px"></div>
 
     <div id="stageLoading">
       <div class="loading-ring"></div>
@@ -701,40 +715,68 @@ function dzDrag(e,on){e.preventDefault();document.getElementById('dz').classList
 function dzDrop(e){e.preventDefault();document.getElementById('dz').classList.remove('drag');const f=e.dataTransfer.files[0];if(f)processFile(f);}
 function handleFile(e){const f=e.target.files[0];if(f)processFile(f);}
 
+async function extractPdfText(arrayBuffer) {
+  // Load pdf.js dynamically (module script already loaded via CDN)
+  const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    // Preserve line structure by tracking y-position changes
+    let lastY = null;
+    for (const item of content.items) {
+      if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
+        fullText += '\n';
+      }
+      fullText += item.str + ' ';
+      lastY = item.transform[5];
+    }
+    fullText += '\n';
+  }
+  return fullText.replace(/\s{3,}/g, '  ').trim();
+}
+
 async function processFile(f) {
   if (f.size > 5 * 1024 * 1024) {
     alert('File is too large. Please upload a resume under 5MB.');
     return;
   }
   const dz = document.getElementById('dz');
+  dz.innerHTML = `<div class="dz-icon">⏳</div><div class="dz-title">Reading ${escH(f.name)}...</div><div class="dz-sub">Extracting text</div>`;
   try {
+    let text = '';
     if (f.name.endsWith('.txt')) {
-      const text = await f.text();
-      document.getElementById('resumeText').value = text;
-      updateCC('resumeText','rcc');
-      dz.innerHTML = `<div class="dz-icon">✅</div><div class="dz-title">${escH(f.name)}</div><div class="dz-sub">Text loaded</div>`;
+      text = await f.text();
+    } else if (f.name.endsWith('.pdf')) {
+      const arrayBuffer = await f.arrayBuffer();
+      text = await extractPdfText(arrayBuffer);
     } else {
-      // PDF/DOC: extract readable text
+      // DOC/DOCX: read raw bytes for readable ASCII content
       const arrayBuffer = await f.arrayBuffer();
       const bytes = new Uint8Array(arrayBuffer);
-      let text = '';
+      let raw = '';
       for (let i = 0; i < bytes.length; i++) {
         const c = bytes[i];
-        if (c >= 32 && c < 127) text += String.fromCharCode(c);
-        else if (c === 10 || c === 13) text += ' ';
+        if (c >= 32 && c < 127) raw += String.fromCharCode(c);
+        else if (c === 10 || c === 13) raw += '\n';
       }
-      const clean = text.replace(/[^\x20-\x7E\n]/g,' ').replace(/\s{3,}/g,' ').trim();
-      if (clean.length > 100) {
-        document.getElementById('resumeText').value = clean;
-        updateCC('resumeText','rcc');
-        dz.innerHTML = `<div class="dz-icon">✅</div><div class="dz-title">${escH(f.name)}</div><div class="dz-sub">Text extracted</div>`;
-      } else {
-        dz.innerHTML = `<div class="dz-icon">📄</div><div class="dz-title">${escH(f.name)}</div><div class="dz-sub" style="color:var(--am)">Please paste your resume text below for best results.</div>`;
-        showToast('For best results, paste your resume text directly.');
-      }
+      text = raw.replace(/[^\x20-\x7E\n]/g, ' ').replace(/\s{3,}/g, '  ').trim();
+    }
+
+    if (text.length > 100) {
+      document.getElementById('resumeText').value = text;
+      updateCC('resumeText','rcc');
+      dz.innerHTML = `<div class="dz-icon">✅</div><div class="dz-title">${escH(f.name)}</div><div class="dz-sub">${text.length.toLocaleString()} characters extracted</div>`;
+    } else {
+      dz.innerHTML = `<div class="dz-icon">📄</div><div class="dz-title">${escH(f.name)}</div><div class="dz-sub" style="color:var(--am)">Could not extract text — please paste your resume below.</div>`;
+      showToast('For best results, paste your resume text directly.');
     }
   } catch(err) {
-    showToast('Could not read file. Please paste your resume text instead.');
+    dz.innerHTML = `<div class="dz-icon">📄</div><div class="dz-title">Upload failed</div><div class="dz-sub" style="color:var(--re)">Please paste your resume text below instead.</div>`;
+    showToast('Could not read file — paste your resume text below.');
+    console.error('File parse error:', err);
   }
 }
 
@@ -772,31 +814,42 @@ async function runAnalysis() {
   document.getElementById('stageLoading').style.display = 'flex';
   setStep(2); animateLoading();
 
-  const prompt = `RESUME:\n${resumeContent}\n\nJOB DESCRIPTION:\n${jobContent}\n\nAnalyze this resume against this job description and return the complete JSON analysis. Make all analysis specific to the actual content provided.
+  const prompt = `RESUME:\n${resumeContent}\n\nJOB DESCRIPTION:\n${jobContent}\n\nAnalyze this resume against this job description. Every finding must reference actual content from the provided resume — no generic observations.
 
-Return ONLY this JSON structure (no markdown, no explanation):
+Return ONLY valid JSON (no markdown, no explanation):
 {
   "overallScore": 64,
   "projectedScore": 89,
   "grade": "C",
   "benchmarkNote": "Top candidates for this role typically score 85+",
-  "verdict": "2-3 sentence specific verdict about THIS resume vs THIS job",
+  "verdict": "2-3 sentence specific verdict referencing actual gaps between THIS resume and THIS job",
   "toneAnalysis": {
-    "resumeTone": "professional",
+    "resumeTone": "casual",
     "jdTone": "corporate-formal",
     "mismatch": true,
-    "mismatchNote": "Specific note about tone gap"
+    "mismatchNote": "Specific example of language mismatch from the actual resume"
   },
   "salaryData": {
     "low": "$52,000",
     "mid": "$68,000",
     "high": "$84,000",
-    "negotiationTip": "Specific negotiation tip for this role"
+    "negotiationTip": "Specific tactic for this role and market"
   },
   "sectionScores": {"summary": 50, "experience": 68, "skills": 45, "education": 82},
+  "quantificationScore": 30,
+  "quantifiedBullets": 3,
+  "totalBullets": 10,
+  "actionVerbScore": 45,
+  "formatWarnings": ["Specific format issue found, e.g. special characters detected that ATS misreads"],
+  "contactInfoIssues": ["Specific missing contact field, e.g. LinkedIn URL not found"],
+  "topPriorityFixes": [
+    {"rank": 1, "title": "Highest-impact fix title", "impact": "+X ATS points", "action": "Exact instruction"},
+    {"rank": 2, "title": "Second fix title", "impact": "+X ATS points", "action": "Exact instruction"},
+    {"rank": 3, "title": "Third fix title", "impact": "+X ATS points", "action": "Exact instruction"}
+  ],
   "keywordsFound": ["actual keyword from resume that matches JD"],
   "keywordsMissing": ["actual keyword from JD missing in resume"],
-  "keywordsCritical": ["most critical missing keywords"],
+  "keywordsCritical": ["most critical missing keywords — in job title or repeated 3+ times in JD"],
   "keywordAnalysis": "Specific analysis of the keyword gap for THIS job",
   "atsIssues": [
     {
@@ -808,22 +861,22 @@ Return ONLY this JSON structure (no markdown, no explanation):
   ],
   "weakBullets": [
     {
-      "original": "Actual bullet from the resume",
-      "rewritten": "Rewritten version with metrics and JD keywords",
-      "improvement": "Why this version is better"
+      "original": "Exact bullet copied from the resume",
+      "rewritten": "Rewritten version: strong verb + specific what + quantified result + JD keyword",
+      "improvement": "Why this version scores higher in ATS and with recruiters"
     }
   ],
-  "rewrittenSummary": "Complete rewritten professional summary incorporating JD keywords",
-  "rewrittenSkills": "Complete rewritten skills section with all missing keywords added",
-  "rewrittenExperience": "Complete rewritten experience bullets using \\n for line breaks",
+  "rewrittenSummary": "Complete rewritten professional summary with at least 4 critical keywords naturally embedded",
+  "rewrittenSkills": "Complete rewritten skills section with all missing critical keywords added",
+  "rewrittenExperience": "Complete rewritten experience bullets using \\n as line separator",
   "linkedinHeadline": "Optimized LinkedIn headline under 220 characters",
-  "linkedinAbout": "Complete LinkedIn About section 250-300 words",
-  "linkedinSkills": "Comma-separated top 10 skills",
+  "linkedinAbout": "Complete LinkedIn About section 250-300 words using \\n for paragraph breaks",
+  "linkedinSkills": "Comma-separated top 10 skills aligned to JD",
   "interviewQuestions": [
     {
-      "category": "Category label",
-      "question": "Specific question they will ask based on resume gaps",
-      "why": "Why they will ask this specific question"
+      "category": "Behavioral|Technical|Gap-based|Culture",
+      "question": "Specific question based on actual gap between resume and JD",
+      "why": "Why this will be asked — references specific gap found"
     }
   ]
 }`;
@@ -873,6 +926,19 @@ Return ONLY this JSON structure (no markdown, no explanation):
     const clean = raw.replace(/```json|```/g,'').trim();
     analysis = JSON.parse(clean);
 
+    // Save to analysis history
+    saveAnalysisHistory({
+      id:      Date.now(),
+      date:    new Date().toISOString(),
+      score:   analysis.overallScore,
+      grade:   analysis.grade,
+      verdict: analysis.verdict,
+      keywordsMissing: (analysis.keywordsMissing || []).slice(0, 6),
+      topPriorityFixes: analysis.topPriorityFixes || [],
+      resumeSnippet: resumeContent.slice(0, 120),
+      jobSnippet:    jobContent.slice(0, 80),
+    });
+
     setTimeout(() => {
       document.getElementById('stageLoading').style.display = 'none';
       const sr = document.getElementById('stageResults');
@@ -919,7 +985,7 @@ Return ONLY the cover letter text, no subject line, no labels.`;
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: prompt, mode: 'match', userEmail: userEmail || null })
+      body: JSON.stringify({ message: prompt, mode: 'coverletter', userEmail: userEmail || null, companyIntel: window.matchCompanyIntel || null, company: document.getElementById('matchCompanyInput')?.value?.trim() || '' })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Something went wrong');
@@ -953,7 +1019,7 @@ Return ONLY this JSON (no markdown):
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: prompt, mode: 'match', userEmail: userEmail || null })
+      body: JSON.stringify({ message: prompt, mode: 'linkedin', userEmail: userEmail || null, companyIntel: window.matchCompanyIntel || null, company: document.getElementById('matchCompanyInput')?.value?.trim() || '' })
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Something went wrong');
@@ -985,6 +1051,14 @@ function renderScoreBanner(r) {
   const gc = {A:'#45de7a',B:'#f5a52a',C:'#ef5f5f',D:'#ef5f5f'}[grade] || '#ef5f5f';
   const circ = 2*Math.PI*36, off = circ-(score/100)*circ;
   const sections = r.sectionScores || {};
+
+  const qScore = r.quantificationScore ?? null;
+  const avScore = r.actionVerbScore ?? null;
+  const qColor = qScore === null ? '#8a87a0' : qScore >= 70 ? '#45de7a' : qScore >= 40 ? '#f5a52a' : '#ef5f5f';
+  const avColor = avScore === null ? '#8a87a0' : avScore >= 70 ? '#45de7a' : avScore >= 40 ? '#f5a52a' : '#ef5f5f';
+
+  const priorityFixes = r.topPriorityFixes || [];
+
   document.getElementById('scoreBanner').innerHTML = `
     <div class="sc-ring">
       <svg class="sc-svg" viewBox="0 0 80 80">
@@ -995,12 +1069,38 @@ function renderScoreBanner(r) {
     </div>
     <div class="sc-info">
       <div class="sc-grade" style="color:${gc}">${grade}</div>
-      <div class="sc-label">${{A:'Excellent ATS ready',B:'Good minor fixes needed',C:'Needs work likely filtered',D:'Critical major gaps'}[grade]||'Needs improvement'}</div>
+      <div class="sc-label">${{A:'Excellent — ATS ready',B:'Good — minor fixes needed',C:'Needs work — likely filtered',D:'Critical — major gaps'}[grade]||'Needs improvement'}</div>
       <div class="sc-verdict">${escH(r.verdict||'')}</div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px">
         ${r.benchmarkNote?`<span class="sc-benchmark">⚡ ${escH(r.benchmarkNote)}</span>`:''}
         ${proj>score?`<span class="sc-proj">↑ Optimized: ~${proj}/100</span>`:''}
       </div>
+      ${qScore !== null || avScore !== null ? `
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:14px">
+        ${qScore !== null ? `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 14px;text-align:center">
+          <div style="font-size:18px;font-weight:800;color:${qColor}">${qScore}%</div>
+          <div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:0.8px">Bullets quantified</div>
+          <div style="font-size:10px;color:var(--tx3)">${r.quantifiedBullets||0} of ${r.totalBullets||0}</div>
+        </div>` : ''}
+        ${avScore !== null ? `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 14px;text-align:center">
+          <div style="font-size:18px;font-weight:800;color:${avColor}">${avScore}%</div>
+          <div style="font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:0.8px">Strong action verbs</div>
+          <div style="font-size:10px;color:var(--tx3)">${avScore >= 70 ? 'Excellent' : avScore >= 40 ? 'Needs work' : 'Weak language'}</div>
+        </div>` : ''}
+      </div>` : ''}
+      ${priorityFixes.length ? `
+      <div style="margin-top:16px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:8px">Top 3 priority fixes</div>
+        ${priorityFixes.map(f=>`
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div style="width:20px;height:20px;border-radius:50%;background:rgba(200,168,75,0.15);border:1px solid rgba(200,168,75,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--gold);flex-shrink:0">${f.rank}</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:var(--tx)">${escH(f.title||'')}</div>
+            <div style="font-size:12px;color:var(--tx3);margin-top:2px">${escH(f.action||'')}</div>
+          </div>
+          ${f.impact?`<div style="font-size:11px;font-weight:700;color:var(--gr);white-space:nowrap">${escH(f.impact)}</div>`:''}
+        </div>`).join('')}
+      </div>` : ''}
     </div>
     <div class="sc-sections">
       ${['summary','experience','skills','education'].map(k=>{
@@ -1064,10 +1164,24 @@ function renderKeywords(r) {
 
 function renderIssues(r) {
   const issues = r.atsIssues || [];
-  if (!issues.length) { document.getElementById('rp2').innerHTML='<div style="color:var(--gr);padding:30px;text-align:center;font-size:15px;font-weight:600">✓ No critical ATS issues detected</div>'; return; }
+  const formatWarnings = r.formatWarnings || [];
+  const contactIssues = r.contactInfoIssues || [];
+
+  // Synthesize format and contact issues as high-severity ATS issues
+  const syntheticIssues = [
+    ...formatWarnings.map(w => ({ severity: 'high', title: 'ATS Format Issue', description: w, fix: 'Remove this formatting element — use plain text with standard section headers instead.' })),
+    ...contactIssues.map(c => ({ severity: 'high', title: 'Missing Contact Info', description: c, fix: 'Add this to the top of your resume. ATS systems require complete contact information to create a candidate profile.' })),
+  ];
+
+  const allIssues = [...syntheticIssues, ...issues];
+
+  if (!allIssues.length) {
+    document.getElementById('rp2').innerHTML = '<div style="color:var(--gr);padding:30px;text-align:center;font-size:15px;font-weight:600">✓ No critical ATS issues detected</div>';
+    return;
+  }
   document.getElementById('rp2').innerHTML = `
-    <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Found <strong style="color:var(--tx)">${issues.length} issues</strong> causing your resume to rank lower. Each has an exact fix.</div>
-    <div class="issue-list">${issues.map(i=>`
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Found <strong style="color:var(--tx)">${allIssues.length} issue${allIssues.length!==1?'s':''}</strong> causing your resume to rank lower. Each has an exact fix.</div>
+    <div class="issue-list">${allIssues.map(i=>`
       <div class="issue-item">
         <div class="issue-sev sev-${i.severity==='high'?'h':i.severity==='medium'?'m':'l'}">${i.severity==='high'?'!':i.severity==='medium'?'~':'↑'}</div>
         <div>
@@ -1345,7 +1459,166 @@ function shareResult() {
 }
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+// ── ANALYSIS HISTORY (localStorage, last 5 analyses) ─────────────────────────
+function saveAnalysisHistory(entry) {
+  try {
+    const existing = JSON.parse(localStorage.getItem('preptai_analysis_history') || '[]');
+    existing.unshift(entry);
+    localStorage.setItem('preptai_analysis_history', JSON.stringify(existing.slice(0, 5)));
+  } catch(e) {}
+}
+
+function getAnalysisHistory() {
+  try { return JSON.parse(localStorage.getItem('preptai_analysis_history') || '[]'); }
+  catch(e) { return []; }
+}
+
+function renderAnalysisHistory() {
+  const history = getAnalysisHistory();
+  const el = document.getElementById('analysisHistory');
+  if (!el) return;
+  if (!history.length) { el.style.display = 'none'; return; }
+
+  const gc = s => s >= 85 ? '#45de7a' : s >= 70 ? '#f5a52a' : '#ef5f5f';
+
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);margin-bottom:12px">Recent Analyses</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${history.map(h => {
+        const date = new Date(h.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        return `<div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;cursor:default">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+            <div style="font-size:22px;font-weight:900;color:${gc(h.score)};font-family:'Outfit',sans-serif">${h.score}</div>
+            <div style="flex:1">
+              <div style="font-size:12px;color:var(--tx2);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">${escH(h.jobSnippet || 'Analysis')}</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:1px">${date} · Grade ${h.grade}</div>
+            </div>
+          </div>
+          ${h.keywordsMissing?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px">${h.keywordsMissing.map(k=>`<span style="padding:2px 8px;border-radius:8px;font-size:10px;background:rgba(239,95,95,0.08);border:1px solid rgba(239,95,95,0.18);color:#ef5f5f">${escH(k)}</span>`).join('')}</div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
 updTrackerBadge();
+renderAnalysisHistory();
+renderVersionsBadge();
+
+// ── COMPANY RESEARCH (match page) ────────────────────────────────────────────
+window.matchCompanyIntel = null;
+
+function matchClearIntel() {
+  window.matchCompanyIntel = null;
+  const card = document.getElementById('matchIntelCard');
+  if (card) { card.style.display = 'none'; card.innerHTML = ''; }
+}
+
+async function matchResearchCompany() {
+  const company = document.getElementById('matchCompanyInput')?.value?.trim();
+  if (!company) { showToast('Enter a company name first'); return; }
+  const btn  = document.getElementById('matchResearchBtn');
+  const card = document.getElementById('matchIntelCard');
+  btn.disabled = true; btn.textContent = '⏳';
+  card.style.display = 'block';
+  card.innerHTML = '<span style="color:#8a87a0">Researching ' + company + '...</span>';
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Research this company.', mode: 'company', company, userEmail: userEmail || null })
+    });
+    if (!res.ok) throw new Error('API error');
+    const d = await res.json();
+    const intel = JSON.parse((d.answer || '').replace(/```json|```/g,'').trim());
+    window.matchCompanyIntel = intel;
+    card.innerHTML = `<strong style="color:#38d9c0">${company}</strong> &middot; ${intel.industry || ''} &middot; ${intel.size || ''}<br>
+      <span style="color:#e6c668">Interview style:</span> ${intel.interviewStyle || '—'}<br>
+      <span style="color:#e6c668">What they look for:</span> ${intel.whatTheyLookFor || '—'}<br>
+      <span style="font-size:11px;color:#8a87a0">Intel injected into cover letter &amp; LinkedIn optimizer</span>`;
+    showToast('Company intel loaded');
+  } catch(e) {
+    card.innerHTML = '<span style="color:#ef5f5f">Could not fetch. Try again.</span>';
+    window.matchCompanyIntel = null;
+  }
+  btn.disabled = false; btn.textContent = '🔍 Research';
+}
+
+// ── RESUME VERSIONING (localStorage, up to 5 versions) ───────────────────────
+function getResumeVersions() {
+  try { return JSON.parse(localStorage.getItem('preptai_resume_versions') || '[]'); } catch(e) { return []; }
+}
+
+function saveResumeVersion() {
+  const text = document.getElementById('resumeText').value.trim();
+  if (!text || text.length < 100) { showToast('Paste your resume first (at least 100 characters)'); return; }
+  const versions = getResumeVersions();
+  if (versions.length >= 5) { showToast('Max 5 versions saved. Delete one first.'); toggleVersionsPanel(); return; }
+  const name = prompt('Name this version (e.g. "Google PM", "Startup SWE"):');
+  if (!name) return;
+  const entry = { id: Date.now(), name: name.slice(0,40), content: text, chars: text.length, savedAt: new Date().toISOString() };
+  versions.push(entry);
+  localStorage.setItem('preptai_resume_versions', JSON.stringify(versions));
+  renderVersionsBadge();
+  renderVersionsPanel();
+  document.getElementById('versionsPanel').style.display = 'block';
+  showToast('Version saved: ' + entry.name);
+}
+
+function loadResumeVersion(id) {
+  const versions = getResumeVersions();
+  const v = versions.find(x => x.id === id);
+  if (!v) return;
+  document.getElementById('resumeText').value = v.content;
+  updateCC('resumeText','rcc');
+  document.getElementById('versionsPanel').style.display = 'none';
+  showToast('Loaded: ' + v.name);
+}
+
+function deleteResumeVersion(id) {
+  let versions = getResumeVersions().filter(x => x.id !== id);
+  localStorage.setItem('preptai_resume_versions', JSON.stringify(versions));
+  renderVersionsBadge();
+  renderVersionsPanel();
+}
+
+function toggleVersionsPanel() {
+  const panel = document.getElementById('versionsPanel');
+  if (panel.style.display === 'none' || !panel.style.display) {
+    renderVersionsPanel();
+    panel.style.display = 'block';
+  } else {
+    panel.style.display = 'none';
+  }
+}
+
+function renderVersionsBadge() {
+  const count = getResumeVersions().length;
+  const btn = document.getElementById('versionsToggle');
+  if (btn) btn.textContent = count > 0 ? `📂 Saved (${count})` : '📂 Saved';
+}
+
+function renderVersionsPanel() {
+  const panel = document.getElementById('versionsPanel');
+  if (!panel) return;
+  const versions = getResumeVersions();
+  if (versions.length === 0) {
+    panel.innerHTML = `<div style="font-size:12px;color:#8a87a0;padding:8px;text-align:center">No saved versions yet. Paste a resume and click "Save version".</div>`;
+    return;
+  }
+  panel.innerHTML = versions.map(v => {
+    const d = new Date(v.savedAt);
+    const dateStr = d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+    return `<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;margin-bottom:5px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:#edeaf7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${v.name}</div>
+        <div style="font-size:11px;color:#8a87a0">${v.chars.toLocaleString()} chars &middot; ${dateStr}</div>
+      </div>
+      <button onclick="loadResumeVersion(${v.id})" style="padding:4px 10px;background:rgba(123,109,244,0.12);border:1px solid rgba(123,109,244,0.25);color:#a498ff;border-radius:6px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer">Load</button>
+      <button onclick="deleteResumeVersion(${v.id})" style="padding:4px 8px;background:transparent;border:1px solid rgba(239,95,95,0.2);color:#ef5f5f;border-radius:6px;font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer" title="Delete">✕</button>
+    </div>`;
+  }).join('');
+}
 </script>
 
 
@@ -1615,35 +1888,10 @@ function downloadPdf(text, filename) {
   @media print{button{display:none}}
 </style></head><body>
 <button onclick="window.print()">Print / Save as PDF</button>
-<h1>PREPT AI , OPTIMIZED RESUME</h1>
-<div class="sub">Generated by PREPT AI Match , preptai.co</div>
+<h1>PREPT AI — OPTIMIZED RESUME</h1>
+<div class="sub">Generated by PREPT AI Match · preptai.co</div>
 ${htmlLines}
-<div class="footer">To save as PDF: File , Print , Save as PDF in the destination dropdown.</div>
-<script>
-// Light/dark mode toggle
-let isLight = localStorage.getItem('preptTheme') === 'light';
-function applyTheme() {
-  document.documentElement.classList.toggle('light', isLight);
-  const btn = document.getElementById('themeBtn');
-  const icon = document.getElementById('themeIcon');
-  const label = document.getElementById('themeLabel');
-  if (icon) icon.textContent = isLight ? '☀️' : '🌙';
-  if (label) label.textContent = isLight ? 'Dark mode' : 'Light mode';
-  if (btn) {
-    btn.style.background = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
-    btn.style.borderColor = isLight ? 'rgba(200,168,75,0.3)' : 'rgba(123,109,244,0.3)';
-    btn.style.color = isLight ? '#c8a84b' : '#a498ff';
-    btn.onmouseover = () => btn.style.background = isLight ? 'rgba(200,168,75,0.22)' : 'rgba(123,109,244,0.22)';
-    btn.onmouseout  = () => btn.style.background = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
-  }
-}
-function toggleTheme() {
-  isLight = !isLight;
-  localStorage.setItem('preptTheme', isLight ? 'light' : 'dark');
-  applyTheme();
-}
-applyTheme();
-</script>
+<div class="footer">To save as PDF: File → Print → Save as PDF in the destination dropdown.</div>
 </body></html>`);
   win.document.close();
   showToast('PDF view opened , use Print , Save as PDF');

@@ -77,6 +77,95 @@ function detectPromptInjection(text) {
   ].some(p => p.test(text));
 }
 
+// ── BLS SALARY BENCHMARKS (2023-2024 Occupational Employment & Wage Statistics) ─
+const SALARY_BENCHMARKS = [
+  // Technology
+  { keys: ["software engineer","software developer","swe","full stack","fullstack","full-stack"], p25: 95000,  median: 132000, p75: 172000 },
+  { keys: ["senior software","staff engineer","principal engineer"],                              p25: 140000, median: 175000, p75: 220000 },
+  { keys: ["frontend","front-end","front end","ui engineer","react developer","vue developer"],   p25: 88000,  median: 120000, p75: 158000 },
+  { keys: ["backend","back-end","back end","api engineer","node developer","python developer"],   p25: 92000,  median: 128000, p75: 168000 },
+  { keys: ["data scientist","machine learning","ml engineer","ai engineer"],                     p25: 100000, median: 130000, p75: 168000 },
+  { keys: ["data analyst","business intelligence","bi analyst"],                                 p25: 65000,  median: 88000,  p75: 115000 },
+  { keys: ["data engineer","etl","pipeline engineer"],                                           p25: 98000,  median: 130000, p75: 168000 },
+  { keys: ["devops","platform engineer","sre","site reliability","infrastructure engineer"],     p25: 105000, median: 140000, p75: 183000 },
+  { keys: ["cybersecurity","security engineer","infosec","security analyst"],                    p25: 85000,  median: 112000, p75: 148000 },
+  { keys: ["cloud engineer","aws engineer","azure engineer","gcp engineer"],                     p25: 100000, median: 135000, p75: 175000 },
+  { keys: ["product manager","pm","product lead"],                                               p25: 105000, median: 147000, p75: 195000 },
+  { keys: ["engineering manager","vp engineering","head of engineering","director of engineering"], p25: 155000, median: 200000, p75: 260000 },
+  { keys: ["qa engineer","quality assurance","test engineer","sdet"],                            p25: 72000,  median: 99000,  p75: 132000 },
+  { keys: ["ux designer","ui designer","product designer","user experience"],                    p25: 75000,  median: 105000, p75: 140000 },
+  { keys: ["it manager","it director","technology manager"],                                     p25: 110000, median: 161000, p75: 210000 },
+  { keys: ["network engineer","systems administrator","sysadmin","network administrator"],       p25: 68000,  median: 95000,  p75: 128000 },
+  { keys: ["technical program manager","tpm","technical project manager"],                       p25: 115000, median: 155000, p75: 200000 },
+  { keys: ["solutions architect","cloud architect","enterprise architect"],                      p25: 130000, median: 170000, p75: 220000 },
+  // Finance & Accounting
+  { keys: ["financial analyst","investment analyst","equity analyst"],                           p25: 68000,  median: 96000,  p75: 135000 },
+  { keys: ["accountant","staff accountant","cpa","controller"],                                  p25: 52000,  median: 78000,  p75: 108000 },
+  { keys: ["finance manager","director of finance","vp finance","head of finance"],              p25: 110000, median: 148000, p75: 200000 },
+  { keys: ["cfo","chief financial officer"],                                                     p25: 175000, median: 250000, p75: 380000 },
+  { keys: ["investment banker","banking analyst","ib analyst"],                                  p25: 100000, median: 145000, p75: 220000 },
+  { keys: ["portfolio manager","fund manager","asset manager"],                                  p25: 95000,  median: 138000, p75: 210000 },
+  { keys: ["financial advisor","wealth manager","financial planner"],                            p25: 58000,  median: 94000,  p75: 155000 },
+  { keys: ["actuary","actuarial"],                                                               p25: 90000,  median: 120000, p75: 160000 },
+  // Sales & Marketing
+  { keys: ["sales manager","director of sales","vp sales","head of sales"],                     p25: 90000,  median: 135000, p75: 190000 },
+  { keys: ["account executive","ae","sales representative","sales rep"],                         p25: 55000,  median: 78000,  p75: 115000 },
+  { keys: ["business development","bd manager","bdr","sdr","sales development"],                 p25: 52000,  median: 73000,  p75: 105000 },
+  { keys: ["marketing manager","marketing director","head of marketing","vp marketing"],         p25: 88000,  median: 138000, p75: 190000 },
+  { keys: ["digital marketing","seo","sem","ppc","growth marketer"],                             p25: 55000,  median: 78000,  p75: 108000 },
+  { keys: ["content strategist","content manager","content marketing"],                          p25: 52000,  median: 72000,  p75: 98000 },
+  { keys: ["brand manager","brand strategist"],                                                  p25: 65000,  median: 95000,  p75: 132000 },
+  // Healthcare
+  { keys: ["registered nurse","rn","nurse"],                                                     p25: 64000,  median: 81000,  p75: 102000 },
+  { keys: ["nurse practitioner","np","advanced practice"],                                       p25: 98000,  median: 120000, p75: 148000 },
+  { keys: ["physician","doctor","md","medical doctor"],                                          p25: 180000, median: 236000, p75: 350000 },
+  { keys: ["physician assistant","pa","pa-c"],                                                   p25: 100000, median: 126000, p75: 158000 },
+  { keys: ["pharmacist","pharmacy"],                                                              p25: 110000, median: 132000, p75: 155000 },
+  { keys: ["physical therapist","pt","physical therapy"],                                        p25: 78000,  median: 97000,  p75: 120000 },
+  { keys: ["occupational therapist","ot","occupational therapy"],                                p25: 76000,  median: 94000,  p75: 115000 },
+  { keys: ["healthcare administrator","hospital administrator","healthcare manager"],             p25: 75000,  median: 110000, p75: 155000 },
+  { keys: ["medical coder","health information","medical records"],                              p25: 40000,  median: 52000,  p75: 68000 },
+  // Legal
+  { keys: ["attorney","lawyer","counsel","associate attorney"],                                  p25: 82000,  median: 145000, p75: 230000 },
+  { keys: ["paralegal","legal assistant"],                                                       p25: 42000,  median: 58000,  p75: 76000 },
+  { keys: ["general counsel","chief legal officer","clo"],                                       p25: 175000, median: 260000, p75: 400000 },
+  // Operations & Management
+  { keys: ["operations manager","director of operations","vp operations"],                       p25: 75000,  median: 103000, p75: 145000 },
+  { keys: ["project manager","pmp","program manager"],                                           p25: 72000,  median: 97000,  p75: 130000 },
+  { keys: ["supply chain","logistics manager","procurement manager"],                            p25: 65000,  median: 92000,  p75: 128000 },
+  { keys: ["hr manager","human resources manager","people manager","head of hr"],                p25: 80000,  median: 120000, p75: 168000 },
+  { keys: ["hr generalist","hr business partner","hrbp"],                                        p25: 55000,  median: 76000,  p75: 102000 },
+  { keys: ["recruiter","talent acquisition","sourcer","recruiting manager"],                     p25: 52000,  median: 72000,  p75: 98000 },
+  { keys: ["ceo","chief executive officer"],                                                     p25: 175000, median: 290000, p75: 580000 },
+  { keys: ["coo","chief operating officer"],                                                     p25: 160000, median: 240000, p75: 380000 },
+  { keys: ["cto","chief technology officer"],                                                    p25: 165000, median: 250000, p75: 390000 },
+  // Real Estate
+  { keys: ["real estate agent","realtor","real estate broker"],                                  p25: 38000,  median: 58000,  p75: 105000 },
+  { keys: ["property manager","property management"],                                            p25: 45000,  median: 62000,  p75: 88000 },
+  // Education
+  { keys: ["teacher","educator","instructor","professor"],                                        p25: 46000,  median: 65000,  p75: 88000 },
+  { keys: ["school counselor","academic advisor","guidance counselor"],                          p25: 48000,  median: 64000,  p75: 82000 },
+  // Customer Service & Retail
+  { keys: ["customer success","customer success manager","csm"],                                 p25: 52000,  median: 72000,  p75: 100000 },
+  { keys: ["customer service","support specialist","customer support"],                          p25: 34000,  median: 44000,  p75: 58000 },
+  { keys: ["retail manager","store manager"],                                                    p25: 42000,  median: 58000,  p75: 80000 },
+  // Skilled Trades
+  { keys: ["electrician","electrical contractor"],                                               p25: 52000,  median: 64000,  p75: 82000 },
+  { keys: ["plumber","plumbing"],                                                                p25: 48000,  median: 61000,  p75: 80000 },
+  { keys: ["hvac","heating","cooling","refrigeration"],                                          p25: 46000,  median: 60000,  p75: 80000 },
+];
+
+function getSalaryBenchmark(role) {
+  if (!role) return null;
+  const r = role.toLowerCase();
+  for (const entry of SALARY_BENCHMARKS) {
+    if (entry.keys.some(k => r.includes(k))) {
+      return entry;
+    }
+  }
+  return null;
+}
+
 // ── ANSWER STYLE FRAMEWORKS ───────────────────────────────────────────────────
 const STYLE_FRAMEWORKS = {
   star: `STAR+ METHOD (Situation → Task → Action → Result → Learning):
@@ -120,7 +209,7 @@ Senior leaders are being evaluated on an entirely different dimension than indiv
 };
 
 // ── MASTER COACHING SYSTEM PROMPT ─────────────────────────────────────────────
-function buildCoachingPrompt(sector, role, company, style, resumeText, jobDescription) {
+function buildCoachingPrompt(sector, role, company, style, resumeText, jobDescription, companyIntel) {
 
   const SECTOR_CONTEXT = {
     'Technology':          'Focus on technical skills, system design, problem-solving, agile/scrum, code quality, and software development lifecycle.',
@@ -155,6 +244,18 @@ ${resumeText}`
 ${jobDescription}`
     : "";
 
+  const intelSection = companyIntel && typeof companyIntel === "object"
+    ? `\n\nVERIFIED COMPANY INTELLIGENCE (use this to make answers feel like the candidate did real research):
+- Industry: ${companyIntel.industry || ""}
+- Size: ${companyIntel.size || ""}
+- Culture: ${companyIntel.culture || ""}
+- Known for: ${companyIntel.knownFor || ""}
+- Interview style: ${companyIntel.interviewStyle || ""}
+- What they look for: ${companyIntel.whatTheyLookFor || ""}
+- Strong talking point: ${companyIntel.talkingPoint || ""}
+${companyIntel.redFlag ? `- Common candidate mistake here: ${companyIntel.redFlag}` : ""}`
+    : "";
+
   return `You are PREPT AI ,  the most advanced interview coaching engine ever built, trained on the intersection of behavioral psychology, hiring science, executive assessment, and communication research.
 
 ═══════════════════════════════════════════════════════════
@@ -168,7 +269,7 @@ CANDIDATE CONTEXT
 Industry: ${sector || "General"}${sectorSection}
 Role: ${role || "Professional mid-to-senior level role"}
 Company: ${company || "not specified"}
-Answer framework: ${STYLE_FRAMEWORKS[style] || STYLE_FRAMEWORKS.star}${resumeSection}${jobSection}
+Answer framework: ${STYLE_FRAMEWORKS[style] || STYLE_FRAMEWORKS.star}${resumeSection}${jobSection}${intelSection}
 
 ═══════════════════════════════════════════════════════════
 THE SCIENCE OF WHAT INTERVIEWERS ACTUALLY EVALUATE
@@ -311,39 +412,111 @@ RULES:
 
 // ── RESUME MATCH PROMPT ───────────────────────────────────────────────────────
 function buildMatchPrompt() {
-  return `You are PREPT AI Match ,  a precision ATS optimization engine trained on how Applicant Tracking Systems actually score resumes and what human recruiters look for in the first 6 seconds of review.
+  return `You are PREPT AI Match — a precision ATS optimization engine trained on how Applicant Tracking Systems actually score resumes and what human recruiters look for in the first 6 seconds of review.
 
 THE RESEARCH BEHIND THIS ANALYSIS:
 - 75% of resumes are rejected by ATS before a human sees them (Jobscan, 2023)
 - Recruiters spend an average of 6-7 seconds on initial resume review (Ladders eye-tracking study)
 - Resumes with quantified achievements are 40% more likely to receive callbacks (LinkedIn Talent Trends)
-- Keyword matching is the #1 ATS ranking factor ,  exact phrase match outperforms semantic match in most systems
+- Keyword matching is the #1 ATS ranking factor — exact phrase match outperforms semantic match in most systems
+- Resumes with tables, columns, or graphics score 30-60% lower in ATS systems (Jobscan format study)
+- Only 36% of resumes have a phone number formatted correctly for ATS parsing (ResumeGo, 2022)
 
-YOUR ANALYSIS FRAMEWORK:
-Return a comprehensive analysis that covers exactly what needs to change and why, with specific rewrites ,  not vague suggestions.
+YOUR ANALYSIS MUST BE SURGICAL AND SPECIFIC. Every finding must reference actual content from the resume. No generic advice.
 
-DELIVER:
+QUANTIFICATION ANALYSIS:
+Count every bullet point in the work experience section. Identify which ones contain a number, percentage, dollar amount, or measurable result. Calculate: quantifiedBullets / totalBullets * 100 = quantificationScore. Industry benchmark: top 10% of candidates have 70%+ quantified bullets.
 
-1. ATS COMPATIBILITY SCORE (0-100)
-Specific breakdown: keyword match %, format compliance, section structure, title alignment
+FORMAT COMPLIANCE ANALYSIS:
+Scan for ATS-hostile formatting: tables, multi-column layouts, headers/footers, text boxes, graphics, special characters (■, ●, →, etc.), non-standard section titles, missing standard sections. Each issue reduces ATS parse accuracy by 10-30%.
 
-2. CRITICAL MISSING KEYWORDS
-Exact phrases from the job description not present in the resume, ranked by frequency in the JD. Include where to add each one.
+CONTACT INFO AUDIT:
+Check for presence of: email address, phone number, LinkedIn URL, location (city/state minimum), GitHub or portfolio URL (for technical roles). Missing contact fields cause ATS rejection at the parsing stage.
 
-3. WEAK PHRASES ,  REWRITE REQUIRED
-Quote the exact weak line. Then provide the rewritten version. Show the upgrade.
-Formula: [Strong action verb] + [specific what] + [quantified result]
+ACTION VERB STRENGTH ANALYSIS:
+Categorize every action verb:
+- STRONG (10 points each): spearheaded, drove, generated, reduced, grew, launched, negotiated, rebuilt, closed, orchestrated, led, delivered, exceeded, cut, secured
+- WEAK (0 points): helped, worked on, assisted, was responsible for, participated in, involved in, supported, contributed to
+Calculate: actionVerbScore = (strongVerbs / totalVerbs) * 100
 
-4. SECTION-BY-SECTION AUDIT
-Professional Summary, Work Experience (bullets), Skills, Education ,  specific grade and specific fix for each
+RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the JSON):
+{
+  "overallScore": <integer 0-100>,
+  "projectedScore": <integer — realistic score after fixes>,
+  "grade": <"A"|"B"|"C"|"D">,
+  "benchmarkNote": <string — e.g. "Top candidates for this role score 85+">,
+  "verdict": <string — 2-3 sentences specific to THIS resume vs THIS job. Name actual gaps.>,
+  "toneAnalysis": {
+    "resumeTone": <string — e.g. "casual/informal">,
+    "jdTone": <string — e.g. "corporate-formal">,
+    "mismatch": <boolean>,
+    "mismatchNote": <string — specific example of the tone gap>
+  },
+  "salaryData": {
+    "low": <string — e.g. "$52,000">,
+    "mid": <string>,
+    "high": <string>,
+    "negotiationTip": <string — one specific tactic for this role>
+  },
+  "sectionScores": {
+    "summary": <integer 0-100>,
+    "experience": <integer 0-100>,
+    "skills": <integer 0-100>,
+    "education": <integer 0-100>
+  },
+  "quantificationScore": <integer 0-100 — % of bullets with metrics>,
+  "quantifiedBullets": <integer — count of bullets with numbers>,
+  "totalBullets": <integer — total experience bullets found>,
+  "actionVerbScore": <integer 0-100>,
+  "formatWarnings": [<string — specific format issues found, e.g. "Table detected in experience section — ATS will misread column order">],
+  "contactInfoIssues": [<string — e.g. "LinkedIn URL missing — recruiters check LinkedIn before scheduling">],
+  "topPriorityFixes": [
+    {"rank": 1, "title": <string>, "impact": <string — e.g. "+12 ATS points">, "action": <string — exact instruction>},
+    {"rank": 2, "title": <string>, "impact": <string>, "action": <string>},
+    {"rank": 3, "title": <string>, "impact": <string>, "action": <string>}
+  ],
+  "keywordsFound": [<strings — actual keywords from resume that match JD>],
+  "keywordsMissing": [<strings — exact phrases from JD not in resume>],
+  "keywordsCritical": [<strings — subset of missing that appear 3+ times in JD or are in job title>],
+  "keywordAnalysis": <string — specific analysis of the keyword gap for THIS job>,
+  "atsIssues": [
+    {
+      "severity": <"high"|"medium"|"low">,
+      "title": <string>,
+      "description": <string — references actual content from the resume>,
+      "fix": <string — exact actionable instruction>
+    }
+  ],
+  "weakBullets": [
+    {
+      "original": <string — exact bullet from resume>,
+      "rewritten": <string — rewritten with strong verb + specific + quantified result + JD keyword>,
+      "improvement": <string — why the rewrite is stronger>
+    }
+  ],
+  "rewrittenSummary": <string — complete professional summary with JD keywords naturally embedded>,
+  "rewrittenSkills": <string — complete skills section with missing keywords added>,
+  "rewrittenExperience": <string — rewritten bullets using \\n as line separator>,
+  "linkedinHeadline": <string — optimized headline under 220 characters>,
+  "linkedinAbout": <string — About section 250-300 words, under 2600 characters total, uses \\n for paragraphs>,
+  "linkedinSkills": <string — comma-separated top 10 skills aligned to JD>,
+  "interviewQuestions": [
+    {
+      "category": <string — e.g. "Behavioral" | "Technical" | "Gap-based">,
+      "question": <string — specific question based on actual resume gaps vs JD requirements>,
+      "why": <string — why this question will be asked based on specific gap found>
+    }
+  ]
+}
 
-5. TOP 3 PRIORITY FIXES
-The three changes that will have the highest immediate impact. If they only do three things, what should they be?
-
-6. TONE AND LANGUAGE ANALYSIS
-Does the candidate's language match the seniority level and culture of the role? Specific examples.
-
-Be surgical. Be direct. Every comment must have a specific corresponding fix. This person's career advancement depends on getting this right.`;
+QUALITY RULES — NEVER VIOLATE:
+- Every atsIssue must reference specific content from the actual resume provided
+- Every weakBullet.original must be an actual bullet from the resume — do not fabricate
+- rewrittenSummary must incorporate at least 4 keywords from keywordsCritical or keywordsMissing
+- interviewQuestions must be based on actual gaps between the resume and JD — not generic questions
+- salaryData ranges must be realistic for the role title and location context in the JD
+- If the resume has no professional summary, still provide a rewrittenSummary based on their experience
+- quantificationScore of 0 means zero bullets have metrics — be accurate, not generous`;
 }
 
 
@@ -370,6 +543,16 @@ Return ONLY a valid JSON array of exactly 5 strings. No markdown, no explanation
 
 // ── SALARY NEGOTIATION COACH ──────────────────────────────────────────────────
 function buildSalaryPrompt(role, company, location, yearsExp, currentOffer, targetSalary) {
+  const benchmark = getSalaryBenchmark(role);
+  const benchmarkSection = benchmark
+    ? `VERIFIED MARKET DATA (BLS Occupational Employment & Wage Statistics 2023-2024):
+- 25th percentile: $${benchmark.p25.toLocaleString()}
+- Median (50th percentile): $${benchmark.median.toLocaleString()}
+- 75th percentile: $${benchmark.p75.toLocaleString()}
+- Location note: Adjust +15-30% for SF/NYC/Seattle, +5-15% for Austin/Denver/Boston, -10-20% for lower cost-of-living markets
+Use these as your anchor numbers. Do not fabricate ranges — derive counter-offer from this real data.`
+    : `Use your best knowledge of current market compensation for this role and location. Be specific with dollar amounts — do not give ranges without anchors.`;
+
   return `You are a salary negotiation expert with deep knowledge of compensation data.
 The user has received a job offer and needs a concrete negotiation strategy.
 
@@ -380,18 +563,20 @@ Years of experience: ${yearsExp || 'Not specified'}
 Current offer: ${currentOffer || 'Not specified'}
 Target salary: ${targetSalary || 'Not specified'}
 
-Research-backed facts to use:
-- Most hiring managers are comfortable with salary negotiation in the 10-25% range
-- The median acceptable increase is 22%
-- 80% of employers have flexibility in their initial offer
-- Candidates who negotiate earn $5,000-$10,000 more on average
+${benchmarkSection}
+
+Research-backed negotiation facts:
+- 80% of employers have flexibility in their initial offer (Jobvite, 2023)
+- Candidates who negotiate earn $5,000-$10,000 more on average over their tenure
+- The acceptable negotiation range is 10-25% above the offer
+- First number anchors the negotiation — always go high within the realistic range
 
 Provide:
-1. COUNTER-OFFER RANGE: A specific dollar range with high/mid/low targets
+1. COUNTER-OFFER RANGE: A specific dollar range with high/mid/low targets derived from the market data above
 2. OPENING LINE: The exact first sentence to say when starting negotiation
 3. THREE POWER PHRASES: Specific sentences to use during the conversation
-4. ONE-LINER CLOSES: How to close the negotiation confidently
-5. WHAT NOT TO SAY: Two phrases to avoid
+4. ONE-LINER CLOSE: How to close the negotiation confidently
+5. WHAT NOT TO SAY: Two phrases to avoid and why
 
 Be specific, practical, and confident. Use actual numbers. No hedging. Write in a direct conversational tone.
 Do not use em dashes anywhere in your response.`;
@@ -400,8 +585,8 @@ Do not use em dashes anywhere in your response.`;
 // ── SKILLS GAP ANALYSIS ───────────────────────────────────────────────────────
 function buildSkillsGapPrompt(jobDescription, resumeText) {
   const context = resumeText
-    ? `User resume:\n${resumeText.slice(0, 1500)}\n\nJob description:\n${jobDescription.slice(0, 1500)}`
-    : `Job description:\n${jobDescription.slice(0, 2000)}`;
+    ? `User resume:\n${resumeText.slice(0, 3000)}\n\nJob description:\n${jobDescription.slice(0, 2000)}`
+    : `Job description:\n${jobDescription.slice(0, 2500)}`;
   return `You are a career strategist analyzing a job description to identify skills gaps.
 
 ${context}
@@ -498,6 +683,53 @@ Score rubric:
 Return ONLY the JSON object. No markdown, no explanation.`;
 }
 
+// ── MOCK ANSWER EVALUATOR (adaptive STAR analysis + model answer + next Q) ────
+function buildMockAnswerPrompt(mockQuestion, userAnswer, sector, role) {
+  return `You are an expert interview coach scoring a candidate's mock interview answer in real time.
+
+Role: ${role || "Professional role"}
+Sector: ${sector || "General"}
+
+The interview question was: "${mockQuestion}"
+
+The candidate answered: "${userAnswer}"
+
+Evaluate the answer and return ONLY this exact JSON (no markdown, no extra text):
+{
+  "starScores": {
+    "S": <integer 0-10, Situation — did they set context clearly?>,
+    "T": <integer 0-10, Task — did they define their specific responsibility?>,
+    "A": <integer 0-10, Action — did they describe specific actions with "I" not "we"?>,
+    "R": <integer 0-10, Result — did they quantify the outcome?>
+  },
+  "weakness": <"S"|"T"|"A"|"R" — the single lowest-scoring component>,
+  "overallScore": <integer 0-100>,
+  "oneLiner": <string — one specific, actionable improvement tip under 20 words>,
+  "modelAnswer": <string — a coached ideal answer for this exact question, 90-120 words, speakable, specific, uses STAR, no placeholder text>,
+  "nextQuestion": <string — one adaptive follow-up that probes the weak component OR a new behavioral question if all scores are above 7. Sound like a real interviewer.>
+}`;
+}
+
+// ── COMPANY RESEARCH (Claude-powered intel for coaching context) ──────────────
+function buildCompanyResearchPrompt(company, role) {
+  return `You are a career research assistant helping a job candidate prepare for an interview.
+
+Company: ${company || "Unknown"}
+Role being applied for: ${role || "Professional role"}
+
+Return ONLY this exact JSON (no markdown, no extra text). Use your knowledge of this company. If you are not confident about specific details, give reasonable general information for a company of this type:
+{
+  "industry": <string — primary industry/sector>,
+  "size": <string — e.g. "50,000+ employees" or "Series B startup (~200 people)">,
+  "culture": <string — 1-2 sentences on work environment and values>,
+  "knownFor": <string — what this company is recognized for in their market>,
+  "interviewStyle": <string — what interview style this company typically uses, e.g. behavioral, case-based, technical>,
+  "whatTheyLookFor": <string — 2-3 specific traits or skills this company consistently prioritizes in candidates>,
+  "talkingPoint": <string — one specific, genuine thing the candidate can mention to show they did their research. Must be real and verifiable.>,
+  "redFlag": <string — one common mistake candidates make when interviewing here, or null if unknown>
+}`;
+}
+
 // ── MAIN HANDLER ──────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://www.preptai.co");
@@ -511,9 +743,13 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: "rate_limited", message: "Too many requests. Please wait before trying again." });
   }
 
-  const { message, mode, userEmail, sector, role, company, style, resumeText, jobDescription } = req.body;
+  const {
+    message, mode, userEmail, sector, role, company, style, resumeText, jobDescription,
+    location, yearsExp, currentOffer, targetSalary, timeLimit,
+    previousQuestion, userAnswer, answers, systemOverride, companyIntel
+  } = req.body;
 
-  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn"];
+  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company"];
   if (!message || typeof message !== "string") return res.status(400).json({ error: "Message is required" });
   if (!mode || !validModes.includes(mode)) return res.status(400).json({ error: "Invalid mode" });
 
@@ -572,11 +808,11 @@ export default async function handler(req, res) {
   }
 
   // Free utility modes: skip all limit checks and usage logging
-  const freeModes = ["mockgen", "salary", "skillsgap", "asyncvideo", "adaptive"];
+  const freeModes = ["mockgen", "salary", "skillsgap", "asyncvideo", "adaptive", "debrief", "jenn", "coverletter", "linkedin", "mockanswer", "company"];
   if (freeModes.includes(mode)) {
     try {
       let systemPrompt;
-      let userMsg = body.message || "Generate the response.";
+      let userMsg = cleanMessage || "Generate the response.";
       let maxTok = 1000;
 
       if (mode === "mockgen") {
@@ -586,10 +822,10 @@ export default async function handler(req, res) {
       } else if (mode === "salary") {
         systemPrompt = buildSalaryPrompt(
           cleanRole, cleanCompany,
-          (body.location || '').slice(0,100),
-          (body.yearsExp || '').slice(0,50),
-          (body.currentOffer || '').slice(0,50),
-          (body.targetSalary || '').slice(0,50)
+          (location || '').slice(0,100),
+          (yearsExp || '').slice(0,50),
+          (currentOffer || '').slice(0,50),
+          (targetSalary || '').slice(0,50)
         );
         userMsg = "Provide my salary negotiation strategy.";
         maxTok = 900;
@@ -599,31 +835,60 @@ export default async function handler(req, res) {
         maxTok = 800;
       } else if (mode === "asyncvideo") {
         systemPrompt = buildAsyncVideoPrompt(
-          (body.message || '').slice(0,500),
+          cleanMessage.slice(0,500),
           cleanRole, cleanCompany,
-          (body.timeLimit || '2 minutes')
+          (timeLimit || '2 minutes')
         );
         userMsg = "Coach my video response.";
         maxTok = 900;
       } else if (mode === "adaptive") {
         systemPrompt = buildAdaptiveFollowUpPrompt(
-          (body.previousQuestion || '').slice(0,300),
-          (body.userAnswer || '').slice(0,800),
+          (previousQuestion || '').slice(0,300),
+          (userAnswer || '').slice(0,800),
           cleanSector, cleanRole
         );
         userMsg = "Generate the follow-up question.";
         maxTok = 150;
       } else if (mode === "debrief") {
-        const answers = Array.isArray(body.answers) ? body.answers.slice(0,10) : [];
-        systemPrompt = buildDebriefPrompt(answers, cleanSector, cleanRole);
+        const debriefAnswers = Array.isArray(answers) ? answers.slice(0,10) : [];
+        systemPrompt = buildDebriefPrompt(debriefAnswers, cleanSector, cleanRole);
         userMsg = "Evaluate the interview performance.";
         maxTok = 400;
+      } else if (mode === "jenn") {
+        const sysOverride = (systemOverride || '').slice(0, 2000);
+        systemPrompt = sysOverride || 'You are Jenn, PREPT AI support assistant. Be warm, professional, and concise. Answer in 2-3 sentences.';
+        userMsg = cleanMessage;
+        maxTok = 300;
+      } else if (mode === "coverletter") {
+        const intelSnippet = companyIntel && typeof companyIntel === "object"
+          ? `\n\nCOMPANY INTELLIGENCE — use this to make the letter feel specific and researched:\n- Culture: ${companyIntel.culture || ""}\n- What they look for: ${companyIntel.whatTheyLookFor || ""}\n- Talking point: ${companyIntel.talkingPoint || ""}\n- Interview style: ${companyIntel.interviewStyle || ""}`
+          : "";
+        systemPrompt = `You are an expert cover letter writer. Write a compelling, human-sounding cover letter that directly connects the candidate's specific achievements to the role's requirements. Never use generic templates. Rules: open with a specific hook (never "I am applying for"), connect top 2-3 requirements to quantified achievements, show genuine company knowledge, close with a confident CTA. 3-4 paragraphs, under 350 words. Sound human, not corporate.${intelSnippet}`;
+        userMsg = cleanMessage;
+        maxTok = 700;
+      } else if (mode === "linkedin") {
+        systemPrompt = `You are a LinkedIn profile optimization expert. Generate optimized LinkedIn profile sections that help candidates get found by recruiters searching for the role. Return ONLY valid JSON with no markdown: {"headline":"optimized headline under 220 chars","about":"compelling About section 250-300 words with \\n paragraph breaks, under 2600 total characters","skills":"comma-separated top 10 skills aligned to the job description"}`;
+        userMsg = cleanMessage;
+        maxTok = 700;
+      } else if (mode === "mockanswer") {
+        systemPrompt = buildMockAnswerPrompt(
+          (previousQuestion || '').slice(0, 400),
+          (userAnswer      || '').slice(0, 1000),
+          cleanSector, cleanRole
+        );
+        userMsg = "Evaluate the candidate's answer and return the JSON.";
+        maxTok = 800;
+      } else if (mode === "company") {
+        systemPrompt = buildCompanyResearchPrompt(cleanCompany, cleanRole);
+        userMsg = "Return the company research JSON.";
+        maxTok = 600;
       }
 
+      // Prompt caching on free-mode system prompts (reduces cost ~80% on repeated calls)
       const response = await anthropic.messages.create({
         model: "claude-sonnet-4-20250514",
         max_tokens: maxTok,
-        system: systemPrompt,
+        system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
         messages: [{ role: "user", content: userMsg }],
       });
       const answer = response.content[0]?.text;
@@ -641,13 +906,51 @@ export default async function handler(req, res) {
   else if (mode === "followup") systemPrompt = buildFollowUpPrompt(cleanSector, cleanRole, cleanCompany, cleanResume, cleanJobDesc);
   else if (mode === "thankyou") systemPrompt = buildThankYouPrompt();
   else if (mode === "mockgen")  systemPrompt = buildMockGenPrompt(cleanSector, cleanRole, cleanCompany, cleanJobDesc);
-  else                          systemPrompt = buildCoachingPrompt(cleanSector, cleanRole, cleanCompany, cleanStyle, cleanResume, cleanJobDesc);
+  else                          systemPrompt = buildCoachingPrompt(cleanSector, cleanRole, cleanCompany, cleanStyle, cleanResume, cleanJobDesc, companyIntel || null);
 
+  // ── STREAMING PATH — chat, followup, thankyou (text responses) ───────────────
+  const streamModes = ["chat", "followup", "thankyou"];
+  const wantsStream = req.body.stream === true && streamModes.includes(mode);
+
+  if (wantsStream) {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("X-Accel-Buffering", "no");
+    res.setHeader("Access-Control-Allow-Origin", "https://www.preptai.co");
+    try {
+      const stream = anthropic.messages.stream({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1024,
+        system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
+        messages: [{ role: "user", content: cleanMessage }],
+      });
+      for await (const event of stream) {
+        if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
+          res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
+        }
+      }
+      if (cleanEmail) await logUsage(cleanEmail, mode);
+      let remaining = "unlimited";
+      if (plan === "free" && cleanEmail) {
+        const used = await getMonthlyUsage(cleanEmail, limitKey);
+        remaining = Math.max(0, limits[limitKey] - used);
+      }
+      res.write(`data: ${JSON.stringify({ done: true, plan, remaining })}\n\n`);
+      res.end();
+    } catch (error) {
+      console.error("Stream error:", error);
+      res.write(`data: ${JSON.stringify({ error: true, message: "Stream failed. Please try again." })}\n\n`);
+      res.end();
+    }
+    return;
+  }
+
+  // ── NON-STREAMING PATH — match, mockgen, and fallback ────────────────────────
   try {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 1024,
-      system: systemPrompt,
+      max_tokens: mode === "match" ? 4096 : 1024,
+      system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
       messages: [{ role: "user", content: cleanMessage }],
     });
 
@@ -672,9 +975,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "ai_error", message: "Something went wrong. Please try again." });
   }
 }
-      } else if (mode === "jenn") {
-        // Jenn contact page support assistant
-        const sysOverride = body.systemOverride || '';
-        systemPrompt = sysOverride || 'You are Jenn, PREPT AI support assistant. Be warm, professional, and concise. Answer in 2-3 sentences.';
-        userMsg = cleanMessage;
-        maxTok = 600;
