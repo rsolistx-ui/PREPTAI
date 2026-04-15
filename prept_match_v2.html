@@ -1532,7 +1532,7 @@ window._gapEntryData = null;
 async function buildGapEntry() {
   const btn   = document.getElementById('gapEntryBtn');
   const panel = document.getElementById('gapEntryPanel');
-  if (!panel) return;
+  if (!panel || btn.disabled) return;
 
   btn.disabled = true;
   btn.textContent = '⏳ Generating entry...';
@@ -1552,16 +1552,22 @@ async function buildGapEntry() {
         userEmail: userEmail || null
       })
     });
-    if (!res.ok) throw new Error('API error');
+    if (!res.ok) throw new Error('API error ' + res.status);
     const d = await res.json();
-    const entry = JSON.parse((d.answer || '').replace(/```json|```/g, '').trim());
+    // Robustly extract JSON — handles preamble text or markdown fences
+    const raw = (d.answer || '').replace(/```json|```/g, '');
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON in response');
+    const entry = JSON.parse(jsonMatch[0]);
+    if (!entry.company || !entry.suggestedTitle || !Array.isArray(entry.bullets)) throw new Error('Incomplete entry returned');
     window._gapEntryData = entry;
     renderGapEntryEditor(entry);
   } catch(e) {
-    panel.innerHTML = `<div style="color:var(--re);font-size:13px;padding:12px">Could not generate entry. Try again.</div>`;
+    panel.innerHTML = `<div style="color:var(--re);font-size:13px;padding:12px">⚠ Could not generate entry — ${e.message}. Please try again.</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ Suggest a resume entry →';
   }
-  btn.disabled = false;
-  btn.textContent = '✦ Suggest a resume entry →';
 }
 
 function renderGapEntryEditor(entry) {
@@ -1657,14 +1663,23 @@ function renderGapEntryEditor(entry) {
 }
 
 function buildGapEntryText() {
-  const company   = document.getElementById('ge_company')?.value?.trim() || '';
-  const title     = document.getElementById('ge_title')?.value?.trim() || '';
-  const type      = document.getElementById('ge_type')?.value || '';
-  const sMonth    = document.getElementById('ge_sMonth')?.value || '';
-  const sYear     = document.getElementById('ge_sYear')?.value || '';
-  const eMonth    = document.getElementById('ge_eMonth')?.value || '';
-  const eYear     = document.getElementById('ge_eYear')?.value || '';
-  const dateRange = `${sMonth} ${sYear} – ${eYear === 'Present' ? 'Present' : eMonth + ' ' + eYear}`;
+  const company = document.getElementById('ge_company')?.value?.trim() || '';
+  const title   = document.getElementById('ge_title')?.value?.trim() || '';
+  const type    = document.getElementById('ge_type')?.value || '';
+  const sMonth  = document.getElementById('ge_sMonth')?.value || '';
+  const sYear   = document.getElementById('ge_sYear')?.value || '';
+  const eMonth  = document.getElementById('ge_eMonth')?.value || '';
+  const eYear   = document.getElementById('ge_eYear')?.value || '';
+
+  // Validate required fields before assembling
+  if (!company) { showToast('Enter a company name before inserting'); return null; }
+  if (!title)   { showToast('Enter a job title before inserting'); return null; }
+
+  // Validate date logic — start year should not be after end year
+  const sY = parseInt(sYear), eY = parseInt(eYear);
+  if (sY && eY && sY > eY) { showToast('Start year cannot be after end year'); return null; }
+
+  const dateRange = `${sMonth} ${sYear} – ${eMonth} ${eYear}`.trim();
 
   const bullets = [];
   let i = 0;
@@ -1673,84 +1688,124 @@ function buildGapEntryText() {
     if (v) bullets.push('• ' + v);
     i++;
   }
+  if (bullets.length === 0) { showToast('Add at least one bullet before inserting'); return null; }
 
-  return `\n${company} | ${title} | ${type}\n${dateRange}\n${bullets.join('\n')}\n`;
+  const header = title ? `${company} | ${title}${type ? ' | ' + type : ''}` : company;
+  return `\n${header}\n${dateRange}\n${bullets.join('\n')}\n`;
 }
 
 function insertGapEntry(mode) {
   const entryText = buildGapEntryText();
+  if (!entryText) return; // validation failed — toast already shown
   const resumeTA  = document.getElementById('resumeText');
   const feedback  = document.getElementById('ge_feedback');
   if (!resumeTA) return;
 
+  // Auto-save a version before any modification so user can undo
+  saveResumeVersion('Before gap insert ' + new Date().toLocaleTimeString());
+
   if (mode === 'append') {
-    // Find the experience section and insert after the last job, before Education
     const current = resumeTA.value;
-    const eduIdx  = current.search(/\b(education|academic|university|college|degree)\b/i);
-    if (eduIdx > 0) {
-      resumeTA.value = current.slice(0, eduIdx).trimEnd() + '\n' + entryText + '\n' + current.slice(eduIdx);
+    // Look for Education/Academic section header line (full line match, not mid-paragraph)
+    const lines = current.split('\n');
+    let eduLineIdx = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (/^\s*(education|academic|university|college|certifications?)\s*:?\s*$/i.test(lines[i])) {
+        eduLineIdx = i; break;
+      }
+    }
+    if (eduLineIdx > 0) {
+      // Insert before the Education line (with blank line separator)
+      lines.splice(eduLineIdx, 0, ...('\n' + entryText.trim()).split('\n'));
+      resumeTA.value = lines.join('\n');
     } else {
       resumeTA.value = current.trimEnd() + '\n' + entryText;
     }
     updateCC('resumeText','rcc');
-    feedback.style.display = 'block';
-    feedback.style.background = 'rgba(69,222,122,0.08)';
-    feedback.style.border = '1px solid rgba(69,222,122,0.2)';
-    feedback.style.color = '#45de7a';
-    feedback.textContent = '✓ Entry added to your resume. Review the paste area above, then re-run the analysis.';
-    showToast('Entry added to resume');
+    _showGeFeedback(feedback, true, '✓ Entry added before Education section. Review above, then re-run analysis.');
+    showToast('Entry added — version auto-saved');
   } else {
-    // Show existing entries for replacement
+    // Show existing job blocks for replacement
     const replaceDiv = document.getElementById('ge_replaceSelect');
-    const current    = resumeTA.value;
-    // Heuristic: find lines that look like job titles (company|title or all-caps headings)
-    const lines = current.split('\n');
-    const jobLines = lines
+    if (!replaceDiv) return;
+    const current = resumeTA.value;
+    const lines   = current.split('\n');
+
+    // Better heuristic: prefer lines with pipe separator (Company | Title) or
+    // Mixed-case lines that are NOT all-uppercase section headers and not bullet/date lines
+    const candidates = lines
       .map((line, idx) => ({ line: line.trim(), idx }))
-      .filter(({ line }) => line.length > 10 && line.length < 120 && /[A-Z]/.test(line[0]) && !line.startsWith('•') && !line.startsWith('-'));
-    const candidates = jobLines.slice(0, 8);
+      .filter(({ line }) =>
+        line.length > 8 && line.length < 120 &&
+        !line.startsWith('•') && !line.startsWith('-') && !line.startsWith('*') &&
+        !/^\d/.test(line) &&                        // not starting with digit (dates)
+        line !== line.toUpperCase() &&              // exclude ALL-CAPS section headers
+        /[A-Z]/.test(line[0]) &&                   // starts with capital
+        !/^(summary|experience|education|skills|certifications?|projects?|awards?|languages?|references?|work\s+history|professional\s+exp)/i.test(line) // not a known section header
+      )
+      .slice(0, 10);
 
     if (candidates.length === 0) {
-      feedback.style.display = 'block';
-      feedback.style.background = 'rgba(239,95,95,0.07)';
-      feedback.style.border = '1px solid rgba(239,95,95,0.2)';
-      feedback.style.color = '#ef5f5f';
-      feedback.textContent = 'Could not detect existing entries. Use "Add to resume" instead.';
+      _showGeFeedback(feedback, false, 'Could not detect existing entries. Use "Add to resume" instead.');
       return;
     }
 
     replaceDiv.style.display = 'block';
     replaceDiv.innerHTML = `
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);margin-bottom:6px">Select the entry to replace:</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);margin-bottom:8px">Select the job entry to replace:</div>
       ${candidates.map(({line, idx}) => `
-        <button onclick="doReplaceEntry(${idx})" style="display:block;width:100%;text-align:left;margin-bottom:4px;padding:8px 10px;background:rgba(255,255,255,0.03);border:1px solid var(--b1);border-radius:6px;color:var(--tx2);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer" onmouseover="this.style.borderColor='rgba(123,109,244,0.35)'" onmouseout="this.style.borderColor=''">${line}</button>
+        <button onclick="doReplaceEntry(${idx})" style="display:block;width:100%;text-align:left;margin-bottom:4px;padding:8px 10px;background:var(--s3);border:1px solid var(--b1);border-radius:6px;color:var(--tx2);font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:border-color 0.15s" onmouseover="this.style.borderColor='rgba(123,109,244,0.4)'" onmouseout="this.style.borderColor=''">
+          ${line.includes('|') ? '📋 ' : ''}${line}
+        </button>
       `).join('')}
     `;
   }
 }
 
+function _showGeFeedback(el, success, msg) {
+  if (!el) return;
+  el.style.display = 'block';
+  el.style.background = success ? 'rgba(69,222,122,0.08)' : 'rgba(239,95,95,0.07)';
+  el.style.border     = success ? '1px solid rgba(69,222,122,0.2)' : '1px solid rgba(239,95,95,0.2)';
+  el.style.color      = success ? '#45de7a' : '#ef5f5f';
+  el.textContent      = msg;
+}
+
 function doReplaceEntry(lineIdx) {
   const entryText = buildGapEntryText();
+  if (!entryText) return; // validation failed
   const resumeTA  = document.getElementById('resumeText');
   const feedback  = document.getElementById('ge_feedback');
   if (!resumeTA) return;
 
   const lines = resumeTA.value.split('\n');
-  // Find a block of consecutive non-empty lines starting at lineIdx and replace them
-  let end = lineIdx + 1;
-  while (end < lines.length && lines[end].trim() !== '' && end < lineIdx + 8) end++;
-  lines.splice(lineIdx, end - lineIdx, ...entryText.trim().split('\n'));
+
+  // Walk backward to find the true start of this job block (previous blank line / doc start)
+  let blockStart = lineIdx;
+  while (blockStart > 0 && lines[blockStart - 1].trim() !== '') blockStart--;
+
+  // Walk forward to find the full end of this job block (next blank line or doc end)
+  // Blank lines WITHIN a block are allowed — stop only at TWO consecutive blanks or doc end
+  let blockEnd = lineIdx + 1;
+  let consecutiveBlanks = 0;
+  while (blockEnd < lines.length) {
+    if (lines[blockEnd].trim() === '') {
+      consecutiveBlanks++;
+      if (consecutiveBlanks >= 2) break; // double blank = new section
+    } else {
+      consecutiveBlanks = 0;
+    }
+    blockEnd++;
+  }
+
+  lines.splice(blockStart, blockEnd - blockStart, ...entryText.trim().split('\n'));
   resumeTA.value = lines.join('\n');
   updateCC('resumeText','rcc');
 
   const replaceDiv = document.getElementById('ge_replaceSelect');
   if (replaceDiv) replaceDiv.style.display = 'none';
-  feedback.style.display = 'block';
-  feedback.style.background = 'rgba(69,222,122,0.08)';
-  feedback.style.border = '1px solid rgba(69,222,122,0.2)';
-  feedback.style.color = '#45de7a';
-  feedback.textContent = '✓ Entry replaced. Review the paste area above, then re-run the analysis.';
-  showToast('Entry replaced in resume');
+  _showGeFeedback(feedback, true, '✓ Entry replaced. Review the resume above, then re-run the analysis.');
+  showToast('Entry replaced — version auto-saved');
 }
 
 // ── COMPANY RESEARCH (match page) ────────────────────────────────────────────
@@ -1778,7 +1833,10 @@ async function matchResearchCompany() {
     });
     if (!res.ok) throw new Error('API error');
     const d = await res.json();
-    const intel = JSON.parse((d.answer || '').replace(/```json|```/g,'').trim());
+    const rawIntel = (d.answer || '').replace(/```json|```/g,'');
+    const jmIntel = rawIntel.match(/\{[\s\S]*\}/);
+    const intel = jmIntel ? JSON.parse(jmIntel[0]) : null;
+    if (!intel) throw new Error('No JSON in response');
     window.matchCompanyIntel = intel;
     card.innerHTML = `<strong style="color:#38d9c0">${company}</strong> &middot; ${intel.industry || ''} &middot; ${intel.size || ''}<br>
       <span style="color:#e6c668">Interview style:</span> ${intel.interviewStyle || '—'}<br>
@@ -1797,20 +1855,29 @@ function getResumeVersions() {
   try { return JSON.parse(localStorage.getItem('preptai_resume_versions') || '[]'); } catch(e) { return []; }
 }
 
-function saveResumeVersion() {
-  const text = document.getElementById('resumeText').value.trim();
-  if (!text || text.length < 100) { showToast('Paste your resume first (at least 100 characters)'); return; }
+function saveResumeVersion(autoLabel) {
+  const text = document.getElementById('resumeText')?.value?.trim();
+  if (!text || text.length < 100) { if (!autoLabel) showToast('Paste your resume first (at least 100 characters)'); return; }
   const versions = getResumeVersions();
-  if (versions.length >= 5) { showToast('Max 5 versions saved. Delete one first.'); toggleVersionsPanel(); return; }
-  const name = prompt('Name this version (e.g. "Google PM", "Startup SWE"):');
+  // For auto-saves: silently overwrite the oldest auto-save slot if full rather than blocking
+  if (versions.length >= 5) {
+    if (autoLabel) {
+      versions.shift(); // drop oldest to make room
+    } else {
+      showToast('Max 5 versions saved. Delete one first.'); toggleVersionsPanel(); return;
+    }
+  }
+  const name = autoLabel || prompt('Name this version (e.g. "Google PM", "Startup SWE"):');
   if (!name) return;
   const entry = { id: Date.now(), name: name.slice(0,40), content: text, chars: text.length, savedAt: new Date().toISOString() };
   versions.push(entry);
   localStorage.setItem('preptai_resume_versions', JSON.stringify(versions));
   renderVersionsBadge();
   renderVersionsPanel();
-  document.getElementById('versionsPanel').style.display = 'block';
-  showToast('Version saved: ' + entry.name);
+  if (!autoLabel) {
+    document.getElementById('versionsPanel').style.display = 'block';
+    showToast('Version saved: ' + entry.name);
+  }
 }
 
 function loadResumeVersion(id) {
