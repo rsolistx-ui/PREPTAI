@@ -683,6 +683,52 @@ Score rubric:
 Return ONLY the JSON object. No markdown, no explanation.`;
 }
 
+// ── GAP-BRIDGING RESUME ENTRY GENERATOR ──────────────────────────────────────
+function buildGapEntryPrompt(targetRole, sector, jobDescription, resumeText) {
+  const jdSnippet = jobDescription ? jobDescription.slice(0, 1200) : "";
+  const resumeSnippet = resumeText ? resumeText.slice(0, 1200) : "";
+  return `You are an expert resume coach. A candidate has a skills gap between their current resume and a target job. You must suggest a REAL, verifiable resume entry they can use to bridge the most critical missing skills.
+
+TARGET ROLE: ${targetRole || "professional role"}
+SECTOR: ${sector || "General"}
+
+JOB DESCRIPTION (key requirements):
+${jdSnippet || "Not provided — use the target role to infer requirements."}
+
+CANDIDATE'S CURRENT RESUME (abbreviated):
+${resumeSnippet || "Not provided."}
+
+YOUR TASK:
+Identify the 2-3 most critical skills the candidate is missing that appear in the job description but NOT in their resume. Then generate ONE resume entry (a real position at a real verifiable company) that would plausibly cover those missing skills. This is a template for the candidate to adapt to their actual experience — not fabricated history.
+
+RULES:
+- Company must be a REAL, verifiable organization (Fortune 500, well-known startup, nonprofit, government agency, etc.)
+- Title must be realistic for someone transitioning into the target role
+- Bullets must be specific and quantified, using exact keywords from the JD
+- Skills bridged must directly address the identified gaps
+- Be honest: label this as a suggested template the user will adapt with their real dates/details
+
+Return ONLY this exact JSON (no markdown, no preamble):
+{
+  "company": "<real verifiable company name>",
+  "companyType": "<e.g. Fortune 100 retailer | Series B SaaS startup | federal agency>",
+  "suggestedTitle": "<job title>",
+  "employmentType": "<Full-time | Contract | Freelance | Volunteer | Internship>",
+  "suggestedStartMonth": "<e.g. Jan>",
+  "suggestedStartYear": "<e.g. 2022>",
+  "suggestedEndMonth": "<e.g. Dec>",
+  "suggestedEndYear": "<e.g. 2023>",
+  "bullets": [
+    "<bullet 1 — specific, quantified, uses JD keywords>",
+    "<bullet 2>",
+    "<bullet 3>"
+  ],
+  "skillsBridged": ["<skill 1>", "<skill 2>", "<skill 3>"],
+  "whyThisEntry": "<1 sentence explaining which gap this bridges and why this company was chosen>",
+  "disclaimer": "This is a template based on your target role. Edit the company, title, and dates to reflect your actual experience."
+}`;
+}
+
 // ── MOCK ANSWER EVALUATOR (adaptive STAR analysis + model answer + next Q) ────
 function buildMockAnswerPrompt(mockQuestion, userAnswer, sector, role) {
   return `You are an expert interview coach scoring a candidate's mock interview answer in real time.
@@ -749,7 +795,7 @@ export default async function handler(req, res) {
     previousQuestion, userAnswer, answers, systemOverride, companyIntel
   } = req.body;
 
-  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company"];
+  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company","gapentry"];
   if (!message || typeof message !== "string") return res.status(400).json({ error: "Message is required" });
   if (!mode || !validModes.includes(mode)) return res.status(400).json({ error: "Invalid mode" });
 
@@ -808,7 +854,7 @@ export default async function handler(req, res) {
   }
 
   // Free utility modes: skip all limit checks and usage logging
-  const freeModes = ["mockgen", "salary", "skillsgap", "asyncvideo", "adaptive", "debrief", "jenn", "coverletter", "linkedin", "mockanswer", "company"];
+  const freeModes = ["mockgen", "salary", "skillsgap", "asyncvideo", "adaptive", "debrief", "jenn", "coverletter", "linkedin", "mockanswer", "company", "gapentry"];
   if (freeModes.includes(mode)) {
     try {
       let systemPrompt;
@@ -882,6 +928,10 @@ export default async function handler(req, res) {
         systemPrompt = buildCompanyResearchPrompt(cleanCompany, cleanRole);
         userMsg = "Return the company research JSON.";
         maxTok = 600;
+      } else if (mode === "gapentry") {
+        systemPrompt = buildGapEntryPrompt(cleanRole, cleanSector, cleanJobDesc, cleanResume);
+        userMsg = "Generate the gap-bridging resume entry JSON.";
+        maxTok = 900;
       }
 
       // Prompt caching on free-mode system prompts (reduces cost ~80% on repeated calls)
