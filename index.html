@@ -890,15 +890,15 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
   background: linear-gradient(
     180deg,
     var(--bg) 0%,
-    rgba(123,109,244,0.07) 20%,
-    rgba(107,92,228,0.14) 40%,
-    rgba(118,100,232,0.17) 50%,
-    rgba(107,92,228,0.14) 62%,
-    rgba(123,109,244,0.07) 80%,
+    rgba(123,109,244,0.04) 20%,
+    rgba(107,92,228,0.08) 40%,
+    rgba(118,100,232,0.10) 50%,
+    rgba(107,92,228,0.08) 62%,
+    rgba(123,109,244,0.04) 80%,
     var(--bg) 100%
   ) !important;
-  border-top-color: rgba(123,109,244,0.2) !important;
-  border-bottom-color: rgba(123,109,244,0.15) !important;
+  border-top-color: rgba(123,109,244,0.12) !important;
+  border-bottom-color: rgba(123,109,244,0.08) !important;
 }
 /* Glow orbs inside the section stay readable on light bg */
 :root.light #phoneCompSection > div[style*="radial-gradient"] {
@@ -918,10 +918,9 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
   border-left-color: #6b5fe0 !important;
   color: #1e1c3a !important;
 }
-/* Check-mark list items */
-:root.light #phoneCompSection [style*="color:var(--tx2)"] {
-  color: #2d2b45 !important;
-}
+/* Check-mark list items and body text in section */
+:root.light #phoneCompSection [style*="color:var(--tx2)"] { color: #2d2b45 !important; }
+:root.light #phoneCompSection [style*="color:var(--tx)"] { color: #0f0f1c !important; }
 /* The phone mockup shell stays dark intentionally — it is a UI preview */
 
 /* Hero eyebrow pill */
@@ -932,7 +931,16 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 }
 :root.light .eyebrow-dot { background: #4a3ec0; }
 
-/* Billing toggle Annual label */
+/* Billing toggle — pill container invisible in light mode; give it a visible outline */
+:root.light #billingToggleWrap {
+  background: rgba(0,0,0,0.05) !important;
+  border-color: rgba(0,0,0,0.18) !important;
+}
+:root.light #monthlyLabel {
+  background: #ffffff !important;
+  color: #0f0f1c !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+}
 :root.light #annualLabel { color: #1a1a2e !important; font-weight: 700; }
 
 /* SAVE 17% badge */

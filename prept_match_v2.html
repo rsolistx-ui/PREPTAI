@@ -41,10 +41,12 @@
 }
 :root.light{
   --bg:#f4f4f8;--s1:#eaeaf0;--s2:#ffffff;
-  --tx:#0f0f1c;--tx2:#3a3858;--tx3:#8a87a0;
+  --s3:#e4e4f0;--s4:#dcdcec;
+  --tx:#0f0f1c;--tx2:#3a3858;--tx3:#5a5770;
   --inp-bg:#ffffff;--inp-border:rgba(0,0,0,0.12);
   --card-bg:#ffffff;--card-border:rgba(0,0,0,0.08);
   --nav-bg:rgba(244,244,248,0.97);--placeholder:#9090a8;
+  --b1:rgba(0,0,0,0.07);--b2:rgba(0,0,0,0.11);--b3:rgba(0,0,0,0.16);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{transition:background 0.3s,color 0.3s;min-height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;font-size:15px;line-height:1.5}
@@ -386,6 +388,25 @@ footer span{color:var(--gold);font-weight:600}
 :root.light .form-group input, :root.light .form-group select, :root.light .form-group textarea { color: #0f0f1c; }
 :root.light .tp-logo-text { color: #0f0f1c; }
 :root.light .trust-divider { background: rgba(0,0,0,0.1); }
+
+/* Nav is hardcoded dark — override for light mode */
+:root.light nav { background: rgba(244,244,248,0.97) !important; border-bottom-color: rgba(0,0,0,0.08) !important; }
+:root.light .nav-brand { color: #b8900a; }
+:root.light .nav-tab.on { background: #e4e4f0; color: #0f0f1c; border-color: rgba(0,0,0,0.12); }
+:root.light .nav-tab { color: #5a5770; }
+:root.light .nav-link { background: #ffffff; border-color: rgba(0,0,0,0.12); color: #3a3858; }
+:root.light .themeBtn { color: #3a3858 !important; border-color: rgba(0,0,0,0.15) !important; }
+
+/* Inline rgba(255,255,255,...) backgrounds — invisible on light bg */
+:root.light [style*="background:rgba(255,255,255,0.04)"] { background: rgba(0,0,0,0.03) !important; }
+:root.light [style*="border:1px solid rgba(255,255,255,0.08)"] { border-color: rgba(0,0,0,0.09) !important; }
+:root.light [style*="border-bottom:1px solid rgba(255,255,255,0.04)"] { border-bottom-color: rgba(0,0,0,0.06) !important; }
+/* Hard-coded dark-mode text colors */
+:root.light [style*="color:#8a87a0"] { color: #5a5770 !important; }
+:root.light [style*="color:#ccc9e0"] { color: #2d2b45 !important; }
+:root.light [style*="color:#edeaf7"] { color: #0f0f1c !important; }
+/* Gap entry editor company input fallback bg */
+:root.light [style*="background:var(--inp-bg,#111120)"] { background: #ffffff !important; }
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
