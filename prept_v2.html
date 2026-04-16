@@ -2648,6 +2648,49 @@ function toggleTheme() {
 }
 
 applyTheme();
+
+// ── Browser Extension Integration ──────────────────────────────────────────
+// Auto-fills role, company, and job description from the PREPT AI browser
+// extension when the page is opened via the extension action pill.
+// Data is passed as a base64-encoded JSON payload in the URL hash: #prept=...
+(function() {
+  try {
+    const hash = window.location.hash;
+    if (!hash.startsWith('#prept=')) return;
+
+    const encoded = hash.slice(7);
+    const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+
+    if (data.title) {
+      const roleEl = document.getElementById('roleInput');
+      if (roleEl) roleEl.value = data.title;
+    }
+
+    if (data.company) {
+      const compEl = document.getElementById('companyInput');
+      if (compEl) compEl.value = data.company;
+    }
+
+    if (data.description) {
+      const jdEl = document.getElementById('jobDescInput');
+      if (jdEl) {
+        jdEl.value = data.description;
+        jdEl.dispatchEvent(new Event('input'));
+      }
+    }
+
+    // Show a brief toast so the user knows the extension pre-filled the data
+    setTimeout(function() {
+      showToast('Role & job description auto-filled from PREPT AI extension \uD83D\uDE80');
+    }, 600);
+
+    // Clean the hash so reloads don't re-trigger
+    if (history.replaceState) history.replaceState(null, '', window.location.pathname + window.location.search);
+  } catch(e) {
+    // Silently ignore malformed hashes
+  }
+})();
+
 </script>
 </body>
 </html>

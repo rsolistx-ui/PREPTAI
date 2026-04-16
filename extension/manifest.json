@@ -1,0 +1,71 @@
+{
+  "manifest_version": 3,
+  "name": "PREPT AI — Job Application Copilot",
+  "short_name": "PREPT AI",
+  "description": "Detect job postings, optimize your resume, and prep for interviews — all in one click. Works on LinkedIn, Indeed, Glassdoor, and 10+ more sites.",
+  "version": "1.0.0",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://www.linkedin.com/*",
+    "*://www.indeed.com/*",
+    "*://www.glassdoor.com/*",
+    "*://jobs.lever.co/*",
+    "*://boards.greenhouse.io/*",
+    "*://*.myworkdayjobs.com/*",
+    "*://*.greenhouse.io/*",
+    "*://*.lever.co/*",
+    "*://wellfound.com/*",
+    "*://*.bamboohr.com/*",
+    "*://*.ashbyhq.com/*",
+    "*://*.smartrecruiters.com/*",
+    "*://jobs.jobvite.com/*",
+    "*://*.icims.com/*",
+    "*://*.workday.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.linkedin.com/jobs/*",
+        "*://www.indeed.com/viewjob*",
+        "*://www.indeed.com/m/viewjob*",
+        "*://www.glassdoor.com/job-listing/*",
+        "*://www.glassdoor.com/Job/*",
+        "*://jobs.lever.co/*/*",
+        "*://boards.greenhouse.io/*/jobs/*",
+        "*://*.myworkdayjobs.com/*/job/*",
+        "*://*.lever.co/*/postings/*",
+        "*://wellfound.com/jobs/*",
+        "*://*.bamboohr.com/jobs/view.php*",
+        "*://*.ashbyhq.com/jobs/*",
+        "*://*.smartrecruiters.com/*/posting/*",
+        "*://jobs.jobvite.com/*/job/*",
+        "*://*.icims.com/jobs/*/job*"
+      ],
+      "js": ["content.js"],
+      "css": ["styles/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "PREPT AI",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

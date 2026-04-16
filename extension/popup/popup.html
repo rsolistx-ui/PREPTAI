@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PREPT AI</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">PREPT <span class="logo-ai">AI</span></div>
+      <div class="tagline">Your job application copilot</div>
+    </header>
+
+    <!-- ── Detected job view ── -->
+    <section id="view-detected" class="view hidden">
+      <div class="section-label">
+        <span class="dot dot-green"></span>
+        Job posting detected
+      </div>
+      <div class="job-card">
+        <div class="job-title" id="det-title">—</div>
+        <div class="job-company" id="det-company">—</div>
+        <div class="job-source" id="det-source">—</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="btn-det-optimize">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Optimize My Resume
+        </button>
+        <button class="btn btn-secondary" id="btn-det-coach">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Prep for Interview
+        </button>
+      </div>
+      <button class="link-btn" id="btn-switch-manual">Or paste a different job description →</button>
+    </section>
+
+    <!-- ── Manual input view ── -->
+    <section id="view-manual" class="view">
+      <div class="section-label">
+        <span class="dot dot-purple"></span>
+        Paste a job description
+      </div>
+      <div class="field">
+        <textarea
+          id="manual-jd"
+          placeholder="Paste the full job description here…"
+          rows="6"
+          maxlength="12000"
+        ></textarea>
+        <div class="char-count"><span id="jd-chars">0</span> / 12,000</div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <input type="text" id="manual-title" placeholder="Job title" maxlength="120">
+        </div>
+        <div class="field">
+          <input type="text" id="manual-company" placeholder="Company" maxlength="120">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="btn-man-optimize" disabled>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Optimize My Resume
+        </button>
+        <button class="btn btn-secondary" id="btn-man-coach" disabled>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Prep for Interview
+        </button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>Works on LinkedIn, Indeed, Glassdoor + more</span>
+      <a href="https://preptai.app" target="_blank" rel="noopener">preptai.app ↗</a>
+    </footer>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

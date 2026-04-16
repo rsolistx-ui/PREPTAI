@@ -1,0 +1,228 @@
+/* PREPT AI — Injected Content Styles */
+/* Scoped to #prept-ai-pill to avoid leaking into host page */
+
+#prept-ai-pill *,
+#prept-ai-pill *::before,
+#prept-ai-pill *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  line-height: 1.4;
+}
+
+/* ── Container ─────────────────────────────────────────────────────────────── */
+
+#prept-ai-pill {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 2147483647;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* ── Trigger button ─────────────────────────────────────────────────────────── */
+
+#prept-trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px 0 4px;
+  height: 44px;
+  background: linear-gradient(135deg, #1e1b38 0%, #2d2850 100%);
+  border: 1px solid rgba(164, 152, 255, 0.35);
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(164, 152, 255, 0.1);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  outline: none;
+}
+
+#prept-trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(200, 168, 75, 0.3);
+  border-color: rgba(200, 168, 75, 0.4);
+}
+
+#prept-trigger:active {
+  transform: translateY(0);
+}
+
+.prept-logo-p {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #c8a84b, #e6c668);
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 900;
+  color: #1a1830;
+  flex-shrink: 0;
+  letter-spacing: -0.5px;
+}
+
+.prept-trigger-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: #c4bcff;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Card ───────────────────────────────────────────────────────────────────── */
+
+#prept-card {
+  width: 300px;
+  background: #141228;
+  border: 1px solid rgba(164, 152, 255, 0.2);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(164, 152, 255, 0.06);
+  opacity: 0;
+  transform: translateY(8px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#prept-ai-pill.open #prept-card {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+/* ── Card Header ─────────────────────────────────────────────────────────────── */
+
+.prept-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prept-brand {
+  font-size: 15px;
+  font-weight: 900;
+  color: #c4bcff;
+  letter-spacing: 0.03em;
+}
+
+.prept-brand span {
+  background: linear-gradient(135deg, #c8a84b, #e6c668);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+#prept-close {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(164, 152, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: #9490be;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  line-height: 1;
+}
+
+#prept-close:hover {
+  background: rgba(164, 152, 255, 0.2);
+  color: #c4bcff;
+}
+
+/* ── Job Info ────────────────────────────────────────────────────────────────── */
+
+.prept-job-info {
+  background: rgba(164, 152, 255, 0.07);
+  border: 1px solid rgba(164, 152, 255, 0.12);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prept-job-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #edeaf7;
+}
+
+.prept-job-company {
+  font-size: 12px;
+  color: #8a87a0;
+}
+
+/* ── Divider ─────────────────────────────────────────────────────────────────── */
+
+.prept-divider {
+  height: 1px;
+  background: rgba(164, 152, 255, 0.1);
+}
+
+/* ── Action Buttons ─────────────────────────────────────────────────────────── */
+
+.prept-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prept-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  width: 100%;
+  letter-spacing: 0.01em;
+}
+
+.prept-btn:hover {
+  transform: translateY(-1px);
+}
+
+.prept-btn-primary {
+  background: linear-gradient(135deg, #c8a84b, #e6c668);
+  color: #1a1830;
+}
+
+.prept-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.prept-btn-secondary {
+  background: rgba(164, 152, 255, 0.1);
+  border: 1px solid rgba(164, 152, 255, 0.22) !important;
+  color: #c4bcff;
+}
+
+.prept-btn-secondary:hover {
+  background: rgba(164, 152, 255, 0.18);
+}
+
+/* ── Footer note ─────────────────────────────────────────────────────────────── */
+
+.prept-footer-note {
+  font-size: 10px;
+  color: #4e4a6a;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
