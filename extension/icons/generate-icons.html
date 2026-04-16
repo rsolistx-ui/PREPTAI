@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<!--
+  PREPT AI — Icon Generator
+  Open this file in a browser to generate the required PNG icon files.
+  Click each "Download" button to save the PNG, then place the files in this icons/ folder.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PREPT AI Icon Generator</title>
+<style>
+  body { font-family: system-ui; background: #0d0b1e; color: #edeaf7; padding: 30px; display: flex; flex-direction: column; gap: 24px; }
+  h1 { color: #c8a84b; }
+  .icon-row { display: flex; align-items: center; gap: 20px; }
+  canvas { border-radius: 22%; border: 1px solid rgba(164,152,255,0.2); }
+  button { padding: 8px 18px; background: linear-gradient(135deg,#c8a84b,#e6c668); color: #1a1830; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+  label { font-size: 13px; color: #8a87a0; }
+</style>
+</head>
+<body>
+<h1>PREPT AI — Icon Generator</h1>
+<p style="color:#8a87a0;font-size:13px">Click each Download button and save the file with the given filename into this <code>icons/</code> folder.</p>
+
+<script>
+function drawIcon(canvas, size) {
+  const ctx = canvas.getContext('2d');
+  const r = size / 2;
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, size, size);
+  bg.addColorStop(0, '#1e1b38');
+  bg.addColorStop(1, '#2d2850');
+
+  // Rounded rect background
+  const rad = size * 0.22;
+  ctx.beginPath();
+  ctx.moveTo(rad, 0); ctx.lineTo(size - rad, 0);
+  ctx.quadraticCurveTo(size, 0, size, rad);
+  ctx.lineTo(size, size - rad);
+  ctx.quadraticCurveTo(size, size, size - rad, size);
+  ctx.lineTo(rad, size);
+  ctx.quadraticCurveTo(0, size, 0, size - rad);
+  ctx.lineTo(0, rad);
+  ctx.quadraticCurveTo(0, 0, rad, 0);
+  ctx.closePath();
+  ctx.fillStyle = bg;
+  ctx.fill();
+
+  // Gold circle
+  const circleR = size * 0.34;
+  const cx = r, cy = r;
+  const goldGrad = ctx.createLinearGradient(cx - circleR, cy - circleR, cx + circleR, cy + circleR);
+  goldGrad.addColorStop(0, '#c8a84b');
+  goldGrad.addColorStop(1, '#e6c668');
+  ctx.beginPath();
+  ctx.arc(cx, cy, circleR, 0, Math.PI * 2);
+  ctx.fillStyle = goldGrad;
+  ctx.fill();
+
+  // "P" letter
+  ctx.fillStyle = '#1a1830';
+  ctx.font = `900 ${size * 0.38}px -apple-system,BlinkMacSystemFont,'Segoe UI',Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('P', cx, cy + size * 0.02);
+}
+
+const sizes = [16, 32, 48, 128];
+sizes.forEach(size => {
+  const row = document.createElement('div');
+  row.className = 'icon-row';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  canvas.style.width = Math.max(size, 48) + 'px';
+  canvas.style.height = Math.max(size, 48) + 'px';
+  canvas.style.imageRendering = size < 48 ? 'pixelated' : 'auto';
+  drawIcon(canvas, size);
+
+  const lbl = document.createElement('label');
+  lbl.textContent = `icon${size}.png (${size}×${size})`;
+
+  const btn = document.createElement('button');
+  btn.textContent = `Download icon${size}.png`;
+  btn.addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `icon${size}.png`;
+    a.click();
+  });
+
+  row.appendChild(canvas);
+  row.appendChild(lbl);
+  row.appendChild(btn);
+  document.body.appendChild(row);
+});
+
+// Also offer to download all at once
+const allBtn = document.createElement('button');
+allBtn.textContent = 'Download all icons';
+allBtn.style.marginTop = '8px';
+allBtn.addEventListener('click', () => {
+  sizes.forEach((size, i) => {
+    setTimeout(() => {
+      const canvas = document.querySelectorAll('canvas')[i];
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `icon${size}.png`;
+      a.click();
+    }, i * 300);
+  });
+});
+document.body.appendChild(allBtn);
+</script>
+</body>
+</html>

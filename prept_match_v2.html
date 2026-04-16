@@ -397,9 +397,12 @@ footer span{color:var(--gold);font-weight:600}
 :root.light .nav-link { background: #ffffff; border-color: rgba(0,0,0,0.12); color: #3a3858; }
 :root.light .themeBtn { color: #3a3858 !important; border-color: rgba(0,0,0,0.15) !important; }
 
-/* Keyword highlights — solid amber chip for legibility on white background */
-:root.light .rw-content .kw-hi { background: #fde68a !important; color: #78350f !important; font-weight: 600 !important; border-radius: 3px !important; padding: 0 3px !important; }
-:root.light .pb-text .hi { background: #fde68a !important; color: #78350f !important; font-weight: 600 !important; border-radius: 3px !important; padding: 0 2px !important; }
+/* Keyword highlights — legible in both dark and light mode */
+/* Dark mode: bright gold text on subtle amber tint */
+.rw-content .kw-hi { background: rgba(200,168,75,0.22) !important; border-radius: 3px !important; padding: 0 3px !important; color: #e6c668 !important; font-weight: 700 !important; }
+/* Light mode: solid amber chip with near-black text */
+:root.light .rw-content .kw-hi { background: #f59e0b !important; color: #1c0a00 !important; font-weight: 700 !important; border-radius: 3px !important; padding: 0 3px !important; }
+:root.light .pb-text .hi { background: #f59e0b !important; color: #1c0a00 !important; font-weight: 700 !important; border-radius: 3px !important; padding: 0 2px !important; }
 /* Inline rgba(255,255,255,...) backgrounds — invisible on light bg */
 :root.light [style*="background:rgba(255,255,255,0.04)"] { background: rgba(0,0,0,0.03) !important; }
 :root.light [style*="border:1px solid rgba(255,255,255,0.08)"] { border-color: rgba(0,0,0,0.09) !important; }
@@ -643,6 +646,33 @@ footer span{color:var(--gold);font-weight:600}
 <div class="toast" id="toast"></div>
 
 <script>
+// ── THEME ─────────────────────────────────────────────────────────────────────
+let isLight = localStorage.getItem('preptTheme') === 'light';
+
+function applyTheme() {
+  document.documentElement.classList.toggle('light', isLight);
+  const icon  = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  const btn   = document.getElementById('themeBtn');
+  if (icon)  icon.textContent  = isLight ? '☀️' : '🌙';
+  if (label) label.textContent = isLight ? 'Dark mode' : 'Light mode';
+  if (btn) {
+    btn.style.background   = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
+    btn.style.borderColor  = isLight ? 'rgba(200,168,75,0.3)'  : 'rgba(123,109,244,0.3)';
+    btn.style.color        = isLight ? '#c8a84b' : '#a498ff';
+    btn.onmouseover = () => btn.style.background = isLight ? 'rgba(200,168,75,0.22)' : 'rgba(123,109,244,0.22)';
+    btn.onmouseout  = () => btn.style.background = isLight ? 'rgba(200,168,75,0.12)' : 'rgba(123,109,244,0.12)';
+  }
+}
+
+function toggleTheme() {
+  isLight = !isLight;
+  localStorage.setItem('preptTheme', isLight ? 'light' : 'dark');
+  applyTheme();
+}
+
+applyTheme(); // Apply on load, respects saved preference from prept_v2.html too
+
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let resumeContent = '', jobContent = '', analysis = null, coverLetter = '';
 let apps = [];
@@ -931,16 +961,22 @@ Return ONLY valid JSON (no markdown, no explanation):
       document.getElementById('stageLoading').style.display = 'none';
       document.getElementById('stageInput').style.display = 'block';
       setStep(1);
-      // Show a strong upgrade prompt instead of silent redirect
       document.getElementById('analyzeBtn').disabled = true;
-      document.getElementById('analyzeBtn').textContent = 'Monthly limit reached';
+      document.getElementById('analyzeBtn').textContent = 'Analysis used for this month';
       document.getElementById('freeUseBanner').innerHTML = `
-        <div style="font-size:15px;font-weight:700;margin-bottom:8px;color:#e6c668">You've used your 1 free analysis this month.</div>
-        <div style="font-size:13px;margin-bottom:12px;color:#ccc9e0">Pro users run unlimited analyses against every job they apply for.</div>
-        <a href="https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00" style="display:inline-block;padding:10px 24px;background:#d4a847;color:#07070e;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none">Start Pro $12/mo →</a>
-        <div style="font-size:11px;color:#8a87a0;margin-top:8px">7-day free trial · Cancel anytime</div>`;
-      document.getElementById('freeUseBanner').style.background = 'rgba(200,168,75,0.1)';
-      document.getElementById('freeUseBanner').style.borderColor = 'rgba(200,168,75,0.35)';
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:6px 0">
+          <div style="font-size:22px">🎯</div>
+          <div style="font-size:16px;font-weight:800;color:#e6c668;letter-spacing:-0.3px">You've used your free analysis for this month</div>
+          <div style="font-size:13px;color:#ccc9e0;line-height:1.65;max-width:420px;text-align:center">
+            Glad PREPT is helping your job search. Pro members run unlimited analyses — every job, every version of their resume, all month long.
+          </div>
+          <a href="https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00"
+             style="display:inline-block;margin-top:4px;padding:12px 32px;background:linear-gradient(135deg,#c8a84b,#e6c668);color:#07070e;border-radius:9px;font-family:'Outfit',sans-serif;font-weight:800;font-size:15px;text-decoration:none;letter-spacing:-0.2px;box-shadow:0 4px 20px rgba(200,168,75,0.3)">
+            Upgrade to Pro — $12/mo →
+          </a>
+          <div style="font-size:11px;color:#6b6882">7-day free trial &middot; Cancel anytime &middot; Instant access</div>
+        </div>`;
+      document.getElementById('freeUseBanner').style.cssText = 'padding:22px 24px;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.3);border-radius:14px;font-size:13px;color:#e6c668;text-align:center;width:100%;max-width:600px';
       return;
     }
 
@@ -2333,6 +2369,43 @@ function downloadCoverLetter(format) {
 
 // Keep old downloadAll as alias for txt
 function downloadAll() { downloadResume('txt'); }
+
+// ── Browser Extension Integration ──────────────────────────────────────────
+// Auto-fills job description (and optionally company) from the PREPT AI
+// browser extension when the page is opened via the extension action pill.
+// Data is passed as a base64-encoded JSON payload in the URL hash: #prept=...
+(function() {
+  try {
+    const hash = window.location.hash;
+    if (!hash.startsWith('#prept=')) return;
+
+    const encoded = hash.slice(7);
+    const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+
+    if (data.description) {
+      const jdEl = document.getElementById('jobText');
+      if (jdEl) {
+        jdEl.value = data.description;
+        jdEl.dispatchEvent(new Event('input'));
+      }
+    }
+
+    if (data.company) {
+      const compEl = document.getElementById('matchCompanyInput');
+      if (compEl) compEl.value = data.company;
+    }
+
+    // Show a brief toast so the user knows the extension pre-filled the data
+    setTimeout(function() {
+      showToast('Job description auto-filled from PREPT AI extension \uD83D\uDE80');
+    }, 600);
+
+    // Clean the hash so reloads don't re-trigger
+    if (history.replaceState) history.replaceState(null, '', window.location.pathname + window.location.search);
+  } catch(e) {
+    // Silently ignore malformed hashes
+  }
+})();
 
 </script>
 </body>

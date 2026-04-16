@@ -55,7 +55,13 @@ async function getMonthlyUsage(email, limitKey) {
 }
 
 async function logUsage(email, mode) {
-  await supabase.from("usage").insert({ email, type: mode });
+  const { error } = await supabase.from("usage").insert({ email, type: mode });
+  if (error) {
+    // Log but don't throw — a logging failure should not block the user response,
+    // but we need visibility so we can fix the underlying DB/RLS issue.
+    console.error("USAGE LOG FAILED:", { email, mode, error: error.message || error });
+  }
+  return !error;
 }
 
 // ── SANITIZATION ──────────────────────────────────────────────────────────────
@@ -967,6 +973,8 @@ export default async function handler(req, res) {
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("X-Accel-Buffering", "no");
     res.setHeader("Access-Control-Allow-Origin", "https://www.preptai.co");
+    // Log usage before streaming starts — same reason as non-streaming path
+    if (cleanEmail) await logUsage(cleanEmail, mode);
     try {
       const stream = anthropic.messages.stream({
         model: "claude-sonnet-4-20250514",
@@ -979,7 +987,6 @@ export default async function handler(req, res) {
           res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
         }
       }
-      if (cleanEmail) await logUsage(cleanEmail, mode);
       let remaining = "unlimited";
       if (plan === "free" && cleanEmail) {
         const used = await getMonthlyUsage(cleanEmail, limitKey);
@@ -996,6 +1003,10 @@ export default async function handler(req, res) {
   }
 
   // ── NON-STREAMING PATH — match, mockgen, and fallback ────────────────────────
+  // Log usage BEFORE calling AI — ensures the slot is consumed even if response
+  // is interrupted. If logging fails, we still serve (UX) but it's visible in logs.
+  if (cleanEmail) await logUsage(cleanEmail, mode);
+
   try {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
@@ -1006,8 +1017,6 @@ export default async function handler(req, res) {
 
     const answer = response.content[0]?.text;
     if (!answer) throw new Error("No response from AI");
-
-    if (cleanEmail) await logUsage(cleanEmail, mode);
 
     let remaining = "unlimited";
     if (plan === "free" && cleanEmail) {

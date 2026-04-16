@@ -1,0 +1,125 @@
+/* PREPT AI — Injected Content Styles v2 */
+
+#prept-ai-pill *, #prept-ai-pill *::before, #prept-ai-pill *::after {
+  box-sizing: border-box; margin: 0; padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  line-height: 1.4;
+}
+
+#prept-ai-pill {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 2147483647;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+}
+
+/* ── Trigger ─────────────────────────────────────────────────────────────── */
+#prept-trigger {
+  display: flex; align-items: center; gap: 7px;
+  padding: 0 14px 0 4px; height: 44px;
+  background: linear-gradient(135deg, #1e1b38, #2d2850);
+  border: 1px solid rgba(164,152,255,0.35); border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.45), 0 0 0 1px rgba(164,152,255,0.1);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  outline: none;
+}
+#prept-trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(200,168,75,0.35);
+  border-color: rgba(200,168,75,0.4);
+}
+
+.prept-logo-p {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #c8a84b, #e6c668);
+  border-radius: 50%; font-size: 17px; font-weight: 900; color: #1a1830; flex-shrink: 0;
+}
+.prept-trigger-label {
+  font-size: 12px; font-weight: 800; color: #c4bcff;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+#prept-card {
+  width: 310px;
+  background: #141228;
+  border: 1px solid rgba(164,152,255,0.2); border-radius: 16px;
+  padding: 14px; gap: 10px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(164,152,255,0.06);
+  display: flex; flex-direction: column;
+  opacity: 0; transform: translateY(8px) scale(0.97); pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+#prept-ai-pill.open #prept-card { opacity: 1; transform: none; pointer-events: all; }
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.prept-card-header { display: flex; align-items: center; justify-content: space-between; }
+.prept-brand { font-size: 14px; font-weight: 900; color: #c4bcff; letter-spacing: 0.03em; }
+.prept-brand span {
+  background: linear-gradient(135deg, #c8a84b, #e6c668);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.prept-header-actions { display: flex; align-items: center; gap: 5px; }
+
+.prept-save-btn {
+  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  background: rgba(164,152,255,0.1); border: none; border-radius: 6px;
+  color: #9490be; cursor: pointer; transition: all 0.15s;
+}
+.prept-save-btn:hover { background: rgba(200,168,75,0.15); color: #c8a84b; }
+.prept-save-btn.saved { background: rgba(200,168,75,0.18); color: #e6c668; }
+
+#prept-close {
+  width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  background: rgba(164,152,255,0.1); border: none; border-radius: 50%;
+  color: #9490be; font-size: 16px; cursor: pointer; transition: background 0.15s;
+}
+#prept-close:hover { background: rgba(164,152,255,0.2); color: #c4bcff; }
+
+/* ── Job info ────────────────────────────────────────────────────────────── */
+.prept-job-info {
+  background: rgba(164,152,255,0.07); border: 1px solid rgba(164,152,255,0.12);
+  border-radius: 9px; padding: 9px 11px; display: flex; flex-direction: column; gap: 3px;
+}
+.prept-job-title { font-size: 13px; font-weight: 700; color: #edeaf7; }
+.prept-job-company { font-size: 12px; color: #8a87a0; }
+
+/* ── Keyword chips ───────────────────────────────────────────────────────── */
+.prept-keywords { display: flex; flex-wrap: wrap; gap: 5px; }
+.prept-kw {
+  padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 600;
+  background: rgba(200,168,75,0.1); border: 1px solid rgba(200,168,75,0.22); color: #c8a84b;
+  letter-spacing: 0.02em;
+}
+
+/* ── Divider ─────────────────────────────────────────────────────────────── */
+.prept-divider { height: 1px; background: rgba(164,152,255,0.1); }
+
+/* ── Main action buttons ─────────────────────────────────────────────────── */
+.prept-actions { display: flex; flex-direction: column; gap: 7px; }
+.prept-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 9px 14px; border-radius: 9px; font-size: 13px; font-weight: 700;
+  cursor: pointer; border: none; transition: transform 0.15s, filter 0.15s; width: 100%;
+}
+.prept-btn:hover { transform: translateY(-1px); }
+.prept-btn-primary { background: linear-gradient(135deg, #c8a84b, #e6c668); color: #1a1830; }
+.prept-btn-primary:hover { filter: brightness(1.08); }
+.prept-btn-secondary {
+  background: rgba(164,152,255,0.1); border: 1px solid rgba(164,152,255,0.22) !important;
+  color: #c4bcff;
+}
+.prept-btn-secondary:hover { background: rgba(164,152,255,0.18); }
+
+/* ── Quick links ─────────────────────────────────────────────────────────── */
+.prept-quick-links { display: flex; gap: 5px; }
+.prept-ql {
+  flex: 1; padding: 6px 4px; border-radius: 7px; font-size: 10px; font-weight: 600;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  color: #8a87a0; cursor: pointer; transition: all 0.15s; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.prept-ql:hover { background: rgba(164,152,255,0.1); color: #c4bcff; }
+
+.prept-footer-note { font-size: 10px; color: #4e4a6a; text-align: center; letter-spacing: 0.04em; }

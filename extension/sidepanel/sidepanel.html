@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PREPT AI</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <header class="sp-header">
+      <div class="sp-logo">PREPT <span>AI</span></div>
+      <div class="sp-header-right">
+        <a href="https://preptai.app/login.html" target="_blank" class="sp-login-link" id="loginLink">Sign in</a>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="sp-tabs">
+      <button class="sp-tab active" data-tab="analyze">Analyze</button>
+      <button class="sp-tab" data-tab="saved">Saved Jobs <span class="sp-badge" id="savedBadge"></span></button>
+      <button class="sp-tab" data-tab="tools">Quick Tools</button>
+    </nav>
+
+    <!-- ── TAB: Analyze ── -->
+    <section class="sp-panel active" id="tab-analyze">
+
+      <!-- Detected job -->
+      <div id="detected-section" class="hidden">
+        <div class="sp-label">
+          <span class="dot dot-green"></span> Job Detected
+        </div>
+        <div class="sp-job-card" id="job-card">
+          <div class="sp-job-title" id="sp-title">—</div>
+          <div class="sp-job-meta">
+            <span id="sp-company">—</span>
+            <span class="sp-dot">·</span>
+            <span id="sp-source" class="sp-source">—</span>
+          </div>
+        </div>
+
+        <!-- Top keywords -->
+        <div id="kw-section" class="hidden">
+          <div class="sp-label">Top Keywords</div>
+          <div class="sp-keywords" id="sp-keywords"></div>
+        </div>
+
+        <!-- Primary actions -->
+        <div class="sp-actions">
+          <button class="sp-btn sp-btn-primary" id="btn-optimize">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Optimize My Resume
+          </button>
+          <button class="sp-btn sp-btn-secondary" id="btn-coach">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Prep for Interview
+          </button>
+        </div>
+
+        <!-- Secondary tools -->
+        <div class="sp-label" style="margin-top:4px">More Tools for This Job</div>
+        <div class="sp-tool-grid">
+          <button class="sp-tool-btn" id="btn-cover">
+            <span class="sp-tool-icon">✉</span>
+            <span>Cover Letter</span>
+          </button>
+          <button class="sp-tool-btn" id="btn-skills">
+            <span class="sp-tool-icon">🎯</span>
+            <span>Skills Gap</span>
+          </button>
+          <button class="sp-tool-btn" id="btn-salary">
+            <span class="sp-tool-icon">💰</span>
+            <span>Salary Intel</span>
+          </button>
+          <button class="sp-tool-btn" id="btn-linkedin">
+            <span class="sp-tool-icon">🔗</span>
+            <span>LinkedIn About</span>
+          </button>
+        </div>
+
+        <button class="sp-save-row" id="btn-save">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          <span id="save-label">Save this job</span>
+        </button>
+      </div>
+
+      <!-- No job yet -->
+      <div id="no-job-section">
+        <div class="sp-empty">
+          <div class="sp-empty-icon">🔍</div>
+          <div class="sp-empty-title">No job detected</div>
+          <div class="sp-empty-sub">Navigate to a job posting on LinkedIn, Indeed, Glassdoor, or 12+ other sites — PREPT AI will auto-detect it.</div>
+        </div>
+
+        <!-- Manual paste fallback -->
+        <div class="sp-manual">
+          <div class="sp-label">Or paste a job description</div>
+          <textarea id="manual-jd" placeholder="Paste the full job description here…" rows="5"></textarea>
+          <div class="sp-row2">
+            <input type="text" id="manual-title" placeholder="Job title">
+            <input type="text" id="manual-company" placeholder="Company">
+          </div>
+          <div class="sp-actions">
+            <button class="sp-btn sp-btn-primary" id="btn-man-optimize" disabled>Optimize Resume</button>
+            <button class="sp-btn sp-btn-secondary" id="btn-man-coach" disabled>Prep for Interview</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── TAB: Saved Jobs ── -->
+    <section class="sp-panel" id="tab-saved">
+      <div id="saved-empty" class="sp-empty hidden">
+        <div class="sp-empty-icon">🔖</div>
+        <div class="sp-empty-title">No saved jobs yet</div>
+        <div class="sp-empty-sub">Click the bookmark icon on any detected job to save it here for later.</div>
+      </div>
+      <div id="saved-list"></div>
+    </section>
+
+    <!-- ── TAB: Quick Tools ── -->
+    <section class="sp-panel" id="tab-tools">
+      <div class="sp-label">Launch PREPT Tools</div>
+      <div class="sp-tools-list">
+        <a class="sp-tool-link" href="https://preptai.app/prept_match_v2.html" target="_blank">
+          <div class="sp-tl-icon">📄</div>
+          <div class="sp-tl-body">
+            <div class="sp-tl-title">Resume Optimizer</div>
+            <div class="sp-tl-sub">ATS score + rewritten bullets + keywords</div>
+          </div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="sp-tool-link" href="https://preptai.app/prept_v2.html" target="_blank">
+          <div class="sp-tl-icon">🎙</div>
+          <div class="sp-tl-body">
+            <div class="sp-tl-title">Live Interview Coach</div>
+            <div class="sp-tl-sub">Real-time coaching with AI feedback</div>
+          </div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="sp-tool-link" href="https://preptai.app/prept_match_v2.html#skillsgap" target="_blank">
+          <div class="sp-tl-icon">🎯</div>
+          <div class="sp-tl-body">
+            <div class="sp-tl-title">Skills Gap Analysis</div>
+            <div class="sp-tl-sub">See exactly what you're missing for a role</div>
+          </div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="sp-tool-link" href="https://preptai.app/prept_v2.html#salary" target="_blank">
+          <div class="sp-tl-icon">💰</div>
+          <div class="sp-tl-body">
+            <div class="sp-tl-title">Salary Intel</div>
+            <div class="sp-tl-sub">Market range + negotiation talking points</div>
+          </div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="sp-tool-link" href="https://preptai.app/prept_v2.html#linkedin" target="_blank">
+          <div class="sp-tl-icon">🔗</div>
+          <div class="sp-tl-body">
+            <div class="sp-tl-title">LinkedIn About Generator</div>
+            <div class="sp-tl-sub">Write a magnetic LinkedIn summary</div>
+          </div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a class="sp-tool-link" href="https://preptai.app/prept_v2.html#mockanswer" target="_blank">
+          <div class="sp-tl-icon">💬</div>
+          <div class="sp-tl-body">
+            <div class="sp-tl-title">Mock Answer Builder</div>
+            <div class="sp-tl-sub">STAR-format answers for any question</div>
+          </div>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+
+      <div class="sp-upgrade-card">
+        <div class="sp-upgrade-title">Upgrade to Pro</div>
+        <div class="sp-upgrade-sub">Unlimited resume analyses, coaching sessions, cover letters, and more. 7-day free trial.</div>
+        <a class="sp-upgrade-btn" href="https://buy.stripe.com/fZeg2O7Ht3rX6rm144" target="_blank">Get Pro — $12/mo →</a>
+      </div>
+    </section>
+
+  </div>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

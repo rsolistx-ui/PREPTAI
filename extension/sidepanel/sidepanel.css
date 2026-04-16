@@ -1,0 +1,226 @@
+/* PREPT AI Side Panel */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #0d0b1e;
+  --bg2:     #141228;
+  --bg3:     rgba(164,152,255,0.07);
+  --border:  rgba(164,152,255,0.16);
+  --tx1:     #edeaf7;
+  --tx2:     #c4bcff;
+  --tx3:     #8a87a0;
+  --tx4:     #4e4a6a;
+  --gold:    #c8a84b;
+  --gold2:   #e6c668;
+  --purple:  #a498ff;
+  --green:   #45de7a;
+  --red:     #ef5f5f;
+}
+
+html, body { height: 100%; background: var(--bg); color: var(--tx1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 13px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+#app { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.sp-header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.sp-logo { font-size: 16px; font-weight: 900; color: var(--tx2); letter-spacing: 0.03em; }
+.sp-logo span {
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.sp-login-link {
+  font-size: 11px; font-weight: 700; color: var(--tx3);
+  text-decoration: none; padding: 4px 10px;
+  border: 1px solid var(--border); border-radius: 20px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.sp-login-link:hover { color: var(--tx2); border-color: rgba(164,152,255,0.3); }
+
+/* ── Tabs ────────────────────────────────────────────────────────────────── */
+.sp-tabs {
+  display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  background: var(--bg);
+}
+.sp-tab {
+  flex: 1; padding: 10px 4px; background: none; border: none;
+  border-bottom: 2px solid transparent; color: var(--tx3);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  font-family: inherit;
+}
+.sp-tab:hover { color: var(--tx2); }
+.sp-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.sp-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 16px; height: 16px; padding: 0 4px;
+  background: var(--purple); color: #fff;
+  border-radius: 20px; font-size: 9px; font-weight: 800;
+}
+.sp-badge:empty { display: none; }
+
+/* ── Panels ──────────────────────────────────────────────────────────────── */
+.sp-panel { display: none; flex-direction: column; gap: 12px; padding: 14px 16px; overflow-y: auto; flex: 1; }
+.sp-panel.active { display: flex; }
+.hidden { display: none !important; }
+
+/* ── Common ──────────────────────────────────────────────────────────────── */
+.sp-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--tx3);
+  display: flex; align-items: center; gap: 5px;
+}
+.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dot-green { background: var(--green); box-shadow: 0 0 6px rgba(69,222,122,0.6); }
+
+/* ── Job card ────────────────────────────────────────────────────────────── */
+.sp-job-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 11px 13px;
+}
+.sp-job-title { font-size: 13px; font-weight: 700; color: var(--tx1); margin-bottom: 4px; }
+.sp-job-meta { font-size: 11px; color: var(--tx3); display: flex; gap: 5px; align-items: center; }
+.sp-dot { color: var(--tx4); }
+.sp-source { color: var(--tx4); font-size: 10px; }
+
+/* ── Keywords ────────────────────────────────────────────────────────────── */
+.sp-keywords { display: flex; flex-wrap: wrap; gap: 5px; }
+.sp-kw {
+  padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 600;
+  background: rgba(200,168,75,0.1); border: 1px solid rgba(200,168,75,0.22);
+  color: var(--gold); letter-spacing: 0.02em;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.sp-actions { display: flex; flex-direction: column; gap: 7px; }
+.sp-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 10px 14px; border-radius: 10px;
+  font-size: 13px; font-weight: 700; cursor: pointer; border: none;
+  transition: transform 0.15s, filter 0.15s, opacity 0.15s;
+  width: 100%; font-family: inherit; letter-spacing: 0.01em;
+}
+.sp-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+.sp-btn:not(:disabled):hover { transform: translateY(-1px); }
+.sp-btn-primary { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1830; }
+.sp-btn-primary:not(:disabled):hover { filter: brightness(1.08); }
+.sp-btn-secondary {
+  background: rgba(164,152,255,0.1); border: 1px solid rgba(164,152,255,0.22) !important;
+  color: var(--tx2);
+}
+.sp-btn-secondary:not(:disabled):hover { background: rgba(164,152,255,0.18); }
+
+/* ── Tool grid ───────────────────────────────────────────────────────────── */
+.sp-tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.sp-tool-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 10px 6px; border-radius: 10px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--tx3); font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; font-family: inherit;
+}
+.sp-tool-btn:hover { background: rgba(164,152,255,0.12); color: var(--tx2); border-color: rgba(164,152,255,0.28); }
+.sp-tool-icon { font-size: 18px; }
+
+/* ── Save row ────────────────────────────────────────────────────────────── */
+.sp-save-row {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 8px; border-radius: 8px; background: none;
+  border: 1px dashed rgba(164,152,255,0.2);
+  color: var(--tx3); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; font-family: inherit; width: 100%;
+}
+.sp-save-row:hover { border-color: rgba(200,168,75,0.35); color: var(--gold); }
+.sp-save-row.saved { border-color: rgba(200,168,75,0.4); color: var(--gold); background: rgba(200,168,75,0.06); }
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.sp-empty {
+  text-align: center; padding: 24px 16px; display: flex;
+  flex-direction: column; align-items: center; gap: 8px;
+}
+.sp-empty-icon { font-size: 32px; }
+.sp-empty-title { font-size: 14px; font-weight: 700; color: var(--tx1); }
+.sp-empty-sub { font-size: 12px; color: var(--tx3); line-height: 1.6; max-width: 220px; }
+
+/* ── Manual form ─────────────────────────────────────────────────────────── */
+.sp-manual { display: flex; flex-direction: column; gap: 8px; }
+textarea, input[type="text"] {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--tx1); font-size: 12px; font-family: inherit; padding: 8px 10px;
+  width: 100%; resize: none; outline: none; transition: border-color 0.15s;
+}
+textarea::placeholder, input::placeholder { color: var(--tx4); }
+textarea:focus, input:focus { border-color: rgba(164,152,255,0.4); }
+.sp-row2 { display: flex; gap: 7px; }
+.sp-row2 input { flex: 1; }
+
+/* ── Saved job cards ─────────────────────────────────────────────────────── */
+#saved-list { display: flex; flex-direction: column; gap: 8px; }
+.saved-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 11px 13px; display: flex; flex-direction: column; gap: 6px;
+}
+.saved-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.saved-card-title { font-size: 13px; font-weight: 700; color: var(--tx1); flex: 1; }
+.saved-card-company { font-size: 11px; color: var(--tx3); }
+.saved-card-date { font-size: 10px; color: var(--tx4); }
+.saved-card-kws { display: flex; flex-wrap: wrap; gap: 4px; }
+.saved-card-kw {
+  padding: 2px 7px; border-radius: 20px; font-size: 9px; font-weight: 600;
+  background: rgba(200,168,75,0.08); border: 1px solid rgba(200,168,75,0.18); color: var(--gold);
+}
+.saved-card-actions { display: flex; gap: 6px; }
+.saved-card-btn {
+  flex: 1; padding: 6px 8px; border-radius: 7px; font-size: 11px; font-weight: 700;
+  cursor: pointer; border: none; transition: all 0.15s; font-family: inherit; text-align: center;
+}
+.saved-btn-opt { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1830; }
+.saved-btn-opt:hover { filter: brightness(1.08); }
+.saved-btn-coach { background: rgba(164,152,255,0.1); border: 1px solid rgba(164,152,255,0.22) !important; color: var(--tx2); }
+.saved-btn-coach:hover { background: rgba(164,152,255,0.18); }
+.saved-btn-del {
+  width: 28px; padding: 6px; border-radius: 7px; font-size: 12px;
+  background: rgba(239,95,95,0.08); border: 1px solid rgba(239,95,95,0.2) !important;
+  color: var(--red); cursor: pointer; font-family: inherit; flex-grow: 0 !important; flex: 0 0 28px !important;
+}
+.saved-btn-del:hover { background: rgba(239,95,95,0.15); }
+
+/* ── Quick tools list ────────────────────────────────────────────────────── */
+.sp-tools-list { display: flex; flex-direction: column; gap: 6px; }
+.sp-tool-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 12px; border-radius: 10px;
+  background: var(--bg2); border: 1px solid var(--border);
+  text-decoration: none; color: var(--tx1);
+  transition: border-color 0.15s, background 0.15s;
+}
+.sp-tool-link:hover { border-color: rgba(164,152,255,0.3); background: rgba(164,152,255,0.06); }
+.sp-tl-icon { font-size: 18px; flex-shrink: 0; }
+.sp-tl-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.sp-tl-title { font-size: 13px; font-weight: 700; color: var(--tx1); }
+.sp-tl-sub { font-size: 11px; color: var(--tx3); }
+.sp-tool-link svg { flex-shrink: 0; color: var(--tx4); }
+
+/* ── Upgrade card ────────────────────────────────────────────────────────── */
+.sp-upgrade-card {
+  background: rgba(200,168,75,0.06); border: 1px solid rgba(200,168,75,0.22);
+  border-radius: 12px; padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 6px; text-align: center;
+}
+.sp-upgrade-title { font-size: 14px; font-weight: 800; color: var(--gold2); }
+.sp-upgrade-sub { font-size: 11px; color: var(--tx3); line-height: 1.6; }
+.sp-upgrade-btn {
+  display: block; margin-top: 4px; padding: 9px 16px;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #1a1830; border-radius: 9px; font-size: 13px; font-weight: 800;
+  text-decoration: none; transition: filter 0.15s;
+}
+.sp-upgrade-btn:hover { filter: brightness(1.08); }
