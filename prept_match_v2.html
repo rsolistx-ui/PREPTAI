@@ -400,12 +400,11 @@ footer span{color:var(--gold);font-weight:600}
 /* Keyword highlights — legible in both dark and light mode */
 /* Dark mode: bright gold text on subtle amber tint */
 .rw-content .kw-hi { background: rgba(200,168,75,0.22) !important; border-radius: 3px !important; padding: 0 3px !important; color: #e6c668 !important; font-weight: 700 !important; }
-/* Light mode: solid amber chip with near-black text */
+/* Light mode: black body text, high-contrast amber keyword chips */
 :root.light .rw-content { color: #000000 !important; background: #ffffff !important; }
 :root.light .cl-out { color: #000000 !important; background: #ffffff !important; }
-:root.light .rw-content * { color: inherit !important; }
-:root.light .rw-content .kw-hi { background: #f59e0b !important; color: #1c0a00 !important; font-weight: 700 !important; border-radius: 3px !important; padding: 0 3px !important; }
-:root.light .pb-text .hi { background: #f59e0b !important; color: #1c0a00 !important; font-weight: 700 !important; border-radius: 3px !important; padding: 0 2px !important; }
+:root.light .rw-content .kw-hi { background: #e07b00 !important; color: #ffffff !important; font-weight: 700 !important; border-radius: 3px !important; padding: 0 4px !important; }
+:root.light .pb-text .hi { background: #e07b00 !important; color: #ffffff !important; font-weight: 700 !important; border-radius: 3px !important; padding: 0 2px !important; }
 /* Inline rgba(255,255,255,...) backgrounds — invisible on light bg */
 :root.light [style*="background:rgba(255,255,255,0.04)"] { background: rgba(0,0,0,0.03) !important; }
 :root.light [style*="border:1px solid rgba(255,255,255,0.08)"] { border-color: rgba(0,0,0,0.09) !important; }
