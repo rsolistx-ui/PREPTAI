@@ -401,8 +401,9 @@ footer span{color:var(--gold);font-weight:600}
 /* Dark mode: bright gold text on subtle amber tint */
 .rw-content .kw-hi { background: rgba(200,168,75,0.22) !important; border-radius: 3px !important; padding: 0 3px !important; color: #e6c668 !important; font-weight: 700 !important; }
 /* Light mode: solid amber chip with near-black text */
-:root.light .rw-content { color: #1a1a2e !important; }
-:root.light .cl-out { color: #1a1a2e !important; }
+:root.light .rw-content { color: #000000 !important; background: #ffffff !important; }
+:root.light .cl-out { color: #000000 !important; background: #ffffff !important; }
+:root.light .rw-content * { color: inherit !important; }
 :root.light .rw-content .kw-hi { background: #f59e0b !important; color: #1c0a00 !important; font-weight: 700 !important; border-radius: 3px !important; padding: 0 3px !important; }
 :root.light .pb-text .hi { background: #f59e0b !important; color: #1c0a00 !important; font-weight: 700 !important; border-radius: 3px !important; padding: 0 2px !important; }
 /* Inline rgba(255,255,255,...) backgrounds — invisible on light bg */
