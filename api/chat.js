@@ -693,7 +693,7 @@ Return ONLY the JSON object. No markdown, no explanation.`;
 function buildGapEntryPrompt(targetRole, sector, jobDescription, resumeText) {
   const jdSnippet = jobDescription ? jobDescription.slice(0, 1200) : "";
   const resumeSnippet = resumeText ? resumeText.slice(0, 1200) : "";
-  return `You are an expert resume coach. A candidate has a skills gap between their current resume and a target job. You must suggest a REAL, verifiable resume entry they can use to bridge the most critical missing skills.
+  return `You are an expert resume coach. A candidate has a skills gap between their current resume and a target job. You must suggest ONE real, verifiable resume entry they can use as a template to bridge the most critical missing skills.
 
 TARGET ROLE: ${targetRole || "professional role"}
 SECTOR: ${sector || "General"}
@@ -705,32 +705,83 @@ CANDIDATE'S CURRENT RESUME (abbreviated):
 ${resumeSnippet || "Not provided."}
 
 YOUR TASK:
-Identify the 2-3 most critical skills the candidate is missing that appear in the job description but NOT in their resume. Then generate ONE resume entry (a real position at a real verifiable company) that would plausibly cover those missing skills. This is a template for the candidate to adapt to their actual experience — not fabricated history.
+1. Identify the 2-3 most critical skills the candidate is missing from the job description.
+2. Determine the industry/sector from the job description and candidate background.
+3. Select the SINGLE BEST real company from the industry-specific list below that would most plausibly let the candidate bridge those exact gaps. Prefer companies known for contract/remote/freelance roles.
+4. Generate ONE resume entry for that company with a realistic title and 3 strong bullets.
+
+INDUSTRY COMPANY REFERENCE (real, verifiable companies — pick the best fit):
+
+AI TRAINING & DATA ANNOTATION:
+Telus International, Outlier AI, DataAnnotation, Scale AI, Appen, Lionbridge (TELUS), Remotasks, Invisible Technologies, Surge AI, Prolific Academic, iMerit, Defined.ai, Sama, CloudFactory
+
+SOFTWARE & TECH:
+Microsoft (contract), Google (contract via staffing), Amazon Web Services, IBM, Accenture, Cognizant, Infosys, Capgemini, Deloitte Digital, Wipro, ThoughtWorks, Slalom Consulting, Publicis Sapient
+
+HEALTHCARE & MEDICAL:
+Teladoc Health, Optum (UnitedHealth Group), CVS Health, Cigna, Aetna, AMN Healthcare, Aya Healthcare, Cross Country Healthcare, LocumTenens.com, Maximus Federal Services, Conduent Health
+
+FINANCE & ACCOUNTING:
+JPMorgan Chase, Goldman Sachs, Fidelity Investments, Vanguard, Deloitte, KPMG, PwC, Ernst & Young (EY), Robert Half International, Paro (fractional finance), Belay Solutions, CFO Hub
+
+MARKETING & CONTENT:
+HubSpot, Salesforce, Contently, Skyword, Conductor, Percolate, Scripted, ClearVoice, Verblio, Crowd Content, Brafton
+
+EDUCATION & E-LEARNING:
+Chegg, Coursera, Udemy, Khan Academy, Tutor.com, Course Hero, Stride (K12), Pearson, McGraw-Hill, Varsity Tutors, Outlier.org
+
+CUSTOMER SERVICE & BPO:
+Concentrix, TTEC, Teleperformance, Sutherland Global, Arise Virtual Solutions, Working Solutions, Liveops, Conduent
+
+OPERATIONS & LOGISTICS:
+Amazon Logistics, FedEx (contract), UPS, XPO Logistics, C.H. Robinson, Echo Global Logistics, Flexport, Ryder System
+
+SALES & CRM:
+Salesforce, HubSpot, Oracle, SAP, Gartner, Forrester Research, ZoomInfo, Outreach.io
+
+LEGAL & COMPLIANCE:
+LegalZoom, Axiom Law, Hire an Esquire, UpCounsel, Thomson Reuters (contract), Consilio, Epiq Systems
+
+REAL ESTATE & CONSTRUCTION:
+CBRE, JLL (Jones Lang LaSalle), Cushman & Wakefield, Turner Construction, Bechtel, AECOM, Jacobs Engineering, Mortenson Construction, Colliers International
+
+HR & RECRUITING:
+LinkedIn Talent Solutions, Indeed, Kforce, Manpower Group, Robert Half, Kelly Services, Randstad, Aerotek, Insight Global
+
+CREATIVE & DESIGN:
+99designs (Vistaprint), Dribbble (contract), Toptal, Fiverr Enterprise, 99designs, Pentagram, IDEO, frog Design
+
+NONPROFIT & GOVERNMENT:
+United Way Worldwide, American Red Cross, Habitat for Humanity, Teach For America, City of [nearest major city], AmeriCorps, Peace Corps alumni network
+
+MEDIA & ENTERTAINMENT:
+Netflix (contract), Warner Bros. Discovery, Disney Streaming, Viacom CBS, Hearst, Condé Nast, Dotdash Meredith
 
 RULES:
-- Company must be a REAL, verifiable organization (Fortune 500, well-known startup, nonprofit, government agency, etc.)
-- Title must be realistic for someone transitioning into the target role
-- Bullets must be specific and quantified, using exact keywords from the JD
-- Skills bridged must directly address the identified gaps
-- Be honest: label this as a suggested template the user will adapt with their real dates/details
+- Company MUST be from the list above or another widely recognized, easily verifiable organization
+- Choose the company whose industry and known work type best fits the candidate's background AND the skills gap
+- Employment type should be Contract or Freelance for AI training companies; match typical hiring model for others
+- Title must be realistic for a transitioning candidate — not overqualified
+- All 3 bullets must use exact keywords from the job description
+- Be honest: this is a template the user will adapt with their real dates/details
 
 Return ONLY this exact JSON (no markdown, no preamble):
 {
-  "company": "<real verifiable company name>",
-  "companyType": "<e.g. Fortune 100 retailer | Series B SaaS startup | federal agency>",
-  "suggestedTitle": "<job title>",
+  "company": "<real verifiable company name from the list above>",
+  "companyType": "<e.g. AI training platform | Fortune 100 retailer | federal agency>",
+  "suggestedTitle": "<realistic job title>",
   "employmentType": "<Full-time | Contract | Freelance | Volunteer | Internship>",
   "suggestedStartMonth": "<e.g. Jan>",
   "suggestedStartYear": "<e.g. 2022>",
   "suggestedEndMonth": "<e.g. Dec>",
   "suggestedEndYear": "<e.g. 2023>",
   "bullets": [
-    "<bullet 1 — specific, quantified, uses JD keywords>",
+    "<bullet 1 — specific, quantified, uses exact JD keywords>",
     "<bullet 2>",
     "<bullet 3>"
   ],
   "skillsBridged": ["<skill 1>", "<skill 2>", "<skill 3>"],
-  "whyThisEntry": "<1 sentence explaining which gap this bridges and why this company was chosen>",
+  "whyThisEntry": "<1 sentence: which gaps this bridges AND why this specific company was chosen over alternatives>",
   "disclaimer": "This is a template based on your target role. Edit the company, title, and dates to reflect your actual experience."
 }`;
 }
