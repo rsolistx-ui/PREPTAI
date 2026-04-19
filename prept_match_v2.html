@@ -1800,7 +1800,11 @@ function saveAnalysisHistory(entry) {
     const existing = JSON.parse(localStorage.getItem('preptai_analysis_history') || '[]');
     existing.unshift(entry);
     localStorage.setItem('preptai_analysis_history', JSON.stringify(existing.slice(0, 5)));
-  } catch(e) {}
+  } catch(e) {
+    if (e.name === 'QuotaExceededError') {
+      try { localStorage.removeItem('preptai_analysis_history'); } catch(_) {}
+    }
+  }
 }
 
 function getAnalysisHistory() {
@@ -2217,7 +2221,14 @@ function saveResumeVersion(autoLabel) {
   if (!name) return;
   const entry = { id: Date.now(), name: name.slice(0,40), content: text, chars: text.length, savedAt: new Date().toISOString() };
   versions.push(entry);
-  localStorage.setItem('preptai_resume_versions', JSON.stringify(versions));
+  try {
+    localStorage.setItem('preptai_resume_versions', JSON.stringify(versions));
+  } catch(e) {
+    if (e.name === 'QuotaExceededError') {
+      versions.shift(); // drop oldest to make room
+      try { localStorage.setItem('preptai_resume_versions', JSON.stringify(versions)); } catch(_) {}
+    }
+  }
   renderVersionsBadge();
   renderVersionsPanel();
   if (!autoLabel) {
@@ -2238,7 +2249,7 @@ function loadResumeVersion(id) {
 
 function deleteResumeVersion(id) {
   let versions = getResumeVersions().filter(x => x.id !== id);
-  localStorage.setItem('preptai_resume_versions', JSON.stringify(versions));
+  try { localStorage.setItem('preptai_resume_versions', JSON.stringify(versions)); } catch(_) {}
   renderVersionsBadge();
   renderVersionsPanel();
 }

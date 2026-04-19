@@ -1236,8 +1236,11 @@ async function callAPIStream(payload, onChunk) {
           const ev = JSON.parse(line.slice(6));
           if (ev.text)  { fullText += ev.text; onChunk(ev.text, fullText); }
           if (ev.done)  { meta = { plan: ev.plan, remaining: ev.remaining }; }
-          if (ev.error) { return { ok: false, error: ev.message }; }
-        } catch(e) {}
+          if (ev.error) { return { ok: false, error: ev.message || 'Stream error' }; }
+        } catch(e) {
+          // Only swallow incomplete-chunk SyntaxErrors; re-throw everything else
+          if (!(e instanceof SyntaxError)) throw e;
+        }
       }
     }
   } catch(streamErr) {

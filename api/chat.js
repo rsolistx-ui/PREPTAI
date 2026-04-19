@@ -34,6 +34,9 @@ function getLimitKey(mode) {
 }
 
 // ── IP RATE LIMIT ─────────────────────────────────────────────────────────────
+// In-memory fallback for authenticated-mode general limiting (60/hr per IP).
+// NOTE: resets on cold start / across serverless instances. Supabase-persisted
+// limits (below) are used for free utility modes and are instance-independent.
 const ipCounts = new Map();
 function checkIPRateLimit(ip) {
   const now = Date.now(), windowMs = 60 * 60 * 1000;
@@ -42,6 +45,25 @@ function checkIPRateLimit(ip) {
   entry.count++;
   ipCounts.set(ip, entry);
   return entry.count <= 60;
+}
+
+// Persisted rate limit for free utility modes — uses usage table, no schema change.
+// Stores anonymous callers as 'anon:<ip>' so limits survive serverless restarts.
+const FREE_MODE_HOURLY_LIMIT = 20;
+async function checkFreeModeRateLimit(ip) {
+  const anonKey = 'anon:' + ip;
+  const oneHourAgo = new Date(Date.now() - 3_600_000).toISOString();
+  try {
+    const { count } = await supabase
+      .from("usage").select("*", { count: "exact", head: true })
+      .eq("email", anonKey).gte("created_at", oneHourAgo);
+    return (count || 0) < FREE_MODE_HOURLY_LIMIT;
+  } catch { return true; } // fail open rather than block legitimate users on DB error
+}
+async function logFreeModeUsage(ip, mode) {
+  try {
+    await supabase.from("usage").insert({ email: 'anon:' + ip, type: mode });
+  } catch { /* non-critical */ }
 }
 
 // ── MONTHLY USAGE ─────────────────────────────────────────────────────────────
@@ -942,9 +964,15 @@ export default async function handler(req, res) {
     }
   }
 
-  // Free utility modes: skip all limit checks and usage logging
+  // Free utility modes: skip monthly credit checks but enforce per-IP hourly limit
   const freeModes = ["mockgen", "salary", "skillsgap", "asyncvideo", "adaptive", "debrief", "jenn", "coverletter", "linkedin", "mockanswer", "company", "gapentry", "appfollowup", "emailthankyou", "negotiation"];
   if (freeModes.includes(mode)) {
+    const callerIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
+    const withinLimit = await checkFreeModeRateLimit(callerIP);
+    if (!withinLimit) {
+      return res.status(429).json({ error: "rate_limited", message: `You've used ${FREE_MODE_HOURLY_LIMIT} free requests this hour. Please wait before trying again.` });
+    }
+    await logFreeModeUsage(callerIP, mode);
     try {
       let systemPrompt;
       let userMsg = cleanMessage || "Generate the response.";
