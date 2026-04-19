@@ -1043,7 +1043,7 @@ function showPlanGate(requiredPlan, featureName) {
   const price  = isPro ? '$12/mo' : '$24/mo';
   const url    = isPro
     ? 'https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00'
-    : 'https://buy.stripe.com/fZeg2O7Ht3rX6rm144';
+    : 'https://buy.stripe.com/fZu00k8104Hr4M09nacbC04';
   const coachView = document.getElementById('coachView');
   if (coachView) {
     coachView.style.display = 'flex';
@@ -1078,8 +1078,8 @@ function setMode(mode) {
     showPlanGate('pro', names[mode]);
     return;
   }
-  if (['salary','videoprep'].includes(mode) && !['career'].includes(userPlan)) {
-    const names = { salary: 'Salary Negotiation Coach', videoprep: 'Video Interview Coach' };
+  if (['salary','videoprep','duo'].includes(mode) && !['career'].includes(userPlan)) {
+    const names = { salary: 'Salary Negotiation Coach', videoprep: 'Video Interview Coach', duo: 'Duo Mode — Remote Coach Assist' };
     currentMode = mode;
     highlightTab(mode);
     showPlanGate('career', names[mode]);
