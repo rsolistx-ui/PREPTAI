@@ -782,6 +782,61 @@ Return ONLY this exact JSON (no markdown, no extra text). Use your knowledge of 
 }`;
 }
 
+// ── POST-APPLICATION FOLLOW-UP EMAIL ─────────────────────────────────────────
+function buildAppFollowupEmailPrompt() {
+  return `You are a career communication expert. Write a professional, concise post-application follow-up email.
+
+RULES:
+- Under 120 words total in the body
+- Open with a specific, warm statement of continued interest — never "I wanted to follow up"
+- Paragraph 1: Briefly restate who you are and the role you applied for
+- Paragraph 2: Reiterate your top relevant qualification (specific, from their resume) that directly matches the role
+- Paragraph 3: Short, confident close asking about next steps — not begging, just professional
+- Subject line should stand out — not "Following Up on my Application"
+- Sound confident, not desperate
+- Always include: Subject: [line]\n\n[email body]
+
+The user will provide: role, company, days since applied, contact name, resume snippet, and job description snippet.`;
+}
+
+// ── POST-INTERVIEW THANK-YOU EMAIL (free mode version) ────────────────────────
+function buildEmailThankYouPrompt() {
+  return `You are a career communication strategist. Write a compelling post-interview thank-you email that moves hiring decisions.
+
+THE RESEARCH: 22% of hiring managers say thank-you emails influenced their decision. The ones that work reference something specific from the conversation.
+
+RULES:
+- Under 130 words total in the body
+- Subject: [line that references the specific role or conversation — not "Thank you for your time"]
+- P1: Specific, warm opener referencing something real from their conversation (use what they provide)
+- P2: One specific quantified achievement from their background that directly connects to what seemed most important
+- P3: Brief genuine observation showing they listened
+- P4: Confident forward-looking close — not begging, not pushy
+- Sound like a confident professional who is interested but not desperate
+- Format: Subject: [line]\n\n[email body]
+
+The user will provide: role, company, interviewer name, topic discussed, resume snippet.`;
+}
+
+// ── SALARY NEGOTIATION EMAIL ──────────────────────────────────────────────────
+function buildNegotiationEmailPrompt() {
+  return `You are an expert salary negotiation coach. Write a professional, evidence-based salary negotiation email.
+
+THE RESEARCH: Candidates who negotiate get 7-23% more on average. The key is: anchor high, justify with market data, stay collaborative.
+
+RULES:
+- Under 180 words total in the body
+- Subject: [professional subject referencing the role and offer]
+- P1: Express genuine enthusiasm for the offer and the role — start positive
+- P2: Make the counter-offer with a specific number anchored to market data (use the salary data they provide if available); frame as "based on market research and my [X] years experience in [specific area]..."
+- P3: Brief summary of 2 specific qualifications that justify the higher number
+- P4: Collaborative close — you want this to work, you're flexible, let's find a number that works for both sides
+- Tone: Confident, collaborative, never apologetic or desperate
+- Format: Subject: [line]\n\n[email body]
+
+The user will provide: role, company, offer received, target salary, resume snippet, salary market data.`;
+}
+
 // ── MAIN HANDLER ──────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://www.preptai.co");
@@ -801,7 +856,7 @@ export default async function handler(req, res) {
     previousQuestion, userAnswer, answers, systemOverride, companyIntel
   } = req.body;
 
-  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company","gapentry"];
+  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company","gapentry","appfollowup","emailthankyou","negotiation"];
   if (!message || typeof message !== "string") return res.status(400).json({ error: "Message is required" });
   if (!mode || !validModes.includes(mode)) return res.status(400).json({ error: "Invalid mode" });
 
@@ -860,7 +915,7 @@ export default async function handler(req, res) {
   }
 
   // Free utility modes: skip all limit checks and usage logging
-  const freeModes = ["mockgen", "salary", "skillsgap", "asyncvideo", "adaptive", "debrief", "jenn", "coverletter", "linkedin", "mockanswer", "company", "gapentry"];
+  const freeModes = ["mockgen", "salary", "skillsgap", "asyncvideo", "adaptive", "debrief", "jenn", "coverletter", "linkedin", "mockanswer", "company", "gapentry", "appfollowup", "emailthankyou", "negotiation"];
   if (freeModes.includes(mode)) {
     try {
       let systemPrompt;
@@ -918,6 +973,33 @@ export default async function handler(req, res) {
         systemPrompt = `You are an expert cover letter writer. Write a compelling, human-sounding cover letter that directly connects the candidate's specific achievements to the role's requirements. Never use generic templates. Rules: open with a specific hook (never "I am applying for"), connect top 2-3 requirements to quantified achievements, show genuine company knowledge, close with a confident CTA. 3-4 paragraphs, under 350 words. Sound human, not corporate.${intelSnippet}`;
         userMsg = cleanMessage;
         maxTok = 1200;
+        // Streaming mode for cover letter
+        if (req.body.stream === true) {
+          res.setHeader("Content-Type", "text/event-stream");
+          res.setHeader("Cache-Control", "no-cache");
+          res.setHeader("X-Accel-Buffering", "no");
+          res.setHeader("Access-Control-Allow-Origin", "https://www.preptai.co");
+          try {
+            const clStream = anthropic.messages.stream({
+              model: "claude-sonnet-4-20250514",
+              max_tokens: maxTok,
+              system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
+              messages: [{ role: "user", content: userMsg }],
+            });
+            for await (const event of clStream) {
+              if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
+                res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
+              }
+            }
+            res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+            res.end();
+          } catch (error) {
+            console.error("coverletter stream error:", error);
+            res.write(`data: ${JSON.stringify({ error: true, message: "Stream failed. Please try again." })}\n\n`);
+            res.end();
+          }
+          return;
+        }
       } else if (mode === "linkedin") {
         systemPrompt = `You are a LinkedIn profile optimization expert. Generate optimized LinkedIn profile sections that help candidates get found by recruiters searching for the role. Return ONLY valid JSON with no markdown: {"headline":"optimized headline under 220 chars","about":"compelling About section 250-300 words with \\n paragraph breaks, under 2600 total characters","skills":"comma-separated top 10 skills aligned to the job description"}`;
         userMsg = cleanMessage;
@@ -938,6 +1020,18 @@ export default async function handler(req, res) {
         systemPrompt = buildGapEntryPrompt(cleanRole, cleanSector, cleanJobDesc, cleanResume);
         userMsg = "Generate the gap-bridging resume entry JSON.";
         maxTok = 1400;
+      } else if (mode === "appfollowup") {
+        systemPrompt = buildAppFollowupEmailPrompt();
+        userMsg = cleanMessage;
+        maxTok = 600;
+      } else if (mode === "emailthankyou") {
+        systemPrompt = buildEmailThankYouPrompt();
+        userMsg = cleanMessage;
+        maxTok = 600;
+      } else if (mode === "negotiation") {
+        systemPrompt = buildNegotiationEmailPrompt();
+        userMsg = cleanMessage;
+        maxTok = 700;
       }
 
       // Prompt caching on free-mode system prompts (reduces cost ~80% on repeated calls)

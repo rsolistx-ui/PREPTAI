@@ -1,6 +1,6 @@
 // PREPT AI Side Panel
 
-const PREPT_URL = 'https://preptai.app';
+const PREPT_URL = 'https://preptai.co';
 
 function encodeJob(data) {
   try { return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
@@ -240,7 +240,85 @@ chrome.runtime.onMessage.addListener((msg) => {
   }
 });
 
+// ── Easy Apply Helper ──────────────────────────────────────────────────────
+
+async function loadEAContact() {
+  const { eaContact } = await chrome.storage.local.get('eaContact');
+  const display = document.getElementById('eaContactDisplay');
+  const setupBtn = document.getElementById('eaSetupBtn');
+  if (!display) return;
+
+  if (eaContact && Object.values(eaContact).some(Boolean)) {
+    setupBtn.style.display = 'none';
+    display.style.display = 'block';
+    const fields = [
+      { label: 'Name',     val: eaContact.name },
+      { label: 'Email',    val: eaContact.email },
+      { label: 'Phone',    val: eaContact.phone },
+      { label: 'Location', val: eaContact.location },
+      { label: 'LinkedIn', val: eaContact.linkedin },
+    ].filter(f => f.val);
+    display.innerHTML = `
+      <div style="margin-bottom:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.4)">Your info — click to copy</div>
+      ${fields.map(f => `
+        <div class="ea-field">
+          <span class="ea-field-label">${f.label}</span>
+          <span class="ea-field-val" title="${esc(f.val)}">${esc(f.val)}</span>
+          <button class="ea-copy-btn" data-val="${esc(f.val)}" onclick="eaCopy(this)">Copy</button>
+        </div>`).join('')}
+      <button onclick="showEAForm(true)" style="margin-top:9px;width:100%;padding:6px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:rgba(255,255,255,0.4);font-family:inherit;font-size:11px;cursor:pointer">✏ Edit info</button>`;
+  } else {
+    setupBtn.style.display = 'block';
+    display.style.display = 'none';
+  }
+}
+
+function showEAForm(prefill) {
+  const form = document.getElementById('eaContactForm');
+  const setupBtn = document.getElementById('eaSetupBtn');
+  if (!form) return;
+  setupBtn.style.display = 'none';
+  form.style.display = 'flex';
+  if (prefill) {
+    chrome.storage.local.get('eaContact').then(({ eaContact }) => {
+      if (!eaContact) return;
+      ['name','email','phone','location','linkedin'].forEach(k => {
+        const el = document.getElementById('ea-' + k);
+        if (el && eaContact[k]) el.value = eaContact[k];
+      });
+    });
+  }
+}
+
+function cancelEAEdit() {
+  document.getElementById('eaContactForm').style.display = 'none';
+  loadEAContact();
+}
+
+async function saveEAContact() {
+  const contact = {
+    name:     document.getElementById('ea-name')?.value?.trim() || '',
+    email:    document.getElementById('ea-email')?.value?.trim() || '',
+    phone:    document.getElementById('ea-phone')?.value?.trim() || '',
+    location: document.getElementById('ea-location')?.value?.trim() || '',
+    linkedin: document.getElementById('ea-linkedin')?.value?.trim() || '',
+  };
+  await chrome.storage.local.set({ eaContact: contact });
+  document.getElementById('eaContactForm').style.display = 'none';
+  loadEAContact();
+}
+
+function eaCopy(btn) {
+  const val = btn.dataset.val || '';
+  navigator.clipboard.writeText(val).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓';
+    setTimeout(() => { btn.textContent = orig; }, 1400);
+  }).catch(() => {});
+}
+
 // ── Init ───────────────────────────────────────────────────────────────────
 
 loadCurrentJob();
 updateSavedBadge();
+loadEAContact();
