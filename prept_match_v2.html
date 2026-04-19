@@ -239,6 +239,29 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;padding:0 
 .add-app-btn{padding:10px 22px;background:var(--gold);color:#07070e;border:none;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
 .tracker-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
 @media(max-width:600px){.tracker-stats{grid-template-columns:repeat(2,1fr)}}
+
+/* ── Mobile responsiveness ─────────────────────────────────────── */
+@media(max-width:640px){
+  .nav-tabs{gap:2px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .nav-tab{font-size:11px;padding:7px 10px;white-space:nowrap;flex-shrink:0}
+  .result-tabs{gap:2px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+  .result-tab{font-size:11px;padding:7px 9px;white-space:nowrap;flex-shrink:0}
+  .rpane{padding:14px 12px}
+  .bta{min-height:160px;font-size:13px}
+  .ucard-body{padding:12px}
+  .analyze-row{flex-direction:column;gap:8px}
+  .analyze-row button{width:100%}
+  .score-hero{flex-direction:column;text-align:center}
+  .kw-chip{font-size:11px;padding:4px 8px}
+  .rw-actions,.cl-acts{flex-wrap:wrap}
+  .rw-btn{font-size:12px;padding:7px 12px}
+  .apply-all-btn{font-size:12px;padding:8px 12px}
+  #bundleBtn{width:100%;justify-content:center}
+  .sp-tool-grid{grid-template-columns:1fr 1fr}
+  .gap-score-ring{width:70px;height:70px}
+  .pr-metrics{flex-direction:column}
+  .prm{padding:8px 10px}
+}
 .tstat{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r);padding:14px 16px}
 .tstat-n{font-size:26px;font-weight:800;color:var(--tx);line-height:1}
 .tstat-l{font-size:11px;color:var(--tx3);margin-top:3px}
@@ -389,6 +412,12 @@ footer span{color:var(--gold);font-weight:600}
 :root.light .tp-logo-text { color: #0f0f1c; }
 :root.light .trust-divider { background: rgba(0,0,0,0.1); }
 
+/* ── Email Templates ── */
+.em-tab{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--b1);background:var(--s3);color:var(--tx3);cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.18s}
+.em-tab:hover{color:var(--tx2);border-color:var(--vi)}
+.em-tab.on{background:var(--vd);border-color:rgba(123,109,244,0.3);color:var(--vi2)}
+.em-panel{display:block}
+
 /* Nav is hardcoded dark — override for light mode */
 :root.light nav { background: rgba(244,244,248,0.97) !important; border-bottom-color: rgba(0,0,0,0.08) !important; }
 :root.light .nav-brand { color: #b8900a; }
@@ -427,6 +456,7 @@ footer span{color:var(--gold);font-weight:600}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module" id="pdfjs-script"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <link rel="canonical" href="https://www.preptai.co/prept_match_v2.html">
   <script type="module" src="/speed-insights.js"></script>
   <script>
@@ -505,6 +535,7 @@ footer span{color:var(--gold);font-weight:600}
             <div class="ordiv">or paste text</div>
             <textarea class="bta" id="resumeText" placeholder="Paste your full resume here contact info, summary, experience, education, skills..." oninput="updateCC('resumeText','rcc')"></textarea>
             <div class="cc" id="rcc">0 characters</div>
+            <div style="font-size:11px;color:var(--tx3);margin-top:4px;display:flex;align-items:center;gap:5px">🔒 Your resume is never stored or shared. Deleted from memory immediately after analysis.</div>
             <!-- RESUME VERSIONING -->
             <div style="display:flex;gap:6px;margin-top:8px">
               <button onclick="saveResumeVersion()" style="flex:1;padding:7px 10px;background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.25);color:#a498ff;border-radius:7px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(123,109,244,0.18)'" onmouseout="this.style.background='rgba(123,109,244,0.1)'">💾 Save version</button>
@@ -571,6 +602,7 @@ footer span{color:var(--gold);font-weight:600}
           <button class="rtab" id="rt5" onclick="swRT(5)">📧 Cover Letter</button>
           <button class="rtab" id="rt6" onclick="swRT(6)">💼 LinkedIn</button>
           <button class="rtab" id="rt7" onclick="swRT(7)">🎯 Interview Prep</button>
+          <button class="rtab" id="rt8" onclick="swRT(8)">✉ Emails</button>
         </div>
         <div class="rpanes-wrap">
           <div class="rpane on" id="rp1"></div>
@@ -580,6 +612,7 @@ footer span{color:var(--gold);font-weight:600}
           <div class="rpane" id="rp5"></div>
           <div class="rpane" id="rp6"></div>
           <div class="rpane" id="rp7"></div>
+          <div class="rpane" id="rp8"></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;gap:10px">
@@ -756,20 +789,45 @@ async function saveAppsToCloud() {
 const SUPABASE_URL      = 'https://lfxfwhitegsjeowlcvqk.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmeGZ3aGl0ZWdzamVvd2xjdnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODM3ODMsImV4cCI6MjA4OTg1OTc4M30.f67zZLrSbaLbTgWZtvx2AIr4aCGVRxuynEFm1_CKvWs';
 let userEmail = null;
+let userPlan  = 'free';
 
 async function initAuth() {
   try {
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data: { session } } = await sb.auth.getSession();
-    if (session?.user) userEmail = session.user.email;
-    else {
+    if (session?.user) {
+      userEmail = session.user.email;
+      const { data: sub } = await sb.from('subscribers').select('plan').eq('email', userEmail).single();
+      userPlan = sub?.plan || 'free';
+      sessionStorage.setItem('preptai_user', JSON.stringify({ email: userEmail, plan: userPlan }));
+    } else {
       const raw = sessionStorage.getItem('preptai_user');
-      if (raw) { try { userEmail = JSON.parse(raw)?.email || null; } catch(e) {} }
+      if (raw) { try { const s = JSON.parse(raw); userEmail = s.email || null; userPlan = s.plan || 'free'; } catch(e) {} }
     }
   } catch(e) {}
 }
 initAuth();
+
+// Returns true if user meets the required plan; otherwise renders inline upgrade prompt in el
+function requirePlan(minPlan, el) {
+  const order = { free: 0, pro: 1, career: 2 };
+  if ((order[userPlan] || 0) >= (order[minPlan] || 0)) return true;
+  const label = minPlan === 'pro' ? 'Pro' : 'Career+';
+  const price = minPlan === 'pro' ? '$12/mo' : '$24/mo';
+  const url   = minPlan === 'pro'
+    ? 'https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00'
+    : 'https://buy.stripe.com/fZu00k8104Hr4M09nacbC04';
+  if (el) el.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 20px;text-align:center">
+      <div style="font-size:28px">🔒</div>
+      <div style="font-size:15px;font-weight:800;color:var(--tx)">Requires ${label}</div>
+      <div style="font-size:13px;color:var(--tx2);max-width:300px;line-height:1.65">Upgrade to <strong style="color:#e6c668">${label}</strong> to unlock this feature along with everything else in the plan.</div>
+      <a href="${url}" style="display:inline-flex;align-items:center;gap:7px;padding:11px 24px;background:linear-gradient(135deg,#c8a84b,#e6c668);color:#07070e;border-radius:9px;font-size:14px;font-weight:800;text-decoration:none">Upgrade to ${label} — ${price} →</a>
+      <div style="font-size:11px;color:var(--tx3)">7-day free trial · Cancel anytime</div>
+    </div>`;
+  return false;
+}
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
 function navTo(page) {
@@ -824,17 +882,22 @@ async function processFile(f) {
     } else if (f.name.endsWith('.pdf')) {
       const arrayBuffer = await f.arrayBuffer();
       text = await extractPdfText(arrayBuffer);
-    } else {
-      // DOC/DOCX: read raw bytes for readable ASCII content
+    } else if (f.name.endsWith('.docx') || f.name.endsWith('.doc')) {
       const arrayBuffer = await f.arrayBuffer();
-      const bytes = new Uint8Array(arrayBuffer);
-      let raw = '';
-      for (let i = 0; i < bytes.length; i++) {
-        const c = bytes[i];
-        if (c >= 32 && c < 127) raw += String.fromCharCode(c);
-        else if (c === 10 || c === 13) raw += '\n';
+      if (typeof mammoth !== 'undefined') {
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        text = result.value || '';
+      } else {
+        // Fallback if mammoth didn't load
+        const bytes = new Uint8Array(arrayBuffer);
+        let raw = '';
+        for (let i = 0; i < bytes.length; i++) {
+          const c = bytes[i];
+          if (c >= 32 && c < 127) raw += String.fromCharCode(c);
+          else if (c === 10 || c === 13) raw += '\n';
+        }
+        text = raw.replace(/[^\x20-\x7E\n]/g, ' ').replace(/\s{3,}/g, '  ').trim();
       }
-      text = raw.replace(/[^\x20-\x7E\n]/g, ' ').replace(/\s{3,}/g, '  ').trim();
     }
 
     if (text.length > 100) {
@@ -1034,11 +1097,15 @@ Return ONLY valid JSON (no markdown, no explanation):
   }
 }
 
-// ── COVER LETTER via /api/chat ────────────────────────────────────────────────
+// ── COVER LETTER via /api/chat (streaming) ───────────────────────────────────
 async function generateCL() {
+  const out = document.getElementById('clOut');
+  if (!requirePlan('pro', out)) return;
   const tone = document.getElementById('clTone')?.value || 'professional';
   const out  = document.getElementById('clOut');
+  const acts = document.getElementById('clActs');
   out.innerHTML = '<div class="thinking"><div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><span class="tlbl">Writing your cover letter...</span></div>';
+  if (acts) acts.style.display = 'none';
 
   const prompt = `Write a compelling cover letter for this candidate targeting this specific role.
 
@@ -1064,15 +1131,34 @@ Return ONLY the cover letter text, no subject line, no labels.`;
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: prompt, mode: 'coverletter', userEmail: userEmail || null, companyIntel: window.matchCompanyIntel || null, company: document.getElementById('matchCompanyInput')?.value?.trim() || '' })
+      body: JSON.stringify({ message: prompt, mode: 'coverletter', stream: true, userEmail: userEmail || null, companyIntel: window.matchCompanyIntel || null, company: document.getElementById('matchCompanyInput')?.value?.trim() || '' })
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Something went wrong');
-    coverLetter = data.answer || '';
-    out.textContent = coverLetter;
-    const acts = document.getElementById('clActs');
-    if (acts) acts.style.display = 'flex';
-    showToast('Cover letter ready');
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Something went wrong');
+    }
+    coverLetter = '';
+    out.textContent = '';
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        try {
+          const d = JSON.parse(line.slice(6));
+          if (d.text) { coverLetter += d.text; out.textContent = coverLetter; }
+          if (d.done) { if (acts) acts.style.display = 'flex'; showToast('Cover letter ready'); }
+          if (d.error) throw new Error(d.message || 'Stream error');
+        } catch(pe) { if (pe.message && pe.message !== 'Unexpected end of JSON input') throw pe; }
+      }
+    }
+    if (coverLetter && acts) acts.style.display = 'flex';
   } catch(e) {
     out.textContent = 'Error: ' + e.message + '. Please try again.';
   }
@@ -1081,6 +1167,7 @@ Return ONLY the cover letter text, no subject line, no labels.`;
 // ── LINKEDIN via /api/chat ────────────────────────────────────────────────────
 async function generateLinkedIn() {
   const content = document.getElementById('liContent');
+  if (!requirePlan('pro', content)) return;
   content.innerHTML = '<div class="thinking"><div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><span class="tlbl">Optimizing your LinkedIn...</span></div>';
 
   const prompt = `Generate optimized LinkedIn profile sections for this candidate targeting this job description.
@@ -1125,6 +1212,7 @@ function renderAll(r) {
   renderCoverLetterPane();
   renderLinkedInPane(r);
   renderInterviewPrep(r);
+  renderEmailTemplates(r);
 }
 
 function renderScoreBanner(r) {
@@ -1182,6 +1270,52 @@ function renderScoreBanner(r) {
           </div>
           ${f.impact?`<div style="font-size:11px;font-weight:700;color:var(--gr);white-space:nowrap">${escH(f.impact)}</div>`:''}
         </div>`).join('')}
+      </div>` : ''}
+      ${(()=>{
+        const ai = r.aiDetectionRisk;
+        if (!ai) return '';
+        const lvl = ai.level || 'low';
+        const aiScore = ai.score ?? 0;
+        const colors = { low: '#45de7a', medium: '#f5a52a', high: '#ef5f5f' };
+        const bgs    = { low: 'rgba(69,222,122,0.06)',  medium: 'rgba(245,165,42,0.06)',  high: 'rgba(239,95,95,0.06)' };
+        const bords  = { low: 'rgba(69,222,122,0.2)',   medium: 'rgba(245,165,42,0.2)',   high: 'rgba(239,95,95,0.2)' };
+        const labels = { low: 'Low — reads as human-authored', medium: 'Medium — some AI signals detected', high: 'High — likely flagged by AI detectors' };
+        const c = colors[lvl], bg = bgs[lvl], bo = bords[lvl];
+        const phrases = (ai.flaggedPhrases || []).slice(0, 8);
+        return `
+        <div style="margin-top:14px;padding:12px 14px;background:${bg};border:1px solid ${bo};border-radius:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3)">🤖 AI Detection Risk</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="font-size:15px;font-weight:900;color:${c}">${aiScore}</div>
+              <div style="font-size:10px;font-weight:700;color:${c};text-transform:uppercase;letter-spacing:0.5px">${lvl}</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--tx2);margin-bottom:${phrases.length ? 8 : 0}px">${escH(labels[lvl])}</div>
+          ${phrases.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">${phrases.map(p=>`<span style="padding:2px 8px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(239,95,95,0.1);border:1px solid rgba(239,95,95,0.2);color:#ef9f9f">${escH(p)}</span>`).join('')}</div>` : ''}
+          ${ai.humanizeAdvice ? `<div style="font-size:11px;color:var(--tx3);line-height:1.55;border-top:1px solid rgba(255,255,255,0.05);padding-top:8px;margin-top:4px">${escH(ai.humanizeAdvice)}</div>` : ''}
+        </div>`;
+      })()}
+      ${proj > score ? `
+      <div style="margin-top:16px;padding:12px 14px;background:rgba(69,222,122,0.04);border:1px solid rgba(69,222,122,0.15);border-radius:10px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:10px">Before vs. after optimization</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="text-align:center;min-width:36px">
+            <div style="font-size:20px;font-weight:900;color:${gc};font-family:'Outfit',sans-serif;line-height:1">${score}</div>
+            <div style="font-size:9px;color:var(--tx3);margin-top:1px">Now</div>
+          </div>
+          <div style="flex:1">
+            <div style="position:relative;height:10px;background:var(--s4);border-radius:5px;overflow:hidden;margin-bottom:5px">
+              <div style="position:absolute;height:10px;background:rgba(69,222,122,0.25);border-radius:5px;width:${proj}%"></div>
+              <div style="position:absolute;height:10px;background:${gc};border-radius:5px;width:${score}%"></div>
+            </div>
+            <div style="font-size:11px;font-weight:700;color:#45de7a;text-align:right">+${proj - score} points potential</div>
+          </div>
+          <div style="text-align:center;min-width:36px">
+            <div style="font-size:20px;font-weight:900;color:#45de7a;font-family:'Outfit',sans-serif;line-height:1">~${proj}</div>
+            <div style="font-size:9px;color:#45de7a;margin-top:1px">Target</div>
+          </div>
+        </div>
       </div>` : ''}
     </div>
     <div class="sc-sections">
@@ -1445,6 +1579,130 @@ function renderInterviewPrep(r) {
     </div>`;
 }
 
+// ── EMAIL TEMPLATES ───────────────────────────────────────────────────────────
+window._emailOutputs = {};
+
+function renderEmailTemplates(r) {
+  const company = document.getElementById('matchCompanyInput')?.value?.trim() || '';
+  const salaryMid = r?.salaryData?.mid || '';
+  document.getElementById('rp8').innerHTML = `
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.6">3 emails that move hiring decisions — each written from your actual resume and this job, never a template.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+      <button class="em-tab on" id="emtab-followup" onclick="showEmailTab('followup')">📬 Follow-up</button>
+      <button class="em-tab" id="emtab-thankyou" onclick="showEmailTab('thankyou')">🤝 Thank-You</button>
+      <button class="em-tab" id="emtab-negotiation" onclick="showEmailTab('negotiation')">💰 Negotiation</button>
+    </div>
+
+    <div id="em-followup" class="em-panel">
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:12px;padding:8px 12px;background:rgba(200,168,75,0.06);border:1px solid rgba(200,168,75,0.15);border-radius:8px;line-height:1.5">📬 <strong>Post-application follow-up</strong> — send 1-2 weeks after applying with no response.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Hiring contact name</label>
+          <input id="em-fu-contact" placeholder="Hiring Team or recruiter name" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none;box-sizing:border-box"/></div>
+        <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Days since applied</label>
+          <input id="em-fu-days" type="number" placeholder="14" value="14" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none;box-sizing:border-box"/></div>
+      </div>
+      <button onclick="generateEmail('followup')" style="width:100%;padding:11px;background:var(--vi);color:#fff;border:none;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px">Generate Follow-up Email</button>
+      <div id="em-out-followup" style="display:none;background:var(--s1);border:1px solid var(--b2);border-radius:var(--rs);padding:18px 22px;font-size:13px;line-height:1.9;color:var(--tx);white-space:pre-wrap;min-height:160px"></div>
+      <div id="em-acts-followup" style="display:none;margin-top:10px;flex-wrap:wrap;gap:8px">
+        <button class="rw-btn rw-primary" onclick="copyEmail('followup')">📋 Copy</button>
+        <button class="rw-btn rw-sec" onclick="generateEmail('followup')">Regenerate</button>
+      </div>
+    </div>
+
+    <div id="em-thankyou" class="em-panel" style="display:none">
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:12px;padding:8px 12px;background:rgba(69,222,122,0.06);border:1px solid rgba(69,222,122,0.15);border-radius:8px;line-height:1.5">🤝 <strong>Post-interview thank-you</strong> — send within 24 hours of your interview. Influences 22% of hiring decisions.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Interviewer name</label>
+          <input id="em-ty-name" placeholder="Sarah (hiring manager)" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none;box-sizing:border-box"/></div>
+        <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Topic you discussed</label>
+          <input id="em-ty-topic" placeholder="team expansion, product roadmap..." style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none;box-sizing:border-box"/></div>
+      </div>
+      <button onclick="generateEmail('thankyou')" style="width:100%;padding:11px;background:var(--vi);color:#fff;border:none;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px">Generate Thank-You Email</button>
+      <div id="em-out-thankyou" style="display:none;background:var(--s1);border:1px solid var(--b2);border-radius:var(--rs);padding:18px 22px;font-size:13px;line-height:1.9;color:var(--tx);white-space:pre-wrap;min-height:160px"></div>
+      <div id="em-acts-thankyou" style="display:none;margin-top:10px;flex-wrap:wrap;gap:8px">
+        <button class="rw-btn rw-primary" onclick="copyEmail('thankyou')">📋 Copy</button>
+        <button class="rw-btn rw-sec" onclick="generateEmail('thankyou')">Regenerate</button>
+      </div>
+    </div>
+
+    <div id="em-negotiation" class="em-panel" style="display:none">
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:12px;padding:8px 12px;background:rgba(245,165,42,0.06);border:1px solid rgba(245,165,42,0.15);border-radius:8px;line-height:1.5">💰 <strong>Salary negotiation</strong> — candidates who negotiate get 7-23% more on average. Market data is pre-loaded from your analysis.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Offer you received</label>
+          <input id="em-neg-offer" placeholder="e.g. $75,000" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none;box-sizing:border-box"/></div>
+        <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Your target salary</label>
+          <input id="em-neg-target" placeholder="e.g. $90,000" value="${escH(salaryMid ? salaryMid.replace(/[^0-9$,km.]/gi,'') : '')}" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none;box-sizing:border-box"/></div>
+      </div>
+      <button onclick="generateEmail('negotiation')" style="width:100%;padding:11px;background:var(--vi);color:#fff;border:none;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px">Generate Negotiation Email</button>
+      <div id="em-out-negotiation" style="display:none;background:var(--s1);border:1px solid var(--b2);border-radius:var(--rs);padding:18px 22px;font-size:13px;line-height:1.9;color:var(--tx);white-space:pre-wrap;min-height:160px"></div>
+      <div id="em-acts-negotiation" style="display:none;margin-top:10px;flex-wrap:wrap;gap:8px">
+        <button class="rw-btn rw-primary" onclick="copyEmail('negotiation')">📋 Copy</button>
+        <button class="rw-btn rw-sec" onclick="generateEmail('negotiation')">Regenerate</button>
+      </div>
+    </div>`;
+}
+
+function showEmailTab(type) {
+  ['followup','thankyou','negotiation'].forEach(t => {
+    const tab   = document.getElementById('emtab-' + t);
+    const panel = document.getElementById('em-' + t);
+    if (tab)   tab.classList.toggle('on', t === type);
+    if (panel) panel.style.display = t === type ? 'block' : 'none';
+  });
+}
+
+async function generateEmail(type) {
+  const out  = document.getElementById('em-out-' + type);
+  const acts = document.getElementById('em-acts-' + type);
+  if (!out) return;
+  const requiredPlan = type === 'negotiation' ? 'career' : 'pro';
+  if (!requirePlan(requiredPlan, out)) return;
+
+  const role    = (analysis?.targetRole) || document.getElementById('jobText')?.value?.trim().split('\n')[0] || 'this role';
+  const company = document.getElementById('matchCompanyInput')?.value?.trim() || 'the company';
+
+  out.style.display = 'block';
+  out.innerHTML = '<div class="thinking"><div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><span class="tlbl">Writing your email...</span></div>';
+  if (acts) acts.style.display = 'none';
+
+  let mode, userMsg;
+  if (type === 'followup') {
+    const contact = document.getElementById('em-fu-contact')?.value?.trim() || 'Hiring Team';
+    const days    = document.getElementById('em-fu-days')?.value || '14';
+    mode    = 'appfollowup';
+    userMsg = `Role: ${role}\nCompany: ${company}\nDays since applied: ${days}\nContact: ${contact}\nResume snippet: ${(resumeContent || '').slice(0, 1200)}\nJob description snippet: ${(jobContent || '').slice(0, 800)}`;
+  } else if (type === 'thankyou') {
+    const name  = document.getElementById('em-ty-name')?.value?.trim() || '';
+    const topic = document.getElementById('em-ty-topic')?.value?.trim() || '';
+    mode    = 'emailthankyou';
+    userMsg = `Role: ${role}\nCompany: ${company}${name ? '\nInterviewer: ' + name : ''}${topic ? '\nTopic discussed: ' + topic : ''}\nResume snippet: ${(resumeContent || '').slice(0, 1200)}\nJob description snippet: ${(jobContent || '').slice(0, 800)}`;
+  } else if (type === 'negotiation') {
+    const offer  = document.getElementById('em-neg-offer')?.value?.trim() || '';
+    const target = document.getElementById('em-neg-target')?.value?.trim() || '';
+    mode    = 'negotiation';
+    userMsg = `Role: ${role}\nCompany: ${company}${offer ? '\nOffer received: ' + offer : ''}${target ? '\nMy target: ' + target : ''}\nResume snippet: ${(resumeContent || '').slice(0, 1200)}\nMarket salary data: ${JSON.stringify(analysis?.salaryData || {})}`;
+  }
+
+  try {
+    const res  = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: userMsg, mode, userEmail: userEmail || null }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to generate email');
+    const emailText = data.answer || '';
+    window._emailOutputs[type] = emailText;
+    out.textContent = emailText;
+    if (acts) acts.style.display = 'flex';
+    showToast('Email ready — click Copy to use');
+  } catch(e) {
+    out.innerHTML = `<span style="color:var(--re)">Error: ${escH(e.message)}. Please try again.</span>`;
+  }
+}
+
+function copyEmail(type) {
+  const text = (window._emailOutputs || {})[type] || '';
+  if (!text) { showToast('Generate the email first'); return; }
+  navigator.clipboard.writeText(text).then(() => showToast('Email copied to clipboard')).catch(() => showToast('Copy failed — select text manually'));
+}
+
 // ── DOWNLOAD ──────────────────────────────────────────────────────────────────
 function downloadAll() {
   if (!analysis) return;
@@ -1470,7 +1728,7 @@ function downloadAll() {
 
 // ── TAB & STEP SWITCHING ──────────────────────────────────────────────────────
 function swRT(n) {
-  for(let i=1;i<=7;i++){
+  for(let i=1;i<=8;i++){
     document.getElementById('rt'+i).classList.toggle('on',i===n);
     document.getElementById('rp'+i).classList.toggle('on',i===n);
   }
@@ -1487,7 +1745,7 @@ function setStep(n) {
 function resetTool() {
   document.getElementById('stageResults').style.display = 'none';
   document.getElementById('stageInput').style.display  = 'block';
-  setStep(1); analysis = null; coverLetter = '';
+  setStep(1); analysis = null; coverLetter = ''; window._emailOutputs = {};
   for(let i=1;i<=6;i++){const el=document.getElementById('ls'+i);if(el){el.className='ls-item'+(i===1?' active':'');}}
 }
 
@@ -1589,7 +1847,11 @@ function saveAnalysisHistory(entry) {
     const existing = JSON.parse(localStorage.getItem('preptai_analysis_history') || '[]');
     existing.unshift(entry);
     localStorage.setItem('preptai_analysis_history', JSON.stringify(existing.slice(0, 5)));
-  } catch(e) {}
+  } catch(e) {
+    if (e.name === 'QuotaExceededError') {
+      try { localStorage.removeItem('preptai_analysis_history'); } catch(_) {}
+    }
+  }
 }
 
 function getAnalysisHistory() {
@@ -2255,7 +2517,14 @@ function saveResumeVersion(autoLabel) {
   if (!name) return;
   const entry = { id: Date.now(), name: name.slice(0,40), content: text, chars: text.length, savedAt: new Date().toISOString() };
   versions.push(entry);
-  localStorage.setItem('preptai_resume_versions', JSON.stringify(versions));
+  try {
+    localStorage.setItem('preptai_resume_versions', JSON.stringify(versions));
+  } catch(e) {
+    if (e.name === 'QuotaExceededError') {
+      versions.shift(); // drop oldest to make room
+      try { localStorage.setItem('preptai_resume_versions', JSON.stringify(versions)); } catch(_) {}
+    }
+  }
   renderVersionsBadge();
   renderVersionsPanel();
   if (!autoLabel) {
@@ -2276,7 +2545,7 @@ function loadResumeVersion(id) {
 
 function deleteResumeVersion(id) {
   let versions = getResumeVersions().filter(x => x.id !== id);
-  localStorage.setItem('preptai_resume_versions', JSON.stringify(versions));
+  try { localStorage.setItem('preptai_resume_versions', JSON.stringify(versions)); } catch(_) {}
   renderVersionsBadge();
   renderVersionsPanel();
 }
@@ -2540,32 +2809,42 @@ function downloadTxt(text, filename) {
 }
 
 function downloadDocx(text, filename) {
-  // Build a minimal Word XML document (works in Word, Google Docs, LibreOffice)
+  // ATS-safe DOCX: single column, no tables, no headers/footers, standard fonts only
+  // Uses Arial 11pt body — compatible with Workday, Taleo, iCIMS, Greenhouse, Lever
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
   const paragraphs = text.split('\n').map(line => {
-    const isHeading = line.startsWith('=') || line === line.toUpperCase() && line.trim().length > 3 && line.trim().length < 50 && !line.startsWith(' ');
-    const escaped = line.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    if (isHeading && !line.startsWith('=')) {
-      return `<w:p><w:pPr><w:pStyle w:val="Heading2"/><w:spacing w:before="240" w:after="60"/></w:pPr><w:r><w:rPr><w:b/><w:color w:val="1a1a2e"/></w:rPr><w:t>${escaped}</w:t></w:r></w:p>`;
-    } else if (line.startsWith('=')) {
-      return '<w:p><w:pPr><w:spacing w:after="0"/></w:pPr></w:p>';
-    } else if (!line.trim()) {
-      return '<w:p><w:pPr><w:spacing w:after="60"/></w:pPr></w:p>';
-    } else {
-      return `<w:p><w:pPr><w:spacing w:after="80"/></w:pPr><w:r><w:rPr><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr><w:t xml:space="preserve">${escaped}</w:t></w:r></w:p>`;
+    const t = line.trim();
+    if (!t || t.startsWith('===') || t.startsWith('---')) {
+      // Section divider → thin spacing paragraph (ATS ignores decorative chars)
+      return `<w:p><w:pPr><w:spacing w:after="60"/></w:pPr></w:p>`;
     }
+    // Section headers: ALL CAPS lines or lines ending with ':'
+    const isSection = (t === t.toUpperCase() && t.length > 2 && t.length < 60 && /[A-Z]/.test(t)) || /^[A-Z &\/]+:?\s*$/.test(t);
+    if (isSection) {
+      return `<w:p><w:pPr><w:spacing w:before="160" w:after="40"/><w:pBdr><w:bottom w:val="single" w:sz="4" w:space="4" w:color="cccccc"/></w:pBdr></w:pPr>`
+        + `<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:b/><w:sz w:val="22"/><w:szCs w:val="22"/><w:color w:val="1a1a2e"/></w:rPr>`
+        + `<w:t>${esc(t)}</w:t></w:r></w:p>`;
+    }
+    // Bullet lines
+    if (t.startsWith('•') || t.startsWith('-') || t.startsWith('*')) {
+      const content = t.replace(/^[•\-\*]\s*/,'');
+      return `<w:p><w:pPr><w:ind w:left="360" w:hanging="180"/><w:spacing w:after="60"/></w:pPr>`
+        + `<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr><w:t xml:space="preserve">• ${esc(content)}</w:t></w:r></w:p>`;
+    }
+    // Regular body line
+    return `<w:p><w:pPr><w:spacing w:after="60"/></w:pPr>`
+      + `<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>`
+      + `<w:t xml:space="preserve">${esc(line)}</w:t></w:r></w:p>`;
   }).join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
-  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 <w:body>
-<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="120"/></w:pPr>
-<w:r><w:rPr><w:b/><w:sz w:val="32"/><w:szCs w:val="32"/><w:color w:val="c8a84b"/></w:rPr>
-<w:t>PREPT AI , OPTIMIZED RESUME</w:t></w:r></w:p>
-<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:after="240"/></w:pPr>
-<w:r><w:rPr><w:sz w:val="18"/><w:color w:val="888888"/></w:rPr>
-<w:t>Generated by PREPT AI Match , preptai.co</w:t></w:r></w:p>
+<w:sectPr>
+  <w:pgSz w:w="12240" w:h="15840"/>
+  <w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="0" w:footer="0"/>
+</w:sectPr>
 ${paragraphs}
 </w:body></w:document>`;
 
@@ -2575,7 +2854,7 @@ ${paragraphs}
   a.download = filename;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  showToast('DOCX downloaded');
+  showToast('DOCX downloaded — ATS-safe format');
 }
 
 function downloadPdf(text, filename) {

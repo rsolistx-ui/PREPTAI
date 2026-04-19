@@ -246,24 +246,52 @@ nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;padding:0 
     </div>
   </div>
 
+  <!-- v1.1 -->
+  <div class="release">
+    <div class="release-meta">
+      <div class="release-date">Apr 19, 2026</div>
+      <div class="release-version">v1.1</div>
+      <div class="release-dot major"></div>
+    </div>
+    <div class="release-content">
+      <div class="release-title">ATS Intelligence, Email Templates &amp; Security</div>
+      <div class="release-sub">AI detection scoring, email generators, tier enforcement, production hardening</div>
+      <div class="tags">
+        <span class="tag tag-new">New</span>
+        <span class="tag tag-improve">Improve</span>
+        <span class="tag tag-security">Security</span>
+        <span class="tag tag-fix">Fix</span>
+      </div>
+      <div class="entries">
+        <div class="entry"><div class="entry-icon">🤖</div><div class="entry-body"><div class="entry-title">AI Writing Detection Risk Score</div><div class="entry-desc">Every resume analysis now includes an AI Detection Risk score (0-100) that flags the exact phrases and structural patterns employer AI detectors catch: overused terms like "leverage," "synergy," and "spearhead," structural uniformity, vague superlatives, and missing specificity. 46% of recruiters now use AI detectors. You'll see what to rewrite before you apply.</div></div></div>
+        <div class="entry"><div class="entry-icon">📊</div><div class="entry-body"><div class="entry-title">ATS Engine v2.1 — Updated Research &amp; Signals</div><div class="entry-desc">Scoring engine updated with 2024-2025 research citations. Now calibrated against 40+ ATS platforms including Workday, Greenhouse, Lever, and iCIMS. Quarterly update cadence established with version tracking. The ATS Engine Intel section on the homepage now shows the current version and last-updated date.</div></div></div>
+        <div class="entry"><div class="entry-icon">📈</div><div class="entry-body"><div class="entry-title">Before / After Score Visualization</div><div class="entry-desc">The score banner now shows a dual progress bar comparing your current ATS score against your projected score after optimization, with a "+N points potential" label. Makes the improvement opportunity immediately clear.</div></div></div>
+        <div class="entry"><div class="entry-icon">✉️</div><div class="entry-body"><div class="entry-title">Email Templates — Three Generators in PREPT Match</div><div class="entry-desc">New Emails tab in PREPT AI Match with three generators: post-application follow-up (with configurable days-since-applied and contact name), post-interview thank-you (personalized from the interview context), and salary negotiation email (anchors high, justifies with market data). Pro feature; negotiation email is Career+.</div></div></div>
+        <div class="entry"><div class="entry-icon">⚡</div><div class="entry-body"><div class="entry-title">Streaming Cover Letter Generation</div><div class="entry-desc">Cover letter now generates in real time using server-sent events. Characters stream directly to the screen as they are written rather than waiting for the full response. Noticeably faster feel on longer letters.</div></div></div>
+        <div class="entry"><div class="entry-icon">🔒</div><div class="entry-body"><div class="entry-title">Tier Entitlement Enforcement</div><div class="entry-desc">Pro and Career+ features are now gated on both the frontend and the API. Previously, cover letter, LinkedIn optimizer, mock interviews, salary coaching, video prep, Duo Mode, and all email generators were accessible to free users with no restriction. Every feature now enforces the correct plan on both the UI and the server independently, so bypassing the interface does not bypass the gate.</div></div></div>
+        <div class="entry"><div class="entry-icon">🛡</div><div class="entry-body"><div class="entry-title">Production Hardening</div><div class="entry-desc">Stream error handling fixed to surface real errors instead of swallowing them silently. Free utility mode rate limits now persist in Supabase across serverless restarts instead of in-memory only. Content-Security-Policy and Permissions-Policy headers added. localStorage QuotaExceededError handled gracefully in resume versioning. CORS standardized to www.preptai.co across all API endpoints.</div></div></div>
+        <div class="entry"><div class="entry-icon">🧩</div><div class="entry-body"><div class="entry-title">Chrome Extension v2.1 — Easy Apply Helper</div><div class="entry-desc">New Easy Apply Helper in the Quick Tools tab. Store your name, email, phone, city, and LinkedIn URL once. Each field has a copy button so you can paste into LinkedIn Easy Apply and other job application forms in one click. Contact info saved locally in the extension — never sent to any server.</div></div></div>
+      </div>
+    </div>
+  </div>
+
   <!-- COMING NEXT -->
   <div class="release">
     <div class="release-meta">
       <div class="release-date">Coming soon</div>
-      <div class="release-version">v1.1</div>
+      <div class="release-version">v1.2</div>
       <div class="release-dot" style="background:#2c2a44;border-color:#4d4a66"></div>
     </div>
     <div class="release-content">
       <div class="release-title">What's Next</div>
-      <div class="release-sub">On the roadmap (May 2026)</div>
+      <div class="release-sub">On the roadmap</div>
       <div class="tags">
         <span class="tag tag-new">Upcoming</span>
       </div>
       <div class="entries">
-        <div class="entry" style="opacity:0.6"><div class="entry-icon">🔍</div><div class="entry-body"><div class="entry-title">PREPT AI Scout</div><div class="entry-desc">Job search intelligence tool. The third product in the PREPT AI suite ,  closing the full loop from job discovery to offer.</div></div></div>
-        <div class="entry" style="opacity:0.6"><div class="entry-icon">🏢</div><div class="entry-body"><div class="entry-title">Company Research Briefing</div><div class="entry-desc">Paste a company URL before your interview and get a one-page prep brief: likely questions, culture signals, recent news, and what to ask them.</div></div></div>
-        <div class="entry" style="opacity:0.6"><div class="entry-icon">🎓</div><div class="entry-body"><div class="entry-title">University & Bootcamp Dashboard</div><div class="entry-desc">Admin dashboard for institutional accounts. Usage analytics, cohort progress tracking, and bulk license management.</div></div></div>
-        <div class="entry" style="opacity:0.6"><div class="entry-icon">🌍</div><div class="entry-body"><div class="entry-title">Annual Billing Plans</div><div class="entry-desc">Pro at $120/yr and Career+ at $240/yr ,  equivalent to 10 months, two months free. Stripe links in progress.</div></div></div>
+        <div class="entry" style="opacity:0.6"><div class="entry-icon">🔍</div><div class="entry-body"><div class="entry-title">PREPT AI Scout</div><div class="entry-desc">Job search intelligence tool. The third product in the PREPT AI suite — closing the full loop from job discovery to offer.</div></div></div>
+        <div class="entry" style="opacity:0.6"><div class="entry-icon">🎓</div><div class="entry-body"><div class="entry-title">University &amp; Bootcamp Dashboard</div><div class="entry-desc">Admin dashboard for institutional accounts. Usage analytics, cohort progress tracking, and bulk license management.</div></div></div>
+        <div class="entry" style="opacity:0.6"><div class="entry-icon">🌍</div><div class="entry-body"><div class="entry-title">Annual Billing</div><div class="entry-desc">Pro at $120/yr and Career+ at $240/yr — two months free versus monthly billing.</div></div></div>
       </div>
     </div>
   </div>

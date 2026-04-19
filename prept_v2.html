@@ -1041,15 +1041,58 @@ SECTORS.forEach(s => {
   grid.appendChild(btn);
 });
 
-// ── MODE SWITCHING ────────────────────────────────────────────────────────────
-function setMode(mode) {
-  currentMode = mode;
-  const allModes = ['live','mock','debrief','thankyou','salary','videoprep','progress','duo'];
-  allModes.forEach(m => {
+// ── PLAN GATE ─────────────────────────────────────────────────────────────────
+function showPlanGate(requiredPlan, featureName) {
+  const isPro = requiredPlan === 'pro';
+  const label  = isPro ? 'Pro' : 'Career+';
+  const price  = isPro ? '$12/mo' : '$24/mo';
+  const url    = isPro
+    ? 'https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00'
+    : 'https://buy.stripe.com/fZu00k8104Hr4M09nacbC04';
+  const coachView = document.getElementById('coachView');
+  if (coachView) {
+    coachView.style.display = 'flex';
+    const area = document.getElementById('chatArea');
+    if (area) area.innerHTML = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px 24px;text-align:center;gap:16px">
+        <div style="font-size:36px">🔒</div>
+        <div style="font-size:18px;font-weight:800;color:var(--tx)">${featureName}</div>
+        <div style="font-size:14px;color:var(--tx2);max-width:340px;line-height:1.65">This feature is included in <strong style="color:#e6c668">${label}</strong>. Upgrade to unlock it along with everything else in your plan.</div>
+        <a href="${url}" style="display:inline-flex;align-items:center;gap:8px;padding:13px 28px;background:linear-gradient(135deg,#c8a84b,#e6c668);color:#07070e;border-radius:10px;font-size:15px;font-weight:800;text-decoration:none;margin-top:4px">Upgrade to ${label} — ${price} →</a>
+        <div style="font-size:12px;color:var(--tx3)">7-day free trial · Cancel anytime</div>
+        <button onclick="setMode('live')" style="margin-top:8px;background:none;border:none;color:var(--tx3);font-size:13px;cursor:pointer;text-decoration:underline;font-family:inherit">← Back to Live Coach</button>
+      </div>`;
+  }
+}
+
+function highlightTab(mode) {
+  ['live','mock','debrief','thankyou','salary','videoprep','progress','duo'].forEach(m => {
     const key = m === 'videoprep' ? 'Videoprep' : m === 'duo' ? 'Duo' : m === 'progress' ? 'Progress' : m.charAt(0).toUpperCase() + m.slice(1);
     const tab = document.getElementById('tab' + key);
     if (tab) tab.classList.toggle('on', m === mode);
   });
+}
+
+// ── MODE SWITCHING ────────────────────────────────────────────────────────────
+function setMode(mode) {
+  // Plan gates — check before any view is shown
+  if (['mock','debrief'].includes(mode) && userPlan === 'free') {
+    const names = { mock: 'Mock Interview', debrief: 'Session Debrief' };
+    currentMode = mode;
+    highlightTab(mode);
+    showPlanGate('pro', names[mode]);
+    return;
+  }
+  if (['salary','videoprep','duo'].includes(mode) && !['career'].includes(userPlan)) {
+    const names = { salary: 'Salary Negotiation Coach', videoprep: 'Video Interview Coach', duo: 'Duo Mode — Remote Coach Assist' };
+    currentMode = mode;
+    highlightTab(mode);
+    showPlanGate('career', names[mode]);
+    return;
+  }
+
+  currentMode = mode;
+  highlightTab(mode);
 
   const coachView    = document.getElementById('coachView');
   const thankyouView = document.getElementById('thankyouView');
@@ -1241,8 +1284,11 @@ async function callAPIStream(payload, onChunk) {
           const ev = JSON.parse(line.slice(6));
           if (ev.text)  { fullText += ev.text; onChunk(ev.text, fullText); }
           if (ev.done)  { meta = { plan: ev.plan, remaining: ev.remaining }; }
-          if (ev.error) { return { ok: false, error: ev.message }; }
-        } catch(e) {}
+          if (ev.error) { return { ok: false, error: ev.message || 'Stream error' }; }
+        } catch(e) {
+          // Only swallow incomplete-chunk SyntaxErrors; re-throw everything else
+          if (!(e instanceof SyntaxError)) throw e;
+        }
       }
     }
   } catch(streamErr) {

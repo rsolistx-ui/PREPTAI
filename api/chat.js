@@ -1,4 +1,7 @@
 // api/chat.js ,  PREPT AI ,  Science-backed coaching engine v3
+// ATS Engine version — update PROMPT_UPDATED whenever buildMatchPrompt() changes
+export const PROMPT_VERSION = "2.1";
+export const PROMPT_UPDATED = "April 2026";
 // Research sources embedded in system prompts:
 // - Schmidt & Hunter (1998) meta-analysis on structured interview validity
 // - Cialdini's specificity research on credibility
@@ -31,6 +34,9 @@ function getLimitKey(mode) {
 }
 
 // ── IP RATE LIMIT ─────────────────────────────────────────────────────────────
+// In-memory fallback for authenticated-mode general limiting (60/hr per IP).
+// NOTE: resets on cold start / across serverless instances. Supabase-persisted
+// limits (below) are used for free utility modes and are instance-independent.
 const ipCounts = new Map();
 function checkIPRateLimit(ip) {
   const now = Date.now(), windowMs = 60 * 60 * 1000;
@@ -39,6 +45,25 @@ function checkIPRateLimit(ip) {
   entry.count++;
   ipCounts.set(ip, entry);
   return entry.count <= 60;
+}
+
+// Persisted rate limit for free utility modes — uses usage table, no schema change.
+// Stores anonymous callers as 'anon:<ip>' so limits survive serverless restarts.
+const FREE_MODE_HOURLY_LIMIT = 20;
+async function checkFreeModeRateLimit(ip) {
+  const anonKey = 'anon:' + ip;
+  const oneHourAgo = new Date(Date.now() - 3_600_000).toISOString();
+  try {
+    const { count } = await supabase
+      .from("usage").select("*", { count: "exact", head: true })
+      .eq("email", anonKey).gte("created_at", oneHourAgo);
+    return (count || 0) < FREE_MODE_HOURLY_LIMIT;
+  } catch { return true; } // fail open rather than block legitimate users on DB error
+}
+async function logFreeModeUsage(ip, mode) {
+  try {
+    await supabase.from("usage").insert({ email: 'anon:' + ip, type: mode });
+  } catch { /* non-critical */ }
 }
 
 // ── MONTHLY USAGE ─────────────────────────────────────────────────────────────
@@ -421,12 +446,14 @@ function buildMatchPrompt() {
   return `You are PREPT AI Match — a precision ATS optimization engine trained on how Applicant Tracking Systems actually score resumes and what human recruiters look for in the first 6 seconds of review.
 
 THE RESEARCH BEHIND THIS ANALYSIS:
-- 75% of resumes are rejected by ATS before a human sees them (Jobscan, 2023)
-- Recruiters spend an average of 6-7 seconds on initial resume review (Ladders eye-tracking study)
-- Resumes with quantified achievements are 40% more likely to receive callbacks (LinkedIn Talent Trends)
+- 75% of resumes are rejected by ATS before a human sees them (Jobscan, 2024)
+- Recruiters spend an average of 6-7 seconds on initial resume review (Ladders eye-tracking study, 2024)
+- Resumes with quantified achievements are 40% more likely to receive callbacks (LinkedIn Talent Trends, 2025)
 - Keyword matching is the #1 ATS ranking factor — exact phrase match outperforms semantic match in most systems
 - Resumes with tables, columns, or graphics score 30-60% lower in ATS systems (Jobscan format study)
-- Only 36% of resumes have a phone number formatted correctly for ATS parsing (ResumeGo, 2022)
+- 46% of recruiters now use AI-content detection tools to screen for AI-generated resumes (Resume Genius, 2025)
+- Resumes flagged as AI-generated are 60% less likely to receive an interview (Canva/Zety hiring survey, 2025)
+- 72% of companies using Workday, Greenhouse, or Lever now have AI screening enabled by default (LinkedIn Hiring Report, 2025)
 
 YOUR ANALYSIS MUST BE SURGICAL AND SPECIFIC. Every finding must reference actual content from the resume. No generic advice.
 
@@ -444,6 +471,23 @@ Categorize every action verb:
 - STRONG (10 points each): spearheaded, drove, generated, reduced, grew, launched, negotiated, rebuilt, closed, orchestrated, led, delivered, exceeded, cut, secured
 - WEAK (0 points): helped, worked on, assisted, was responsible for, participated in, involved in, supported, contributed to
 Calculate: actionVerbScore = (strongVerbs / totalVerbs) * 100
+
+AI WRITING DETECTION ANALYSIS (Critical — 46% of recruiters now use AI detectors):
+Employers use tools like Workday AI Screening, Greenhouse signal scoring, iCIMS IntelliSearch, Originality.ai, and GPTZero to automatically flag AI-generated resumes. Analyze this resume for these specific red flags:
+
+OVERUSED AI PHRASE MARKERS — flag each exact phrase found in the resume:
+High-risk (5 pts each): "leverage", "leveraging", "spearhead", "spearheaded", "streamline", "synergy", "cutting-edge", "proven track record", "results-driven", "dynamic professional", "detail-oriented", "innovative", "holistic approach", "robust", "seamlessly", "transformative", "actionable insights", "foster collaboration", "drive growth", "passionate about", "dedicated to", "strategic mindset", "thought leader", "best-in-class", "forward-thinking", "impactful", "meticulous"
+Medium-risk (3 pts each): "utilized", "facilitated", "collaborated with", "assisted in", "responsible for", "contributed to", "involved in", "worked closely", "proactively", "effectively communicated"
+
+STRUCTURAL UNIFORMITY — flag if >65% of experience bullets fall within 6 words of each other in length (adds 15 pts)
+VAGUE SUPERLATIVES — flag each: "exceptional", "outstanding", "world-class", "top-tier" without supporting data (adds 8 pts each)
+MISSING SPECIFICITY — flag if fewer than 30% of bullets contain: named projects, specific tools, real team sizes, named clients/companies, or geographic context (adds 20 pts)
+HEDGING LANGUAGE IN SUMMARY — flag phrases like "seeking to", "eager to learn", "looking to grow", "passionate about making a difference" (adds 10 pts each)
+
+Calculate aiDetectionScore: sum all penalties, cap at 100.
+- 0–25: Low risk — reads as human-authored
+- 26–55: Medium risk — some AI signals present, detectors may flag
+- 56–100: High risk — strong AI patterns, will likely be flagged by automated screening
 
 RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the JSON):
 {
@@ -512,7 +556,13 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
       "question": <string — specific question based on actual resume gaps vs JD requirements>,
       "why": <string — why this question will be asked based on specific gap found>
     }
-  ]
+  ],
+  "aiDetectionRisk": {
+    "score": <integer 0-100 — calculated AI likelihood score>,
+    "level": <"low"|"medium"|"high">,
+    "flaggedPhrases": [<strings — exact overused/AI-marker phrases found verbatim in the resume, empty array if none>],
+    "humanizeAdvice": <string — 1-2 specific, actionable sentences telling the candidate exactly how to rewrite to reduce AI signals, referencing actual flagged content>
+  }
 }
 
 QUALITY RULES — NEVER VIOLATE:
@@ -882,6 +932,61 @@ Return ONLY this exact JSON (no markdown, no extra text). Use your knowledge of 
 }`;
 }
 
+// ── POST-APPLICATION FOLLOW-UP EMAIL ─────────────────────────────────────────
+function buildAppFollowupEmailPrompt() {
+  return `You are a career communication expert. Write a professional, concise post-application follow-up email.
+
+RULES:
+- Under 120 words total in the body
+- Open with a specific, warm statement of continued interest — never "I wanted to follow up"
+- Paragraph 1: Briefly restate who you are and the role you applied for
+- Paragraph 2: Reiterate your top relevant qualification (specific, from their resume) that directly matches the role
+- Paragraph 3: Short, confident close asking about next steps — not begging, just professional
+- Subject line should stand out — not "Following Up on my Application"
+- Sound confident, not desperate
+- Always include: Subject: [line]\n\n[email body]
+
+The user will provide: role, company, days since applied, contact name, resume snippet, and job description snippet.`;
+}
+
+// ── POST-INTERVIEW THANK-YOU EMAIL (free mode version) ────────────────────────
+function buildEmailThankYouPrompt() {
+  return `You are a career communication strategist. Write a compelling post-interview thank-you email that moves hiring decisions.
+
+THE RESEARCH: 22% of hiring managers say thank-you emails influenced their decision. The ones that work reference something specific from the conversation.
+
+RULES:
+- Under 130 words total in the body
+- Subject: [line that references the specific role or conversation — not "Thank you for your time"]
+- P1: Specific, warm opener referencing something real from their conversation (use what they provide)
+- P2: One specific quantified achievement from their background that directly connects to what seemed most important
+- P3: Brief genuine observation showing they listened
+- P4: Confident forward-looking close — not begging, not pushy
+- Sound like a confident professional who is interested but not desperate
+- Format: Subject: [line]\n\n[email body]
+
+The user will provide: role, company, interviewer name, topic discussed, resume snippet.`;
+}
+
+// ── SALARY NEGOTIATION EMAIL ──────────────────────────────────────────────────
+function buildNegotiationEmailPrompt() {
+  return `You are an expert salary negotiation coach. Write a professional, evidence-based salary negotiation email.
+
+THE RESEARCH: Candidates who negotiate get 7-23% more on average. The key is: anchor high, justify with market data, stay collaborative.
+
+RULES:
+- Under 180 words total in the body
+- Subject: [professional subject referencing the role and offer]
+- P1: Express genuine enthusiasm for the offer and the role — start positive
+- P2: Make the counter-offer with a specific number anchored to market data (use the salary data they provide if available); frame as "based on market research and my [X] years experience in [specific area]..."
+- P3: Brief summary of 2 specific qualifications that justify the higher number
+- P4: Collaborative close — you want this to work, you're flexible, let's find a number that works for both sides
+- Tone: Confident, collaborative, never apologetic or desperate
+- Format: Subject: [line]\n\n[email body]
+
+The user will provide: role, company, offer received, target salary, resume snippet, salary market data.`;
+}
+
 // ── MAIN HANDLER ──────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "https://www.preptai.co");
@@ -901,7 +1006,7 @@ export default async function handler(req, res) {
     previousQuestion, userAnswer, answers, systemOverride, companyIntel
   } = req.body;
 
-  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company","gapentry"];
+  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company","gapentry","appfollowup","emailthankyou","negotiation"];
   if (!message || typeof message !== "string") return res.status(400).json({ error: "Message is required" });
   if (!mode || !validModes.includes(mode)) return res.status(400).json({ error: "Invalid mode" });
 
@@ -959,9 +1064,34 @@ export default async function handler(req, res) {
     }
   }
 
-  // Free utility modes: skip all limit checks and usage logging
-  const freeModes = ["mockgen", "salary", "skillsgap", "asyncvideo", "adaptive", "debrief", "jenn", "coverletter", "linkedin", "mockanswer", "company", "gapentry"];
-  if (freeModes.includes(mode)) {
+  // ── PLAN ENFORCEMENT FOR GATED UTILITY MODES ──────────────────────────────────
+  // These are NOT covered by the monthly chat/match credit system above.
+  // They need explicit plan checks here before any prompt is built or AI is called.
+  const proOnlyModes    = ["coverletter","linkedin","mockanswer","mockgen","debrief","adaptive","appfollowup","emailthankyou"];
+  const careerOnlyModes = ["salary","asyncvideo","negotiation"];
+  const trulyFreeModes  = ["skillsgap","company","gapentry","jenn"]; // no plan needed
+
+  if (proOnlyModes.includes(mode)) {
+    if (!cleanEmail) return res.status(403).json({ error: "login_required", message: "Sign in to access this feature.", loginUrl: "/login.html" });
+    if (!['pro','career'].includes(plan)) return res.status(403).json({ error: "upgrade_required", message: "This feature requires a Pro or Career+ plan.", upgradeUrl: "https://preptai.co/#pricing", requiredPlan: "pro" });
+  }
+  if (careerOnlyModes.includes(mode)) {
+    if (!cleanEmail) return res.status(403).json({ error: "login_required", message: "Sign in to access this feature.", loginUrl: "/login.html" });
+    if (plan !== 'career') return res.status(403).json({ error: "upgrade_required", message: "Salary negotiation coaching and video prep require a Career+ plan.", upgradeUrl: "https://preptai.co/#pricing", requiredPlan: "career" });
+  }
+
+  // Utility modes: prompt routing for all plan-verified modes above + truly free modes
+  const utilityModes = [...proOnlyModes, ...careerOnlyModes, ...trulyFreeModes];
+  if (utilityModes.includes(mode)) {
+    // Only IP-rate-limit the truly free anonymous modes; paid plans have already verified credentials
+    if (trulyFreeModes.includes(mode)) {
+      const callerIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
+      const withinLimit = await checkFreeModeRateLimit(callerIP);
+      if (!withinLimit) {
+        return res.status(429).json({ error: "rate_limited", message: `You've used ${FREE_MODE_HOURLY_LIMIT} free requests this hour. Please wait before trying again.` });
+      }
+      await logFreeModeUsage(callerIP, mode);
+    }
     try {
       let systemPrompt;
       let userMsg = cleanMessage || "Generate the response.";
@@ -1018,6 +1148,33 @@ export default async function handler(req, res) {
         systemPrompt = `You are an expert cover letter writer. Write a compelling, human-sounding cover letter that directly connects the candidate's specific achievements to the role's requirements. Never use generic templates. Rules: open with a specific hook (never "I am applying for"), connect top 2-3 requirements to quantified achievements, show genuine company knowledge, close with a confident CTA. 3-4 paragraphs, under 350 words. Sound human, not corporate.${intelSnippet}`;
         userMsg = cleanMessage;
         maxTok = 1200;
+        // Streaming mode for cover letter
+        if (req.body.stream === true) {
+          res.setHeader("Content-Type", "text/event-stream");
+          res.setHeader("Cache-Control", "no-cache");
+          res.setHeader("X-Accel-Buffering", "no");
+          res.setHeader("Access-Control-Allow-Origin", "https://www.preptai.co");
+          try {
+            const clStream = anthropic.messages.stream({
+              model: "claude-sonnet-4-20250514",
+              max_tokens: maxTok,
+              system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
+              messages: [{ role: "user", content: userMsg }],
+            });
+            for await (const event of clStream) {
+              if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
+                res.write(`data: ${JSON.stringify({ text: event.delta.text })}\n\n`);
+              }
+            }
+            res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+            res.end();
+          } catch (error) {
+            console.error("coverletter stream error:", error);
+            res.write(`data: ${JSON.stringify({ error: true, message: "Stream failed. Please try again." })}\n\n`);
+            res.end();
+          }
+          return;
+        }
       } else if (mode === "linkedin") {
         systemPrompt = `You are a LinkedIn profile optimization expert. Generate optimized LinkedIn profile sections that help candidates get found by recruiters searching for the role. Return ONLY valid JSON with no markdown: {"headline":"optimized headline under 220 chars","about":"compelling About section 250-300 words with \\n paragraph breaks, under 2600 total characters","skills":"comma-separated top 10 skills aligned to the job description"}`;
         userMsg = cleanMessage;
@@ -1038,6 +1195,18 @@ export default async function handler(req, res) {
         systemPrompt = buildGapEntryPrompt(cleanRole, cleanSector, cleanJobDesc, cleanResume);
         userMsg = "Generate the gap-bridging resume entry JSON.";
         maxTok = 1400;
+      } else if (mode === "appfollowup") {
+        systemPrompt = buildAppFollowupEmailPrompt();
+        userMsg = cleanMessage;
+        maxTok = 600;
+      } else if (mode === "emailthankyou") {
+        systemPrompt = buildEmailThankYouPrompt();
+        userMsg = cleanMessage;
+        maxTok = 600;
+      } else if (mode === "negotiation") {
+        systemPrompt = buildNegotiationEmailPrompt();
+        userMsg = cleanMessage;
+        maxTok = 700;
       }
 
       // Prompt caching on free-mode system prompts (reduces cost ~80% on repeated calls)

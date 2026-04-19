@@ -123,6 +123,24 @@
 
     <!-- ── TAB: Quick Tools ── -->
     <section class="sp-panel" id="tab-tools">
+
+      <!-- Easy Apply Helper -->
+      <div class="sp-label" style="margin-top:0">⚡ Easy Apply Helper</div>
+      <div id="easyApplySection" style="background:rgba(10,102,194,0.07);border:1px solid rgba(10,102,194,0.25);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:12px;color:#ccc9e0;line-height:1.5;margin-bottom:10px">Save your contact info once. Copy-paste instantly when filling out LinkedIn Easy Apply and other job forms.</div>
+        <div id="eaContactDisplay" style="display:none;margin-bottom:10px"></div>
+        <div id="eaContactForm" style="display:none;flex-direction:column;gap:7px;margin-bottom:10px">
+          <input id="ea-name"     placeholder="Full Name"          class="ea-inp"/>
+          <input id="ea-email"    placeholder="Email"    type="email" class="ea-inp"/>
+          <input id="ea-phone"    placeholder="Phone"    type="tel"   class="ea-inp"/>
+          <input id="ea-location" placeholder="City, State"          class="ea-inp"/>
+          <input id="ea-linkedin" placeholder="LinkedIn URL"         class="ea-inp"/>
+          <button id="eaSaveBtn"  onclick="saveEAContact()" style="padding:8px;background:#0a66c2;border:none;border-radius:6px;color:#fff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer">Save Contact Info</button>
+          <button onclick="cancelEAEdit()" style="padding:6px;background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#8a87a0;font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer">Cancel</button>
+        </div>
+        <button id="eaSetupBtn" onclick="showEAForm()" style="width:100%;padding:8px;background:rgba(10,102,194,0.15);border:1px solid rgba(10,102,194,0.3);border-radius:7px;color:#5fa8d3;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer">+ Set up Easy Apply Info</button>
+      </div>
+
       <div class="sp-label">Launch PREPT Tools</div>
       <div class="sp-tools-list">
         <a class="sp-tool-link" href="https://preptai.co/prept_match_v2.html" target="_blank">
@@ -178,7 +196,7 @@
       <div class="sp-upgrade-card">
         <div class="sp-upgrade-title">Upgrade to Pro</div>
         <div class="sp-upgrade-sub">Unlimited resume analyses, coaching sessions, cover letters, and more. 7-day free trial.</div>
-        <a class="sp-upgrade-btn" href="https://buy.stripe.com/fZeg2O7Ht3rX6rm144" target="_blank">Get Pro — $12/mo →</a>
+        <a class="sp-upgrade-btn" href="https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00" target="_blank">Get Pro — $12/mo →</a>
       </div>
     </section>
 
