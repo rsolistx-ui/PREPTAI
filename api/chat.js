@@ -1,4 +1,7 @@
 // api/chat.js ,  PREPT AI ,  Science-backed coaching engine v3
+// ATS Engine version — update PROMPT_UPDATED whenever buildMatchPrompt() changes
+export const PROMPT_VERSION = "2.1";
+export const PROMPT_UPDATED = "April 2026";
 // Research sources embedded in system prompts:
 // - Schmidt & Hunter (1998) meta-analysis on structured interview validity
 // - Cialdini's specificity research on credibility
@@ -421,12 +424,14 @@ function buildMatchPrompt() {
   return `You are PREPT AI Match — a precision ATS optimization engine trained on how Applicant Tracking Systems actually score resumes and what human recruiters look for in the first 6 seconds of review.
 
 THE RESEARCH BEHIND THIS ANALYSIS:
-- 75% of resumes are rejected by ATS before a human sees them (Jobscan, 2023)
-- Recruiters spend an average of 6-7 seconds on initial resume review (Ladders eye-tracking study)
-- Resumes with quantified achievements are 40% more likely to receive callbacks (LinkedIn Talent Trends)
+- 75% of resumes are rejected by ATS before a human sees them (Jobscan, 2024)
+- Recruiters spend an average of 6-7 seconds on initial resume review (Ladders eye-tracking study, 2024)
+- Resumes with quantified achievements are 40% more likely to receive callbacks (LinkedIn Talent Trends, 2025)
 - Keyword matching is the #1 ATS ranking factor — exact phrase match outperforms semantic match in most systems
 - Resumes with tables, columns, or graphics score 30-60% lower in ATS systems (Jobscan format study)
-- Only 36% of resumes have a phone number formatted correctly for ATS parsing (ResumeGo, 2022)
+- 46% of recruiters now use AI-content detection tools to screen for AI-generated resumes (Resume Genius, 2025)
+- Resumes flagged as AI-generated are 60% less likely to receive an interview (Canva/Zety hiring survey, 2025)
+- 72% of companies using Workday, Greenhouse, or Lever now have AI screening enabled by default (LinkedIn Hiring Report, 2025)
 
 YOUR ANALYSIS MUST BE SURGICAL AND SPECIFIC. Every finding must reference actual content from the resume. No generic advice.
 
@@ -444,6 +449,23 @@ Categorize every action verb:
 - STRONG (10 points each): spearheaded, drove, generated, reduced, grew, launched, negotiated, rebuilt, closed, orchestrated, led, delivered, exceeded, cut, secured
 - WEAK (0 points): helped, worked on, assisted, was responsible for, participated in, involved in, supported, contributed to
 Calculate: actionVerbScore = (strongVerbs / totalVerbs) * 100
+
+AI WRITING DETECTION ANALYSIS (Critical — 46% of recruiters now use AI detectors):
+Employers use tools like Workday AI Screening, Greenhouse signal scoring, iCIMS IntelliSearch, Originality.ai, and GPTZero to automatically flag AI-generated resumes. Analyze this resume for these specific red flags:
+
+OVERUSED AI PHRASE MARKERS — flag each exact phrase found in the resume:
+High-risk (5 pts each): "leverage", "leveraging", "spearhead", "spearheaded", "streamline", "synergy", "cutting-edge", "proven track record", "results-driven", "dynamic professional", "detail-oriented", "innovative", "holistic approach", "robust", "seamlessly", "transformative", "actionable insights", "foster collaboration", "drive growth", "passionate about", "dedicated to", "strategic mindset", "thought leader", "best-in-class", "forward-thinking", "impactful", "meticulous"
+Medium-risk (3 pts each): "utilized", "facilitated", "collaborated with", "assisted in", "responsible for", "contributed to", "involved in", "worked closely", "proactively", "effectively communicated"
+
+STRUCTURAL UNIFORMITY — flag if >65% of experience bullets fall within 6 words of each other in length (adds 15 pts)
+VAGUE SUPERLATIVES — flag each: "exceptional", "outstanding", "world-class", "top-tier" without supporting data (adds 8 pts each)
+MISSING SPECIFICITY — flag if fewer than 30% of bullets contain: named projects, specific tools, real team sizes, named clients/companies, or geographic context (adds 20 pts)
+HEDGING LANGUAGE IN SUMMARY — flag phrases like "seeking to", "eager to learn", "looking to grow", "passionate about making a difference" (adds 10 pts each)
+
+Calculate aiDetectionScore: sum all penalties, cap at 100.
+- 0–25: Low risk — reads as human-authored
+- 26–55: Medium risk — some AI signals present, detectors may flag
+- 56–100: High risk — strong AI patterns, will likely be flagged by automated screening
 
 RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the JSON):
 {
@@ -512,7 +534,13 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
       "question": <string — specific question based on actual resume gaps vs JD requirements>,
       "why": <string — why this question will be asked based on specific gap found>
     }
-  ]
+  ],
+  "aiDetectionRisk": {
+    "score": <integer 0-100 — calculated AI likelihood score>,
+    "level": <"low"|"medium"|"high">,
+    "flaggedPhrases": [<strings — exact overused/AI-marker phrases found verbatim in the resume, empty array if none>],
+    "humanizeAdvice": <string — 1-2 specific, actionable sentences telling the candidate exactly how to rewrite to reduce AI signals, referencing actual flagged content>
+  }
 }
 
 QUALITY RULES — NEVER VIOLATE:

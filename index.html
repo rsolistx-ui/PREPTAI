@@ -712,6 +712,61 @@ footer {
 @media(max-width:900px){ .trust-bar-inner { gap: 20px; flex-wrap: wrap; } }
 @media(max-width:600px){ .trust-bar-inner { flex-direction: column; gap: 16px; } .trust-divider { display: none; } }
 
+/* ── ATS Engine Intel strip ──────────────────────────────────────────────── */
+.ats-intel-strip {
+  position: relative; z-index: 1;
+  background: var(--s1);
+  border-top: 1px solid var(--b1); border-bottom: 1px solid var(--b1);
+  padding: 52px 24px;
+}
+.ats-intel-strip::before {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 300px;
+  background: radial-gradient(ellipse, rgba(200,168,75,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.ats-intel-inner { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+.ats-engine-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 14px; border-radius: 20px; margin-bottom: 16px;
+  background: rgba(200,168,75,0.1); border: 1px solid rgba(200,168,75,0.28);
+  font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--gold);
+}
+.ats-engine-badge-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--gold);
+  animation: live-pulse 2s ease-in-out infinite; flex-shrink: 0;
+}
+.ats-intel-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 40px; align-items: start;
+}
+.ats-intel-lead-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(22px, 3vw, 32px); font-weight: 800;
+  letter-spacing: -0.8px; color: var(--tx); line-height: 1.2; margin-bottom: 12px;
+}
+.ats-intel-lead-sub {
+  font-size: 14px; color: var(--tx2); line-height: 1.7; max-width: 460px;
+}
+.ats-intel-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.ats-intel-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 14px; border-radius: 12px;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--b1);
+  transition: border-color 0.15s;
+}
+.ats-intel-item:hover { border-color: rgba(200,168,75,0.25); }
+.aii-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.aii-title { font-size: 13px; font-weight: 700; color: var(--tx); margin-bottom: 3px; }
+.aii-desc { font-size: 11px; color: var(--tx3); line-height: 1.55; }
+@media(max-width:900px){ .ats-intel-layout { grid-template-columns: 1fr; gap: 24px; } }
+@media(max-width:600px){ .ats-intel-grid { grid-template-columns: 1fr; } }
+:root.light .ats-intel-item { background: #fff; }
+
 .live-section{position:relative;z-index:1;padding:100px 24px;overflow:hidden}
 .live-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(123,109,244,0.08) 0%,transparent 65%);pointer-events:none}
 .live-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
@@ -1352,6 +1407,52 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
   </div>
 </section>
 
+<!-- ATS ENGINE INTEL -->
+<section class="ats-intel-strip">
+  <div class="ats-intel-inner reveal">
+    <div class="ats-engine-badge">
+      <span class="ats-engine-badge-dot"></span>
+      ATS Engine v2.1 &nbsp;·&nbsp; Updated April 2026
+    </div>
+    <div class="ats-intel-layout">
+      <div>
+        <h2 class="ats-intel-lead-title">PREPT AI Match tracks what's filtering you out — including AI detection.</h2>
+        <p class="ats-intel-lead-sub">Our scoring engine is actively maintained and updated as employer ATS platforms and AI content filters evolve. Every analysis reflects the real hiring environment right now, not last year.</p>
+      </div>
+      <div class="ats-intel-grid">
+        <div class="ats-intel-item">
+          <div class="aii-icon">🤖</div>
+          <div>
+            <div class="aii-title">AI Content Detection</div>
+            <div class="aii-desc">Flags overused AI phrases and structural patterns that employer AI scanners catch — before you apply.</div>
+          </div>
+        </div>
+        <div class="ats-intel-item">
+          <div class="aii-icon">🏢</div>
+          <div>
+            <div class="aii-title">40+ ATS Platforms</div>
+            <div class="aii-desc">Calibrated against Workday, Greenhouse, Lever, iCIMS, Taleo, BambooHR, and more.</div>
+          </div>
+        </div>
+        <div class="ats-intel-item">
+          <div class="aii-icon">🔄</div>
+          <div>
+            <div class="aii-title">Quarterly Updates</div>
+            <div class="aii-desc">Scoring rules updated every quarter as hiring practices and filter criteria shift.</div>
+          </div>
+        </div>
+        <div class="ats-intel-item">
+          <div class="aii-icon">📊</div>
+          <div>
+            <div class="aii-title">Research-Backed</div>
+            <div class="aii-desc">Built on Jobscan, LinkedIn Talent Trends, and recruiter eye-tracking data from 2024–2025.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- HOW IT WORKS -->
 <section id="how">
   <div class="section-inner">
@@ -1804,6 +1905,14 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
         <div class="faq-q" onclick="toggleFaq(this)">What is STAR format and why does it matter?</div>
         <div class="faq-a">STAR stands for Situation, Task, Action, Result. It is the structure that trained interviewers are explicitly scoring your answers against. Every behavioral question ,  "tell me about a time you," "describe a situation where you" ,  is designed to elicit a STAR response. PREPT AI structures every coached answer in STAR format automatically so your answers hit every point an interviewer is looking for, even under pressure.</div>
       </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can employers detect if my resume was written by AI?</div>
+        <div class="faq-a">Yes, and this is increasingly common. 46% of recruiters now use AI content detection tools as part of their screening process (Resume Genius, 2025). Tools like Workday AI Screening, Greenhouse signal scoring, and standalone detectors like GPTZero flag resumes with overused AI phrases ("leverage," "spearhead," "synergy," "proven track record"), structural uniformity where all bullets are the same length, and vague superlatives without supporting data. PREPT AI Match includes an AI Detection Risk score that analyzes your resume for these specific patterns and tells you exactly which phrases to replace to sound human-authored again.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How often is the ATS scoring engine updated?</div>
+        <div class="faq-a">Quarterly. The PREPT AI Match scoring engine (currently v2.1, updated April 2026) is reviewed and updated every quarter as ATS platforms release new versions, employer screening behavior shifts, and new AI detection patterns emerge. The research base is updated to reflect current studies from Jobscan, LinkedIn Talent Trends, and hiring outcome data. When the engine updates, existing users benefit immediately on their next analysis — no reinstall or action required.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -1846,6 +1955,8 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     <div class="trust-item"><div class="tp-logo"><div class="tp-logo-icon" style="font-size:16px">🔒</div><div><div class="tp-logo-text">Privacy First</div><div class="trust-stars" style="font-size:11px;letter-spacing:0;color:#45de7a">Zero breaches</div></div></div><div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">0 data breaches, ever</div><div class="trust-item-label">No data stored on our servers</div></div></div>
     <div class="trust-divider"></div>
     <div class="trust-item"><div class="trust-item-icon">🌐</div><div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">Used in 50+ industries</div><div class="trust-item-label">From legal to logistics</div></div></div>
+    <div class="trust-divider"></div>
+    <div class="trust-item"><div class="trust-item-icon" style="font-size:16px">🤖</div><div class="trust-item-text"><div style="font-weight:700;color:var(--tx);font-size:11px">AI Detection Scoring</div><div class="trust-item-label">ATS Engine v2.1 · Apr 2026</div></div></div>
   </div>
 </div>
 
