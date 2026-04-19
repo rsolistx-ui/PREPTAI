@@ -964,15 +964,34 @@ export default async function handler(req, res) {
     }
   }
 
-  // Free utility modes: skip monthly credit checks but enforce per-IP hourly limit
-  const freeModes = ["mockgen", "salary", "skillsgap", "asyncvideo", "adaptive", "debrief", "jenn", "coverletter", "linkedin", "mockanswer", "company", "gapentry", "appfollowup", "emailthankyou", "negotiation"];
-  if (freeModes.includes(mode)) {
-    const callerIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
-    const withinLimit = await checkFreeModeRateLimit(callerIP);
-    if (!withinLimit) {
-      return res.status(429).json({ error: "rate_limited", message: `You've used ${FREE_MODE_HOURLY_LIMIT} free requests this hour. Please wait before trying again.` });
+  // ── PLAN ENFORCEMENT FOR GATED UTILITY MODES ──────────────────────────────────
+  // These are NOT covered by the monthly chat/match credit system above.
+  // They need explicit plan checks here before any prompt is built or AI is called.
+  const proOnlyModes    = ["coverletter","linkedin","mockanswer","mockgen","debrief","adaptive","appfollowup","emailthankyou"];
+  const careerOnlyModes = ["salary","asyncvideo","negotiation"];
+  const trulyFreeModes  = ["skillsgap","company","gapentry","jenn"]; // no plan needed
+
+  if (proOnlyModes.includes(mode)) {
+    if (!cleanEmail) return res.status(403).json({ error: "login_required", message: "Sign in to access this feature.", loginUrl: "/login.html" });
+    if (!['pro','career'].includes(plan)) return res.status(403).json({ error: "upgrade_required", message: "This feature requires a Pro or Career+ plan.", upgradeUrl: "https://preptai.co/#pricing", requiredPlan: "pro" });
+  }
+  if (careerOnlyModes.includes(mode)) {
+    if (!cleanEmail) return res.status(403).json({ error: "login_required", message: "Sign in to access this feature.", loginUrl: "/login.html" });
+    if (plan !== 'career') return res.status(403).json({ error: "upgrade_required", message: "Salary negotiation coaching and video prep require a Career+ plan.", upgradeUrl: "https://preptai.co/#pricing", requiredPlan: "career" });
+  }
+
+  // Utility modes: prompt routing for all plan-verified modes above + truly free modes
+  const utilityModes = [...proOnlyModes, ...careerOnlyModes, ...trulyFreeModes];
+  if (utilityModes.includes(mode)) {
+    // Only IP-rate-limit the truly free anonymous modes; paid plans have already verified credentials
+    if (trulyFreeModes.includes(mode)) {
+      const callerIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
+      const withinLimit = await checkFreeModeRateLimit(callerIP);
+      if (!withinLimit) {
+        return res.status(429).json({ error: "rate_limited", message: `You've used ${FREE_MODE_HOURLY_LIMIT} free requests this hour. Please wait before trying again.` });
+      }
+      await logFreeModeUsage(callerIP, mode);
     }
-    await logFreeModeUsage(callerIP, mode);
     try {
       let systemPrompt;
       let userMsg = cleanMessage || "Generate the response.";

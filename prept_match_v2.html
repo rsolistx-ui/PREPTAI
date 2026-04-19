@@ -779,20 +779,45 @@ async function saveAppsToCloud() {
 const SUPABASE_URL      = 'https://lfxfwhitegsjeowlcvqk.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmeGZ3aGl0ZWdzamVvd2xjdnFrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODM3ODMsImV4cCI6MjA4OTg1OTc4M30.f67zZLrSbaLbTgWZtvx2AIr4aCGVRxuynEFm1_CKvWs';
 let userEmail = null;
+let userPlan  = 'free';
 
 async function initAuth() {
   try {
     const { createClient } = supabase;
     const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data: { session } } = await sb.auth.getSession();
-    if (session?.user) userEmail = session.user.email;
-    else {
+    if (session?.user) {
+      userEmail = session.user.email;
+      const { data: sub } = await sb.from('subscribers').select('plan').eq('email', userEmail).single();
+      userPlan = sub?.plan || 'free';
+      sessionStorage.setItem('preptai_user', JSON.stringify({ email: userEmail, plan: userPlan }));
+    } else {
       const raw = sessionStorage.getItem('preptai_user');
-      if (raw) { try { userEmail = JSON.parse(raw)?.email || null; } catch(e) {} }
+      if (raw) { try { const s = JSON.parse(raw); userEmail = s.email || null; userPlan = s.plan || 'free'; } catch(e) {} }
     }
   } catch(e) {}
 }
 initAuth();
+
+// Returns true if user meets the required plan; otherwise renders inline upgrade prompt in el
+function requirePlan(minPlan, el) {
+  const order = { free: 0, pro: 1, career: 2 };
+  if ((order[userPlan] || 0) >= (order[minPlan] || 0)) return true;
+  const label = minPlan === 'pro' ? 'Pro' : 'Career+';
+  const price = minPlan === 'pro' ? '$12/mo' : '$24/mo';
+  const url   = minPlan === 'pro'
+    ? 'https://buy.stripe.com/bJe4gAdlkddX92gfLycbC00'
+    : 'https://buy.stripe.com/fZeg2O7Ht3rX6rm144';
+  if (el) el.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 20px;text-align:center">
+      <div style="font-size:28px">🔒</div>
+      <div style="font-size:15px;font-weight:800;color:var(--tx)">Requires ${label}</div>
+      <div style="font-size:13px;color:var(--tx2);max-width:300px;line-height:1.65">Upgrade to <strong style="color:#e6c668">${label}</strong> to unlock this feature along with everything else in the plan.</div>
+      <a href="${url}" style="display:inline-flex;align-items:center;gap:7px;padding:11px 24px;background:linear-gradient(135deg,#c8a84b,#e6c668);color:#07070e;border-radius:9px;font-size:14px;font-weight:800;text-decoration:none">Upgrade to ${label} — ${price} →</a>
+      <div style="font-size:11px;color:var(--tx3)">7-day free trial · Cancel anytime</div>
+    </div>`;
+  return false;
+}
 
 // ── NAV ───────────────────────────────────────────────────────────────────────
 function navTo(page) {
@@ -1064,6 +1089,8 @@ Return ONLY valid JSON (no markdown, no explanation):
 
 // ── COVER LETTER via /api/chat (streaming) ───────────────────────────────────
 async function generateCL() {
+  const out = document.getElementById('clOut');
+  if (!requirePlan('pro', out)) return;
   const tone = document.getElementById('clTone')?.value || 'professional';
   const out  = document.getElementById('clOut');
   const acts = document.getElementById('clActs');
@@ -1130,6 +1157,7 @@ Return ONLY the cover letter text, no subject line, no labels.`;
 // ── LINKEDIN via /api/chat ────────────────────────────────────────────────────
 async function generateLinkedIn() {
   const content = document.getElementById('liContent');
+  if (!requirePlan('pro', content)) return;
   content.innerHTML = '<div class="thinking"><div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><span class="tlbl">Optimizing your LinkedIn...</span></div>';
 
   const prompt = `Generate optimized LinkedIn profile sections for this candidate targeting this job description.
@@ -1610,6 +1638,8 @@ async function generateEmail(type) {
   const out  = document.getElementById('em-out-' + type);
   const acts = document.getElementById('em-acts-' + type);
   if (!out) return;
+  const requiredPlan = type === 'negotiation' ? 'career' : 'pro';
+  if (!requirePlan(requiredPlan, out)) return;
 
   const role    = (analysis?.targetRole) || document.getElementById('jobText')?.value?.trim().split('\n')[0] || 'this role';
   const company = document.getElementById('matchCompanyInput')?.value?.trim() || 'the company';
