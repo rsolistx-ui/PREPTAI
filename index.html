@@ -1277,7 +1277,9 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 
     <!-- RIGHT: phone mockup showing live coaching -->
     <div class="hero-right" style="animation:fadeup 0.8s 0.4s ease both">
-      <div style="position:relative;display:flex;justify-content:center;align-items:flex-start;padding:20px 28px 52px">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:20px;padding:20px 28px 20px">
+        <!-- Phone + top badge wrapper -->
+        <div style="position:relative">
         <!-- Phone shell -->
         <div style="width:264px;background:#0d0d1c;border:2px solid rgba(255,255,255,0.13);border-radius:38px;padding:14px 12px 20px;box-shadow:0 48px 100px rgba(0,0,0,0.65),0 0 0 1px rgba(255,255,255,0.05);flex-shrink:0">
           <!-- Notch -->
@@ -1315,8 +1317,9 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
         </div>
         <!-- Floating badge — top right -->
         <div style="position:absolute;top:0;right:0;background:#0f0f1c;border:1px solid rgba(200,168,75,0.3);border-radius:10px;padding:8px 12px;font-size:11px;font-weight:700;color:#e6c668;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.5)">Live on Zoom</div>
-        <!-- Floating badge — bottom left -->
-        <div style="position:absolute;bottom:20px;left:0;background:#0f0f1c;border:1px solid rgba(69,222,122,0.25);border-radius:10px;padding:8px 12px;font-size:11px;font-weight:600;color:#45de7a;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4)">✓ Zoom · Teams · Meet</div>
+        </div><!-- end phone + top badge wrapper -->
+        <!-- Centered label below phone -->
+        <div style="background:#0f0f1c;border:1px solid rgba(69,222,122,0.25);border-radius:10px;padding:8px 18px;font-size:11px;font-weight:600;color:#45de7a;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.3)">✓ Zoom · Teams · Meet</div>
       </div>
     </div>
   </div>
