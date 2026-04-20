@@ -1302,6 +1302,10 @@ function removeThinking() {
   document.getElementById('thinking')?.remove();
   document.getElementById('buytimePanel')?.remove();
 }
+// Removes just the spinner — leaves buy-time panel visible while waiting for stream
+function removeThinkingSpinner() {
+  document.getElementById('thinking')?.remove();
+}
 
 function getContext() {
   return {
@@ -1499,7 +1503,9 @@ async function sendQuestion() {
 
   try {
     const ctx = getContext();
-    removeThinking();
+    // Remove the spinner so the stream bubble can appear cleanly.
+    // Buy-time panel stays visible until the first streaming chunk arrives.
+    removeThinkingSpinner();
 
     // Create streaming answer bubble
     const msgId = 'stream-' + Date.now();
@@ -1512,9 +1518,12 @@ async function sendQuestion() {
     area.scrollTop = area.scrollHeight;
 
     let streamedText = '';
+    let buyTimeDismissed = false;
     const result = await callAPIStream(
       { message: `Interview question: "${q}"`, mode: 'chat', ...ctx },
       (chunk, full) => {
+        // Dismiss buy-time panel on first chunk — answer has arrived
+        if (!buyTimeDismissed) { buyTimeDismissed = true; document.getElementById('buytimePanel')?.remove(); }
         streamedText = full;
         const bodyEl = document.getElementById(`${msgId}-body`);
         if (bodyEl) {
@@ -1522,6 +1531,8 @@ async function sendQuestion() {
           bodyEl.innerHTML = formatted + tipHTML + '<span class="stream-cursor">▋</span>';
           area.scrollTop = area.scrollHeight;
         }
+        // Mirror streaming text to stealth panel if Phone Mode is active
+        mirrorToStealth(full);
       }
     );
 
@@ -1529,8 +1540,8 @@ async function sendQuestion() {
     if (!result.ok) {
       bubble.remove();
       const d = result.data || {};
-      if (result.status === 403 && d.error === 'free_limit_reached') { document.getElementById('upgradeBanner').style.display = 'block'; document.getElementById('sendBtn').disabled = false; return; }
-      if (result.status === 403 && d.error === 'login_required') { addMsg('system', '🔒 Sign in required', `Please <a href="/login.html" style="color:#7b6df4">sign in</a> to use PREPT AI Live. Free to start.`); document.getElementById('sendBtn').disabled = false; return; }
+      if (result.status === 403 && d.error === 'free_limit_reached') { document.getElementById('buytimePanel')?.remove(); document.getElementById('upgradeBanner').style.display = 'block'; document.getElementById('sendBtn').disabled = false; return; }
+      if (result.status === 403 && d.error === 'login_required') { document.getElementById('buytimePanel')?.remove(); addMsg('system', '🔒 Sign in required', `Please <a href="/login.html" style="color:#7b6df4">sign in</a> to use PREPT AI Live. Free to start.`); document.getElementById('sendBtn').disabled = false; return; }
       throw new Error(d.message || result.error || 'Something went wrong');
     }
 
@@ -2721,21 +2732,18 @@ function stopStealthListen() {
   if (btn) btn.innerHTML = '🎤 Enable continuous listen';
 }
 
-// Also update the main chat area when stealth is active
-const _origAddMsg = addMsg;
-function addMsg(type, title, body) {
-  _origAddMsg(type, title, body);
-  // Mirror coached answers to stealth panel if active
-  if (stealthActive && type === 'assistant') {
-    const sa = document.getElementById('stealthAnswer');
-    if (sa) {
-      const formatted = body
-        .replace(/\*\*([^*]+)\*\*/g, '<strong style="color:#e6c668">$1</strong>')
-        .replace(/\n\n/g, '</p><p style="margin-top:12px">')
-        .replace(/\n/g, '<br>');
-      sa.innerHTML = '<p style="margin:0">' + formatted + '</p>';
-    }
-  }
+// Stealth mirror helper — called directly by the streaming path when stealthActive.
+// (The old addMsg-wrapper approach caused infinite recursion due to JS hoisting;
+// coached answers are streamed directly to DOM anyway, so a wrapper on addMsg
+// would never fire for the main coaching output.)
+function mirrorToStealth(text) {
+  if (!stealthActive) return;
+  const sa = document.getElementById('stealthAnswer');
+  if (!sa) return;
+  sa.innerHTML = '<p style="margin:0">' + text
+    .replace(/\*\*([^*]+)\*\*/g, '<strong style="color:#e6c668">$1</strong>')
+    .replace(/\n\n/g, '</p><p style="margin-top:12px">')
+    .replace(/\n/g, '<br>') + '</p>';
 }
 
 
