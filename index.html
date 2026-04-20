@@ -179,8 +179,30 @@ nav.scrolled { background: var(--nav-bg, rgba(6,6,13,0.97)); border-color: var(-
   min-height: 100vh;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  text-align: center;
   padding: 120px 24px 80px;
+}
+.hero-split {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: center;
+  max-width: 1100px; width: 100%;
+  margin-bottom: 48px;
+}
+.hero-left { display: flex; flex-direction: column; align-items: flex-start; }
+.hero-left .hero-eyebrow { margin-bottom: 28px; }
+.hero-left .hero-title { text-align: left; }
+.hero-left .hero-sub { text-align: left; margin: 0 0 32px; }
+.hero-left .hero-actions { justify-content: flex-start; margin-bottom: 14px; }
+.hero-left .hero-trust { text-align: left; }
+.hero-right { display: flex; justify-content: center; align-items: center; }
+@media(max-width:960px) {
+  .hero-split { grid-template-columns: 1fr; gap: 48px; text-align: center; }
+  .hero-left { align-items: center; }
+  .hero-left .hero-title,
+  .hero-left .hero-sub,
+  .hero-left .hero-trust { text-align: center; }
+  .hero-left .hero-sub { margin: 0 auto 32px; }
+  .hero-left .hero-actions { justify-content: center; }
+  .hero-right { order: -1; }
 }
 
 .hero-eyebrow {
@@ -491,7 +513,7 @@ section {
   border-radius: 8px; padding: 10px 14px;
   font-size: 12px; color: var(--tx2); line-height: 1.5;
 }
-.hv-issue .fix { color: var(--cy); margin-top: 4px; font-size: 11px; }
+.hv-issue .fix { color: var(--vi2); margin-top: 4px; font-size: 11px; }
 
 .features-section { background: var(--s1); }
 .features-grid {
@@ -513,7 +535,7 @@ section {
 }
 .fi-gold { background: var(--gd); border: 1px solid rgba(200,168,75,0.18); }
 .fi-vi { background: var(--vd); border: 1px solid rgba(123,109,244,0.18); }
-.fi-cy { background: var(--cyd); border: 1px solid rgba(56,217,192,0.18); }
+.fi-cy { background: var(--vd); border: 1px solid rgba(123,109,244,0.18); }
 .feat-title { font-size: 15px; font-weight: 700; color: var(--tx); margin-bottom: 8px; }
 .feat-desc { font-size: 13px; color: var(--tx2); line-height: 1.6; }
 .feat-tag {
@@ -1225,97 +1247,110 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-eyebrow">
-    <div class="eyebrow-dot"></div>
-    The Prepared Candidate's Edge. Ready in 16 Industries.
+  <div class="hero-split">
+    <!-- LEFT: headline + CTAs -->
+    <div class="hero-left">
+      <div class="hero-eyebrow" style="animation:fadeup 0.6s ease both">
+        <div class="eyebrow-dot"></div>
+        The Prepared Candidate's Edge. 16 Industries.
+      </div>
+
+      <h1 class="hero-title" style="animation:fadeup 0.6s 0.1s ease both">
+        Your AI coach.<br>
+        <span class="line2">Live. In your interview.</span>
+      </h1>
+
+      <p class="hero-sub" style="animation:fadeup 0.6s 0.2s ease both">
+        Most qualified candidates lose to less qualified ones because they freeze, ramble, or miss the keywords. PREPT AI gives you the coached answer in under 3 seconds — on your phone, right beside you.
+      </p>
+
+      <div class="hero-actions" style="animation:fadeup 0.6s 0.3s ease both">
+        <a href="/prept_v2.html" class="btn-hero">Try the live coach free →</a>
+        <a href="/prept_match_v2.html" class="btn-hero-ghost" style="border-color:rgba(200,168,75,0.35);color:#e6c668">Optimize my resume →</a>
+      </div>
+
+      <div class="hero-trust" style="animation:fadeup 0.6s 0.35s ease both">
+        <span class="trust-dot">●</span>
+        No credit card required &nbsp;·&nbsp; Works on your phone, no install &nbsp;·&nbsp; Cancel anytime
+      </div>
+    </div>
+
+    <!-- RIGHT: phone mockup showing live coaching -->
+    <div class="hero-right" style="animation:fadeup 0.8s 0.4s ease both">
+      <div style="position:relative;display:flex;justify-content:center;align-items:flex-start;padding:20px 28px 52px">
+        <!-- Phone shell -->
+        <div style="width:264px;background:#0d0d1c;border:2px solid rgba(255,255,255,0.13);border-radius:38px;padding:14px 12px 20px;box-shadow:0 48px 100px rgba(0,0,0,0.65),0 0 0 1px rgba(255,255,255,0.05);flex-shrink:0">
+          <!-- Notch -->
+          <div style="width:56px;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;margin:0 auto 14px"></div>
+          <!-- Header bar -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:6px">
+              <div style="width:7px;height:7px;border-radius:50%;background:#45de7a;animation:live-pulse 1.4s ease-in-out infinite"></div>
+              <span style="font-size:11px;font-weight:700;color:#edeaf7;letter-spacing:0.5px">PREPT AI Live</span>
+            </div>
+            <span style="font-size:10px;color:#8a87a0;display:flex;align-items:center;gap:4px">
+              <span style="width:5px;height:5px;border-radius:50%;background:#ef5f5f;animation:live-pulse 1.2s ease-in-out infinite;display:inline-block"></span>Listening
+            </span>
+          </div>
+          <!-- Question bubble -->
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 3px;padding:10px 12px;margin-bottom:10px">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#8a87a0;margin-bottom:5px;font-weight:700">Interviewer asked</div>
+            <div style="font-size:11px;color:#ccc9e0;line-height:1.5">Tell me about a time you led a team through a high-pressure deadline.</div>
+          </div>
+          <!-- Coached answer bubble -->
+          <div style="background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.28);border-radius:3px 10px 10px 10px;padding:12px;margin-bottom:10px">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#a498ff;margin-bottom:6px;font-weight:700">Coached answer</div>
+            <div style="font-size:11px;color:#edeaf7;line-height:1.65">
+              <strong style="color:#a498ff">S:</strong> Our launch date moved up three weeks — no scope reduction.
+              <strong style="color:#a498ff">T:</strong> I owned cross-team coordination.
+              <strong style="color:#a498ff">A:</strong> Daily standups, shared tracker, clear owners.
+              <strong style="color:#a498ff">R:</strong> Shipped on time. Client rated the process 9/10.
+            </div>
+          </div>
+          <!-- Footer chips -->
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:10px;background:rgba(69,222,122,0.09);border:1px solid rgba(69,222,122,0.18);font-size:10px;font-weight:700;color:#45de7a">⚡ 2.1 sec</div>
+            <div style="font-size:10px;color:#8a87a0">~20 sec to speak</div>
+          </div>
+        </div>
+        <!-- Floating badge — top right -->
+        <div style="position:absolute;top:0;right:0;background:#0f0f1c;border:1px solid rgba(200,168,75,0.3);border-radius:10px;padding:8px 12px;font-size:11px;font-weight:700;color:#e6c668;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.5)">Live on Zoom</div>
+        <!-- Floating badge — bottom left -->
+        <div style="position:absolute;bottom:20px;left:0;background:#0f0f1c;border:1px solid rgba(69,222,122,0.25);border-radius:10px;padding:8px 12px;font-size:11px;font-weight:600;color:#45de7a;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.4)">✓ Zoom · Teams · Meet</div>
+      </div>
+    </div>
   </div>
 
-  <h1 class="hero-title">
-    Your AI coach.<br>
-    <span class="line2">Live. In your interview.</span>
-  </h1>
-
-  <p class="hero-sub">
-    Most qualified candidates lose to less qualified ones because they freeze, ramble, or miss the keywords. PREPT AI gives you the exact words to say in under 3 seconds. Live. On your phone or second screen. And optimizes your resume so you get the interview in the first place.
-  </p>
-
-  <div class="hero-stats">
+  <!-- Stats bar — full width below the split -->
+  <div class="hero-stats" style="animation:fadeup 0.6s 0.25s ease both">
     <div class="hstat"><div class="hstat-n">3s</div><div class="hstat-l">Answer coached in 3 seconds</div></div>
     <div class="hstat"><div class="hstat-n">16</div><div class="hstat-l">Industries covered</div></div>
     <div class="hstat"><div class="hstat-n">75%</div><div class="hstat-l">Resumes filtered by ATS</div></div>
     <div class="hstat"><div class="hstat-n">2min</div><div class="hstat-l">To your first session</div></div>
   </div>
+</section>
 
-  <div class="hero-actions">
-    <a href="/prept_v2.html" class="btn-hero">Try the live coach free →</a>
-    <a href="/prept_match_v2.html" class="btn-hero-ghost" style="border-color:rgba(200,168,75,0.35);color:#e6c668">Optimize my resume →</a>
-  </div>
-
-  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;margin-bottom:8px;flex-wrap:wrap">
-    <span style="color:#45de7a;font-size:14px;letter-spacing:1px">★★★★★</span>
-    <span style="font-size:13px;color:#8a87a0">Used by job seekers across 16 industries</span>
-    <span style="color:#2c2a44">·</span>
-    <span style="font-size:13px;color:#8a87a0">No credit card required</span>
-    <span style="color:#2c2a44">·</span>
-    <span style="font-size:13px;color:#8a87a0">Cancel anytime</span>
-  </div>
-
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;justify-content:center;animation:fadeup 0.6s 0.32s ease both">
-    <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;background:rgba(123,109,244,0.08);border:1px solid rgba(123,109,244,0.18);color:#a498ff;font-size:12px;font-weight:600">🎙 PREPT AI Live real-time interview coach</span>
-    <span style="color:#2c2a44;font-weight:700">+</span>
-    <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.18);color:#e6c668;font-size:12px;font-weight:600">📄 PREPT AI Match ATS resume optimizer</span>
-  </div>
-
-  <div class="hero-trust">
-    <span class="trust-dot">●</span>
-    No credit card required &nbsp;·&nbsp; Works on your phone, no install &nbsp;·&nbsp; Cancel anytime
-  </div>
-
-  <div class="hero-preview" style="margin-top:48px">
-    <div class="preview-frame">
-      <div class="preview-topbar">
-        <div class="ptb-dot ptb-red"></div>
-        <div class="ptb-dot ptb-yellow"></div>
-        <div class="ptb-dot ptb-green"></div>
-        <div class="ptb-url">preptai.co/live</div>
+<!-- PROBLEM -->
+<section id="problem" class="problem-section">
+  <div class="section-inner reveal">
+    <div class="section-eyebrow">The brutal truth</div>
+    <h2 class="section-title">The system is designed<br>to filter you out.</h2>
+    <p class="section-sub">Most job seekers never find out why they're not getting callbacks. Here's why.</p>
+    <div class="problem-grid reveal">
+      <div class="problem-card">
+        <div class="pc-number" style="color:var(--re)">75%</div>
+        <div class="pc-label">Resumes never reach a human</div>
+        <div class="pc-desc">Applicant Tracking Systems automatically filter out resumes that don't match their keyword criteria regardless of your actual qualifications.</div>
       </div>
-      <div class="preview-content">
-        <div class="preview-left">
-          <div class="pl-label">Match score</div>
-          <div class="pl-score">
-            <div class="pl-score-n">64</div>
-            <div class="pl-score-info">
-              <div class="pl-score-grade">Grade C</div>
-              <div class="pl-score-label">Likely filtered by ATS</div>
-            </div>
-          </div>
-          <div class="pl-proj">↑ Optimized score: ~91/100</div>
-          <div class="pl-label" style="margin-top:8px">Critical keywords missing</div>
-          <div class="pl-kw-miss">
-            <span class="kw-chip kw-amber">Salesforce</span>
-            <span class="kw-chip kw-red">KPI tracking</span>
-            <span class="kw-chip kw-red">SLA compliance</span>
-            <span class="kw-chip kw-red">Churn Analysis</span>
-            <span class="kw-chip kw-amber">CRM software</span>
-          </div>
-        </div>
-        <div class="preview-right">
-          <div class="pr-tabs">
-            <div class="pr-tab on">Rewritten Resume</div>
-            <div class="pr-tab">Cover Letter</div>
-            <div class="pr-tab">LinkedIn</div>
-            <div class="pr-tab">Interview Prep</div>
-          </div>
-          <div class="pr-block">
-            <div class="pb-label">Rewritten summary</div>
-            <div class="pb-text">Results-driven <span class="hi">Customer Success Manager</span> with 5+ years driving enterprise retention. Expert in <span class="hi">CRM systems (Salesforce)</span>, <span class="hi">KPI tracking</span>, and <span class="hi">SLA compliance</span>. Proven track record in <span class="hi">Churn Analysis</span> delivering 90%+ retention rates consistently.</div>
-          </div>
-          <div class="pr-metrics">
-            <div class="prm"><div class="prm-n">+27</div><div class="prm-l">Score gain</div></div>
-            <div class="prm"><div class="prm-n">8</div><div class="prm-l">Keywords added</div></div>
-            <div class="prm"><div class="prm-n">3</div><div class="prm-l">Issues fixed</div></div>
-          </div>
-        </div>
+      <div class="problem-card">
+        <div class="pc-number" style="color:var(--am)">6s</div>
+        <div class="pc-label">Average recruiter review time</div>
+        <div class="pc-desc">If you make it past the ATS, a human spends less time reading your resume than it takes to tie your shoes. First impression is everything.</div>
+      </div>
+      <div class="problem-card">
+        <div class="pc-number" style="color:var(--vi2)">$0</div>
+        <div class="pc-label">What most people invest in interview prep</div>
+        <div class="pc-desc">Career coaches charge $200/hour. Resume writers charge $500+. Most people send 40 applications, hear nothing, and wonder what went wrong. PREPT AI gives you the same advantage for less than $0.40 a day.</div>
       </div>
     </div>
   </div>
@@ -1386,32 +1421,6 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
   setTimeout(type, 1800);
 })();
 </script>
-
-<!-- PROBLEM -->
-<section id="problem" class="problem-section">
-  <div class="section-inner reveal">
-    <div class="section-eyebrow">The brutal truth</div>
-    <h2 class="section-title">The system is designed<br>to filter you out.</h2>
-    <p class="section-sub">Most job seekers never find out why they're not getting callbacks. Here's why.</p>
-    <div class="problem-grid reveal">
-      <div class="problem-card">
-        <div class="pc-number" style="color:var(--re)">75%</div>
-        <div class="pc-label">Resumes never reach a human</div>
-        <div class="pc-desc">Applicant Tracking Systems automatically filter out resumes that don't match their keyword criteria regardless of your actual qualifications.</div>
-      </div>
-      <div class="problem-card">
-        <div class="pc-number" style="color:var(--am)">6s</div>
-        <div class="pc-label">Average recruiter review time</div>
-        <div class="pc-desc">If you make it past the ATS, a human spends less time reading your resume than it takes to tie your shoes. First impression is everything.</div>
-      </div>
-      <div class="problem-card">
-        <div class="pc-number" style="color:var(--vi2)">$0</div>
-        <div class="pc-label">What most people invest in interview prep</div>
-        <div class="pc-desc">Career coaches charge $200/hour. Resume writers charge $500+. Most people send 40 applications, hear nothing, and wonder what went wrong. PREPT AI gives you the same advantage for less than $0.40 a day.</div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- ATS ENGINE INTEL -->
 <section class="ats-intel-strip">
