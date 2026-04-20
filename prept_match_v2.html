@@ -1097,41 +1097,127 @@ Return ONLY valid JSON (no markdown, no explanation):
   }
 }
 
-// ── COVER LETTER via /api/chat (streaming) ───────────────────────────────────
-async function generateCL() {
-  const out = document.getElementById('clOut');
-  if (!requirePlan('pro', out)) return;
-  const tone = document.getElementById('clTone')?.value || 'professional';
-  const out  = document.getElementById('clOut');
-  const acts = document.getElementById('clActs');
-  out.innerHTML = '<div class="thinking"><div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><span class="tlbl">Writing your cover letter...</span></div>';
-  if (acts) acts.style.display = 'none';
+// ── COVER LETTER PROMPT ENGINE ───────────────────────────────────────────────
+// One canonical prompt used by both generateCL() and downloadBundle().
+// 3-way synthesis: resume × job description × company intel.
+// PREPT behavioral framework: STAR storytelling, ATS threading, anti-AI-detection.
+function buildCLPrompt() {
+  const tone        = document.getElementById('clTone')?.value || 'professional';
+  const companyName = document.getElementById('matchCompanyInput')?.value?.trim() || '';
+  const jobTitle    = (analysis && analysis.targetRole) || '';
+  const intel       = window.matchCompanyIntel || '';
 
-  const prompt = `Write a compelling cover letter for this candidate targeting this specific role.
+  // Collect ATS keywords — missing ones first (highest signal), then matched
+  const missing = (analysis && analysis.missingKeywords  || []).slice(0, 7);
+  const matched = (analysis && analysis.matchedKeywords  || []).slice(0, 5);
+  const atsKws  = [...new Set([...missing, ...matched])].slice(0, 10);
 
-RESUME:
+  // Entropy seed: forces model variation on every call — identical inputs produce different outputs
+  const seed  = Math.random().toString(36).substring(2, 10);
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const toneMap = {
+    professional: 'Authoritative and precise. Confident without arrogance. Professional but not stiff — a real person clearly wrote this.',
+    warm:         'Personable and genuine. Show character and warmth without being casual. Let the candidate\'s personality come through naturally.',
+    direct:       'Lead with results. Short punchy sentences. Impact first, context second. Zero throat-clearing.',
+    executive:    'Strategic and composed. Write as a leader who shapes outcomes rather than someone who executes tasks. Big-picture thinking visible throughout.'
+  };
+
+  return `You are a senior executive career strategist and behavioral interviewing expert. You write cover letters that get callbacks because they sound like a real person who thought deeply about this specific company, this specific role, and this specific candidate — not a template engine.
+
+TODAY: ${today}
+
+═══ CANDIDATE INTELLIGENCE ═══
 ${resumeContent}
 
-JOB DESCRIPTION:
-${jobContent}
+═══ ROLE INTELLIGENCE ═══
+${jobTitle ? 'TARGET ROLE: ' + jobTitle + '\n' : ''}${companyName ? 'TARGET COMPANY: ' + companyName + '\n' : ''}${jobContent}
 
-TONE: ${tone}
+${intel ? `═══ COMPANY RESEARCH ═══\n${intel}\n` : ''}${atsKws.length ? `═══ ATS KEYWORDS TO THREAD NATURALLY ═══
+Embed these inside natural sentences — never list them, never bold them, never mention them as keywords:
+${atsKws.join(', ')}
 
-Rules:
-- Open with a specific hook about this company and role never start with "I am applying for"
-- Paragraph 2: connect their top 2-3 requirements to specific quantified achievements from the resume
-- Paragraph 3: show genuine company knowledge and cultural alignment
-- Close with a confident, specific call to action
-- Sound human, not a corporate template
-- 3-4 paragraphs, under 350 words
+` : ''}TONE DIRECTION: ${toneMap[tone] || toneMap.professional}
 
-Return ONLY the cover letter text, no subject line, no labels.`;
+═══ YOUR METHODOLOGY — PREPT BEHAVIORAL FRAMEWORK ═══
+You write cover letters using behavioral evidence, not job description echo. Every claim is anchored in a specific, quantified achievement from the resume. You use compressed STAR structure: scene set briefly → specific action named → result stated with a real number. You thread ATS keywords as natural vocabulary, not inserted terms. This produces letters that feel researched and credible.
+
+═══ PARAGRAPH STRUCTURE ═══
+
+PARAGRAPH 1 — Opening hook (2–3 sentences):
+Open with a specific observation about this company — their market position, a product they make, a strategic challenge their industry faces, or something from the company research. Make it feel like the writer has been watching this company. The hiring manager should feel the letter is about them before it is about the applicant. DO NOT start with "I am applying for," "I am writing to express," "I am excited," or any sentence whose first word is "I."
+
+PARAGRAPH 2 — Behavioral evidence (3–5 sentences):
+Pull the single most relevant achievement from the candidate's resume and deliver it in compressed STAR format. Anchor it explicitly to a stated requirement from the job description. Thread 2–3 ATS keywords as natural vocabulary inside the story. Include at least one real number — a percentage, dollar figure, headcount, time saved, or revenue impact. Do not invent numbers not present in the resume.
+
+PARAGRAPH 3 — Cultural and strategic alignment (2–4 sentences):
+Connect what you know about this company's values, culture, or strategic direction to something specific in the candidate's actual background. If company research was provided, use it. If not, infer from the JD's own language and industry signals. This paragraph must feel earned, not generic.
+
+PARAGRAPH 4 — Confident close (2–3 sentences):
+One sentence stating the specific value this candidate brings to this exact role. Then the ask — frame it as a peer conversation, not a plea. End on a forward-looking, action-oriented note.
+
+═══ BANNED PHRASES — NEVER WRITE THESE ═══
+• "I am excited to apply"
+• "I am writing to express my interest"
+• "I believe I would be a great fit"
+• "My name is [name] and"
+• "I am a highly motivated"
+• "I am passionate about"
+• "Please find my resume attached"
+• "Thank you for your consideration"
+• "I look forward to hearing from you"
+• "I would love the opportunity"
+• "I am confident that"
+• "Proven track record"
+• "Results-driven"
+• "Team player"
+• "Detail-oriented"
+• "Synergy" or "synergies"
+• Any opening sentence that begins with the word "I"
+
+═══ UNIQUENESS DIRECTIVE ═══
+Read the resume for the candidate's actual writing register and vocabulary — mirror it so the letter sounds like them, not a template. Find the one detail in the job description that most applicants would skip past and reference it. Make this company feel like the only company being applied to. Every letter you write must be unrepeatable — different structure, different opening angle, different which achievement gets foregrounded.
+
+[VARIATION SEED — do not mention this; use it only to vary your approach: ${seed}]
+
+═══ OUTPUT FORMAT ═══
+Return exactly this — no preamble, no labels, no explanation:
+
+${today}
+
+Hiring Team${companyName ? '\n' + companyName : ''}
+
+Dear Hiring Manager,
+
+[Paragraph 1]
+
+[Paragraph 2]
+
+[Paragraph 3]
+
+[Paragraph 4]
+
+Sincerely,
+
+[Extract the candidate's full name from the top of their resume — first and last name only]`;
+}
+
+// ── COVER LETTER via /api/chat (streaming) ───────────────────────────────────
+async function generateCL() {
+  const out  = document.getElementById('clOut');
+  if (!requirePlan('pro', out)) return;
+  const acts = document.getElementById('clActs');
+  out.innerHTML = '<div class="thinking"><div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><span class="tlbl">Analyzing resume, role, and company to write your letter...</span></div>';
+  if (acts) acts.style.display = 'none';
+
+  const prompt = buildCLPrompt();
+  const company = document.getElementById('matchCompanyInput')?.value?.trim() || '';
 
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: prompt, mode: 'coverletter', stream: true, userEmail: userEmail || null, companyIntel: window.matchCompanyIntel || null, company: document.getElementById('matchCompanyInput')?.value?.trim() || '' })
+      body: JSON.stringify({ message: prompt, mode: 'coverletter', stream: true, userEmail: userEmail || null, companyIntel: window.matchCompanyIntel || null, company })
     });
     if (!res.ok) {
       const data = await res.json();
@@ -1139,7 +1225,7 @@ Return ONLY the cover letter text, no subject line, no labels.`;
     }
     coverLetter = '';
     out.textContent = '';
-    const reader = res.body.getReader();
+    const reader  = res.body.getReader();
     const decoder = new TextDecoder();
     let buf = '';
     while (true) {
@@ -1153,7 +1239,7 @@ Return ONLY the cover letter text, no subject line, no labels.`;
         try {
           const d = JSON.parse(line.slice(6));
           if (d.text) { coverLetter += d.text; out.textContent = coverLetter; }
-          if (d.done) { if (acts) acts.style.display = 'flex'; showToast('Cover letter ready'); }
+          if (d.done) { if (acts) acts.style.display = 'flex'; showToast('Cover letter ready — unique to this role'); }
           if (d.error) throw new Error(d.message || 'Stream error');
         } catch(pe) { if (pe.message && pe.message !== 'Unexpected end of JSON input') throw pe; }
       }
@@ -1494,22 +1580,23 @@ function copyAllSections() {
 
 function renderCoverLetterPane() {
   document.getElementById('rp5').innerHTML = `
-    <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Generate a cover letter written specifically for this role at this company using your actual experience and their exact language.</div>
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:6px;line-height:1.6">Reads your resume, the job description, and any company intel you added — then writes a letter that sounds like you, not a template. Every generation is different. ATS keywords are threaded naturally. No filler phrases.</div>
+    <div style="font-size:11px;color:var(--tx3);margin-bottom:14px">Uses the same behavioral evidence framework as PREPT AI live coaching — STAR-anchored achievements, not generic claims.</div>
     <div class="cl-row">
       <select class="cl-select" id="clTone">
-        <option value="professional">Professional & confident</option>
-        <option value="warm">Warm & personable</option>
-        <option value="direct">Direct & results-focused</option>
-        <option value="executive">Executive & strategic</option>
+        <option value="professional">Professional &amp; confident</option>
+        <option value="warm">Warm &amp; personable</option>
+        <option value="direct">Direct &amp; results-focused</option>
+        <option value="executive">Executive &amp; strategic</option>
       </select>
-      <button class="cl-gen" onclick="generateCL()">Generate Cover Letter</button>
+      <button class="cl-gen" onclick="generateCL()">✦ Generate Cover Letter</button>
     </div>
-    <div class="cl-out" id="clOut">Click "Generate Cover Letter" takes about 10 seconds and will be tailored specifically to this job and your resume.</div>
+    <div class="cl-out" id="clOut" style="white-space:pre-wrap">Click "Generate Cover Letter" — takes about 15 seconds and is built specifically for this role, this company, and your resume.</div>
     <div class="cl-acts" id="clActs" style="display:none">
-      <button class="rw-btn rw-primary" onclick="navigator.clipboard.writeText(coverLetter).then(()=>showToast('Cover letter copied')).catch(()=>showToast('Copy failed — select text manually'))">📋 Copy</button>
+      <button class="rw-btn rw-primary" onclick="navigator.clipboard.writeText(coverLetter).then(()=>showToast('Copied')).catch(()=>showToast('Copy failed — select text manually'))">📋 Copy</button>
       <button class="rw-btn rw-primary" onclick="downloadCoverLetter('docx')" style="background:#7b6df4">📄 DOCX</button>
       <button class="rw-btn rw-primary" onclick="downloadCoverLetter('pdf')" style="background:#4d4a66">🖨 PDF</button>
-      <button class="rw-btn rw-sec" onclick="generateCL()">Regenerate</button>
+      <button class="rw-btn rw-sec" onclick="generateCL()">🔄 Regenerate (new version)</button>
     </div>`;
 }
 
@@ -2891,15 +2978,112 @@ function downloadResume(format) {
 
 function downloadCoverLetter(format) {
   if (!coverLetter) { showToast('Generate a cover letter first.'); return; }
-  if (format === 'txt')  downloadTxt(coverLetter, 'preptai-cover-letter.txt');
+  const companyName = document.getElementById('matchCompanyInput')?.value?.trim() || '';
+  const slug = (companyName || 'cover-letter').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+$/, '');
+  if (format === 'txt') {
+    downloadTxt(coverLetter, `preptai-cover-letter-${slug}.txt`);
+  }
   if (format === 'docx') {
-    const docText = 'COVER LETTER\n' + '='.repeat(50) + '\n\n' + coverLetter + '\n\nGenerated by PREPT AI Match , preptai.co';
-    downloadDocx(docText, 'preptai-cover-letter.docx');
+    downloadCoverLetterDocx(coverLetter, `preptai-cover-letter-${slug}.docx`);
   }
   if (format === 'pdf') {
-    const pdfText = 'COVER LETTER\n' + '='.repeat(50) + '\n\n' + coverLetter;
-    downloadPdf(pdfText, 'preptai-cover-letter.pdf');
+    downloadCoverLetterPdf(coverLetter, companyName, `preptai-cover-letter-${slug}.pdf`);
   }
+}
+
+// Renders the cover letter as a properly formatted letter-style DOCX
+// (not a plain text dump — date block, paragraphs, signature, footer)
+function downloadCoverLetterDocx(text, filename) {
+  const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const paragraphs = text.split('\n').map(line => {
+    const t = line.trim();
+    if (!t) return `<w:p><w:pPr><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr></w:p>`;
+    // Detect signature name line (last non-empty line after "Sincerely,")
+    // Date line detection: contains a year and a month name
+    const isDateLine = /\b(January|February|March|April|May|June|July|August|September|October|November|December)\b.+\d{4}/.test(t);
+    if (isDateLine) {
+      return `<w:p><w:pPr><w:spacing w:before="0" w:after="120"/></w:pPr>`
+        + `<w:r><w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:color w:val="555566"/></w:rPr>`
+        + `<w:t>${esc(t)}</w:t></w:r></w:p>`;
+    }
+    // "Sincerely," / "Best regards," / "Regards,"
+    if (/^(Sincerely|Best regards|Regards|Warmly|Respectfully)[,.]?\s*$/i.test(t)) {
+      return `<w:p><w:pPr><w:spacing w:before="240" w:after="0"/></w:pPr>`
+        + `<w:r><w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>`
+        + `<w:t>${esc(t)}</w:t></w:r></w:p>`;
+    }
+    // "Dear Hiring Manager," salutation
+    if (/^Dear /i.test(t)) {
+      return `<w:p><w:pPr><w:spacing w:before="240" w:after="120"/></w:pPr>`
+        + `<w:r><w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>`
+        + `<w:t>${esc(t)}</w:t></w:r></w:p>`;
+    }
+    // "Hiring Team" / company address line (short, no period)
+    if (t === 'Hiring Team' || (t.length < 55 && !t.endsWith('.'))) {
+      return `<w:p><w:pPr><w:spacing w:after="0"/></w:pPr>`
+        + `<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>`
+        + `<w:t>${esc(t)}</w:t></w:r></w:p>`;
+    }
+    // Body paragraph
+    return `<w:p><w:pPr><w:spacing w:after="160" w:line="288" w:lineRule="auto"/></w:pPr>`
+      + `<w:r><w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr>`
+      + `<w:t xml:space="preserve">${esc(line)}</w:t></w:r></w:p>`;
+  }).join('\n');
+
+  // Footer branding paragraph
+  const footer = `<w:p><w:pPr><w:spacing w:before="360" w:after="0"/><w:jc w:val="center"/><w:pBdr><w:top w:val="single" w:sz="4" w:space="4" w:color="ddddee"/></w:pBdr></w:pPr>`
+    + `<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial"/><w:sz w:val="16"/><w:szCs w:val="16"/><w:color w:val="9999aa"/><w:i/></w:rPr>`
+    + `<w:t>Generated by PREPT AI Match \u00b7 preptai.co</w:t></w:r></w:p>`;
+
+  const xml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:body>
+<w:sectPr>
+  <w:pgSz w:w="12240" w:h="15840"/>
+  <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="0" w:footer="0"/>
+</w:sectPr>
+${paragraphs}
+${footer}
+</w:body></w:document>`;
+
+  const blob = new Blob([xml], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast('Cover letter DOCX downloaded');
+}
+
+// Renders the cover letter as a print-ready PDF page
+function downloadCoverLetterPdf(text, companyName, filename) {
+  const lines = text.split('\n');
+  const htmlLines = lines.map(line => {
+    const t = line.trim();
+    if (!t) return '<br>';
+    const esc = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const isDate = /\b(January|February|March|April|May|June|July|August|September|October|November|December)\b.+\d{4}/.test(t);
+    if (isDate) return `<p style="font-size:10pt;color:#666;margin:0 0 16px">${esc}</p>`;
+    if (/^Dear /i.test(t)) return `<p style="font-size:11pt;margin:24px 0 12px;font-family:Georgia,serif">${esc}</p>`;
+    if (/^(Sincerely|Best regards|Regards|Warmly|Respectfully)[,.]?\s*$/i.test(t)) return `<p style="font-size:11pt;margin:32px 0 4px;font-family:Georgia,serif">${esc}</p>`;
+    return `<p style="font-size:11pt;line-height:1.7;margin:0 0 12px;color:#1a1a1a;font-family:Georgia,serif">${esc}</p>`;
+  }).join('');
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Cover Letter${companyName ? ' — ' + companyName : ''}</title>
+<style>
+  body{max-width:680px;margin:48px auto;padding:32px 40px;font-family:Georgia,serif;color:#1a1a1a}
+  @media print{body{margin:0;padding:24px}@page{margin:2cm}}
+  .footer{margin-top:48px;font-size:8pt;color:#aaa;text-align:center;font-family:Arial,sans-serif;border-top:1px solid #eee;padding-top:12px}
+  button{padding:10px 24px;background:#7b6df4;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:24px;font-family:Arial,sans-serif}
+  @media print{button{display:none}}
+</style></head><body>
+<button onclick="window.print()">Print / Save as PDF</button>
+${htmlLines}
+<div class="footer">Generated by PREPT AI Match &middot; preptai.co</div>
+</body></html>`);
+  win.document.close();
+  showToast('PDF view opened — use Print → Save as PDF');
 }
 
 async function downloadBundle() {
@@ -2908,17 +3092,17 @@ async function downloadBundle() {
   const company = (document.getElementById('matchCompanyInput')?.value?.trim() || 'application').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/-+$/,'');
   const slug = company || 'application';
 
-  // Generate cover letter if not already done
+  // Generate cover letter if not already done — uses same engine as the Cover Letter tab
   if (!coverLetter) {
-    if (btn) { btn.textContent = '⏳ Writing cover letter...'; btn.disabled = true; }
-    const tone = document.getElementById('clTone')?.value || 'professional';
-    const prompt = `Write a compelling cover letter for this candidate targeting this specific role.\n\nRESUME:\n${resumeContent}\n\nJOB DESCRIPTION:\n${jobContent}\n\nTONE: ${tone}\n\nRules:\n- Open with a specific hook about this company and role — never start with "I am applying for"\n- Paragraph 2: connect their top 2-3 requirements to specific quantified achievements from the resume\n- Paragraph 3: show genuine company knowledge and cultural alignment\n- Close with a confident, specific call to action\n- Sound human, not a corporate template\n- 3-4 paragraphs, under 350 words\n\nReturn ONLY the cover letter text, no subject line, no labels.`;
+    if (btn) { btn.textContent = '⏳ Crafting your cover letter...'; btn.disabled = true; }
+    const prompt = buildCLPrompt(); // canonical 3-way synthesis prompt
+    const companyVal = document.getElementById('matchCompanyInput')?.value?.trim() || '';
     try {
-      const res  = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ message: prompt, mode:'coverletter', userEmail: userEmail||null, companyIntel: window.matchCompanyIntel||null, company: document.getElementById('matchCompanyInput')?.value?.trim()||'' }) });
+      const res  = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ message: prompt, mode:'coverletter', userEmail: userEmail||null, companyIntel: window.matchCompanyIntel||null, company: companyVal }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Cover letter failed');
       coverLetter = data.answer || '';
-      // Also update the cover letter tab output if visible
+      // Mirror output to the Cover Letter tab if it's been rendered
       const clOut = document.getElementById('clOut');
       if (clOut) { clOut.textContent = coverLetter; const acts = document.getElementById('clActs'); if (acts) acts.style.display='flex'; }
     } catch(e) {
@@ -2930,16 +3114,15 @@ async function downloadBundle() {
 
   if (btn) { btn.textContent = '⬇ Downloading...'; btn.disabled = true; }
 
-  // Download resume
+  // Download optimized resume (DOCX)
   const resumeText = buildResumeText();
   downloadDocx(resumeText, `preptai-resume-${slug}.docx`);
 
-  // Short delay so browser doesn't block the second download
+  // Short delay so browser doesn't block both downloads simultaneously
   await new Promise(r => setTimeout(r, 800));
 
-  // Download cover letter
-  const clText = 'COVER LETTER\n' + '='.repeat(50) + '\n\n' + coverLetter + '\n\nGenerated by PREPT AI — preptai.co';
-  downloadDocx(clText, `preptai-cover-letter-${slug}.docx`);
+  // Download cover letter as properly formatted letter DOCX (not plain text)
+  downloadCoverLetterDocx(coverLetter, `preptai-cover-letter-${slug}.docx`);
 
   if (btn) { btn.textContent = '✓ Downloaded!'; setTimeout(()=>{ btn.textContent='📦 Download Application Bundle'; btn.disabled=false; }, 3000); }
   showToast('Resume + Cover Letter downloaded');
