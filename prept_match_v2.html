@@ -1956,31 +1956,28 @@ function renderGapEntryOptions(entries) {
   if (!panel) return;
   panel.innerHTML = `
     <div style="margin-bottom:14px">
-      <div style="font-size:12px;font-weight:800;color:#a498ff;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">✦ ${entries.length} Resume Entry Options</div>
-      <div style="font-size:11px;color:var(--tx3)">Each is from a real, verifiable employer. Edit fields to match your actual experience, then add or replace.</div>
+      <div style="font-size:12px;font-weight:800;color:#a498ff;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px">✦ ${entries.length} Keyword Section Templates</div>
+      <div style="font-size:11px;color:var(--tx3)">Keyword-targeted bullets for a section you own. You fill in the employer, dates, and context — these are the words that close your gap.</div>
     </div>
     ${entries.map((entry, i) => `
       <div id="gap-option-${i}" style="background:var(--s2);border:1px solid rgba(123,109,244,0.2);border-radius:14px;padding:20px;margin-bottom:14px">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap">
-          <div>
-            <div style="font-size:14px;font-weight:800;color:var(--tx)">${escH(entry.company)}</div>
-            <div style="font-size:12px;color:var(--tx3);margin-top:2px">${escH(entry.companyType || '')} &nbsp;·&nbsp; ${escH(entry.suggestedTitle)} &nbsp;·&nbsp; ${escH(entry.employmentType || '')}</div>
-          </div>
-          <div style="font-size:11px;color:var(--tx3);white-space:nowrap">${escH(entry.suggestedStartMonth||'')} ${escH(entry.suggestedStartYear||'')} – ${escH(entry.suggestedEndMonth||'')} ${escH(entry.suggestedEndYear||'')}</div>
+        <div style="margin-bottom:10px">
+          <div style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px;background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.2);border-radius:20px;font-size:11px;font-weight:700;color:#a498ff;margin-bottom:8px">${escH(entry.employmentType || 'Freelance / Contract Work')}</div>
+          <div style="font-size:12px;color:var(--tx3)">Fill in your employer, title, and dates — then use these bullets to describe your real experience using the right keywords.</div>
         </div>
         <ul style="margin:0 0 10px 0;padding-left:18px;list-style:disc">
           ${entry.bullets.map(b => `<li style="font-size:13px;color:var(--tx2);line-height:1.6;margin-bottom:4px">${escH(b)}</li>`).join('')}
         </ul>
-        ${entry.whyThisEntry ? `<div style="font-size:11px;color:#38d9c0;margin-bottom:12px;padding:6px 10px;background:rgba(56,217,192,0.06);border:1px solid rgba(56,217,192,0.15);border-radius:6px">${escH(entry.whyThisEntry)}</div>` : ''}
+        ${entry.whyThisEntry ? `<div style="font-size:11px;color:var(--vi2);margin-bottom:12px;padding:6px 10px;background:rgba(123,109,244,0.06);border:1px solid rgba(123,109,244,0.15);border-radius:6px">${escH(entry.whyThisEntry)}</div>` : ''}
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button onclick="openGapEntryEditor(${i},'append')" style="flex:1;min-width:140px;padding:9px 12px;background:linear-gradient(135deg,#45de7a,#38d9c0);border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:#06060d;cursor:pointer">+ Add to my resume</button>
-          <button onclick="openGapEntryEditor(${i},'replace')" style="flex:1;min-width:140px;padding:9px 12px;background:rgba(123,109,244,0.12);border:1px solid rgba(123,109,244,0.3);border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:#a498ff;cursor:pointer">↕ Replace an existing entry</button>
+          <button onclick="openGapEntryEditor(${i},'append')" style="flex:1;min-width:140px;padding:9px 12px;background:linear-gradient(135deg,#7b6df4,#a498ff);border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:#fff;cursor:pointer">+ Customize &amp; add to resume</button>
+          <button onclick="openGapEntryEditor(${i},'replace')" style="flex:1;min-width:140px;padding:9px 12px;background:rgba(123,109,244,0.12);border:1px solid rgba(123,109,244,0.3);border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:#a498ff;cursor:pointer">↕ Customize &amp; replace entry</button>
         </div>
         <div id="gap-editor-${i}" style="display:none;margin-top:12px"></div>
       </div>
     `).join('')}
     <div style="text-align:center;margin-top:4px">
-      <button onclick="buildGapEntry()" style="padding:7px 16px;background:rgba(123,109,244,0.08);border:1px solid rgba(123,109,244,0.2);border-radius:20px;color:#a498ff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🔄 Generate 3 new options</button>
+      <button onclick="buildGapEntry()" style="padding:7px 16px;background:rgba(123,109,244,0.08);border:1px solid rgba(123,109,244,0.2);border-radius:20px;color:#a498ff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🔄 Generate 3 new templates</button>
     </div>
   `;
 }
@@ -1998,28 +1995,28 @@ function openGapEntryEditor(idx, mode) {
   editorDiv.style.display = 'block';
   editorDiv.innerHTML = `
     <div style="background:var(--s3);border:1px solid rgba(123,109,244,0.15);border-radius:10px;padding:16px">
-      <div style="font-size:11px;color:var(--tx3);margin-bottom:12px;padding:6px 10px;background:rgba(245,165,42,0.07);border:1px solid rgba(245,165,42,0.18);border-radius:6px">
-        ⚠ Edit all fields to match your actual experience before using.
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:12px;padding:8px 10px;background:rgba(123,109,244,0.06);border:1px solid rgba(123,109,244,0.18);border-radius:6px">
+        Fill in your actual employer, title, and dates. The bullets below use the exact keywords from the job — rewrite them to describe your real experience.
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
         <div>
-          <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Company</label>
-          <input id="ge${idx}_company" value="${escH(entry.company||'')}" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:7px 9px;border-radius:6px;outline:none;box-sizing:border-box"/>
+          <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Your Employer / Organization</label>
+          <input id="ge${idx}_company" value="" placeholder="Enter your actual employer name" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:7px 9px;border-radius:6px;outline:none;box-sizing:border-box"/>
         </div>
         <div>
-          <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Title</label>
-          <input id="ge${idx}_title" value="${escH(entry.suggestedTitle||'')}" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:7px 9px;border-radius:6px;outline:none;box-sizing:border-box"/>
+          <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Your Title / Role</label>
+          <input id="ge${idx}_title" value="" placeholder="Enter your actual job title" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:7px 9px;border-radius:6px;outline:none;box-sizing:border-box"/>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr) auto;gap:6px;align-items:end;margin-bottom:10px">
         <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Start</label>
-          <select id="ge${idx}_sMonth" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 4px;border-radius:6px;outline:none">${monthOpts}</select></div>
-        <div style="padding-top:20px"><select id="ge${idx}_sYear" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 4px;border-radius:6px;outline:none">${yearOpts}</select></div>
+          <select id="ge${idx}_sMonth" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 4px;border-radius:6px;outline:none"><option value="">Mo.</option>${monthOpts}</select></div>
+        <div style="padding-top:20px"><select id="ge${idx}_sYear" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 4px;border-radius:6px;outline:none"><option value="">Year</option>${yearOpts}</select></div>
         <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">End</label>
-          <select id="ge${idx}_eMonth" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 4px;border-radius:6px;outline:none">${monthOpts}</select></div>
+          <select id="ge${idx}_eMonth" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 4px;border-radius:6px;outline:none"><option value="">Mo.</option>${monthOpts}</select></div>
         <div style="padding-top:20px"><select id="ge${idx}_eYear" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 4px;border-radius:6px;outline:none"><option value="Present">Present</option>${yearOpts}</select></div>
         <div><label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:3px">Type</label>
-          <select id="ge${idx}_type" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 4px;border-radius:6px;outline:none"><option>Full-time</option><option>Contract</option><option>Freelance</option><option>Volunteer</option><option>Internship</option></select></div>
+          <select id="ge${idx}_type" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 4px;border-radius:6px;outline:none"><option>Full-time</option><option>Contract</option><option>Freelance</option><option>Volunteer</option><option>Internship</option><option>Personal Project</option></select></div>
       </div>
       <div style="margin-bottom:10px">
         <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:6px">Bullet Points</label>
@@ -2037,12 +2034,8 @@ function openGapEntryEditor(idx, mode) {
       <div id="ge${idx}_feedback" style="display:none;margin-top:8px;padding:9px 12px;border-radius:7px;font-size:13px;font-weight:600"></div>
     </div>
   `;
-  // Pre-select dates
-  const sm = document.getElementById(`ge${idx}_sMonth`); if (sm && entry.suggestedStartMonth) sm.value = entry.suggestedStartMonth;
-  const sy = document.getElementById(`ge${idx}_sYear`);  if (sy && entry.suggestedStartYear)  sy.value = entry.suggestedStartYear;
-  const em = document.getElementById(`ge${idx}_eMonth`); if (em && entry.suggestedEndMonth)   em.value = entry.suggestedEndMonth;
-  const ey = document.getElementById(`ge${idx}_eYear`);  if (ey && entry.suggestedEndYear)    ey.value = entry.suggestedEndYear;
-  const ty = document.getElementById(`ge${idx}_type`);   if (ty && entry.employmentType)      ty.value = entry.employmentType;
+  // Dates intentionally left blank — user fills in their actual dates
+  const ty = document.getElementById(`ge${idx}_type`); if (ty && entry.employmentType) ty.value = entry.employmentType;
 }
 
 function applyGapEntry(idx, mode) {
@@ -2162,26 +2155,24 @@ function renderGapEntryEditor(entry) {
   panel.innerHTML = `
     <div style="background:var(--s2);border:1px solid rgba(123,109,244,0.25);border-radius:14px;padding:22px;position:relative">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:8px">
-        <div style="font-size:13px;font-weight:800;color:#a498ff;text-transform:uppercase;letter-spacing:0.8px">✦ Suggested Resume Entry</div>
+        <div style="font-size:13px;font-weight:800;color:#a498ff;text-transform:uppercase;letter-spacing:0.8px">✦ Keyword Section Template</div>
         <div style="display:flex;align-items:center;gap:8px">
-          <button onclick="buildGapEntry()" id="gapRegenBtn" style="padding:5px 12px;background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.25);border-radius:20px;color:#a498ff;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.18s" onmouseover="this.style.background='rgba(123,109,244,0.2)'" onmouseout="this.style.background='rgba(123,109,244,0.1)'">🔄 Different company</button>
+          <button onclick="buildGapEntry()" id="gapRegenBtn" style="padding:5px 12px;background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.25);border-radius:20px;color:#a498ff;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.18s" onmouseover="this.style.background='rgba(123,109,244,0.2)'" onmouseout="this.style.background='rgba(123,109,244,0.1)'">🔄 New templates</button>
           <button onclick="document.getElementById('gapEntryPanel').style.display='none'" style="background:transparent;border:none;color:var(--tx3);font-size:18px;cursor:pointer;line-height:1;padding:0 4px">×</button>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;padding:7px 10px;background:rgba(245,165,42,0.07);border:1px solid rgba(245,165,42,0.18);border-radius:6px">
-        ⚠ Template only — edit all fields to match your actual experience before using.
-        ${entry.disclaimer ? ' ' + escH(entry.disclaimer) : ''}
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:16px;padding:7px 10px;background:rgba(123,109,244,0.06);border:1px solid rgba(123,109,244,0.18);border-radius:6px">
+        Fill in your actual employer, title, and dates. Rewrite the bullets below to describe your real experience using these keywords.
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
         <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:4px">Company</label>
-          <input id="ge_company" value="${escH(entry.company || '')}" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none"/>
-          <div style="font-size:10px;color:var(--tx3);margin-top:3px">${escH(entry.companyType || '')}</div>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:4px">Your Employer / Organization</label>
+          <input id="ge_company" value="" placeholder="Enter your actual employer name" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none"/>
         </div>
         <div>
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:4px">Title</label>
-          <input id="ge_title" value="${escH(entry.suggestedTitle || '')}" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none"/>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--tx3);display:block;margin-bottom:4px">Your Title / Role</label>
+          <input id="ge_title" value="" placeholder="Enter your actual job title" style="width:100%;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:8px 10px;border-radius:7px;outline:none"/>
         </div>
       </div>
 
@@ -2742,9 +2733,9 @@ async function runSkillsGap() {
       <div style="margin-top:20px;padding:18px 20px;background:rgba(123,109,244,0.06);border:1px solid rgba(123,109,244,0.2);border-radius:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
         <div style="flex:1;min-width:180px">
           <div style="font-size:14px;font-weight:700;color:var(--tx);margin-bottom:3px">Bridge your skills gap</div>
-          <div style="font-size:12px;color:var(--tx3);line-height:1.5">Get a real-company resume entry suggestion that covers your missing skills. Edit dates and details to match your actual experience.</div>
+          <div style="font-size:12px;color:var(--tx3);line-height:1.5">Generate keyword-targeted bullet templates for a section you add to your resume. You supply the employer, dates, and experience — PREPT AI supplies the language.</div>
         </div>
-        <button onclick="buildGapEntry()" id="gapEntryBtn" style="padding:10px 18px;background:linear-gradient(135deg,#7b6df4,#a498ff);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0">✦ Suggest a resume entry →</button>
+        <button onclick="buildGapEntry()" id="gapEntryBtn" style="padding:10px 18px;background:linear-gradient(135deg,#7b6df4,#a498ff);border:none;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0">✦ Generate section templates →</button>
       </div>
       <div id="gapEntryPanel" style="display:none;margin-top:16px"></div>
       ` : ''}
