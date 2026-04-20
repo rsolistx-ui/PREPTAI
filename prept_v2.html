@@ -125,11 +125,12 @@ textarea.sidebar-input{resize:vertical;min-height:80px;max-height:160px;line-hei
 .buytime-panel{background:rgba(245,165,42,0.06);border:1px solid rgba(245,165,42,0.18);border-radius:12px;padding:14px 16px;max-width:820px;animation:fadeIn 0.4s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .buytime-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:#f5a52a;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.buytime-phrases{display:flex;flex-direction:column;gap:6px}
-.buytime-phrase{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:8px 12px;background:rgba(245,165,42,0.05);border:1px solid rgba(245,165,42,0.1);border-radius:8px;cursor:pointer;transition:all 0.15s;text-align:left}
+.buytime-phrases{display:flex;flex-direction:column;gap:8px}
+.buytime-phrase{display:flex;flex-direction:column;gap:4px;padding:10px 12px;background:rgba(245,165,42,0.05);border:1px solid rgba(245,165,42,0.1);border-radius:8px;cursor:pointer;transition:all 0.15s;text-align:left}
 .buytime-phrase:hover{background:rgba(245,165,42,0.1);border-color:rgba(245,165,42,0.25)}
-.buytime-phrase-text{font-size:13px;color:#edeaf7;line-height:1.5;flex:1;font-style:italic}
-.buytime-copy{font-size:10px;font-weight:700;color:#f5a52a;white-space:nowrap;padding:3px 8px;border-radius:10px;background:rgba(245,165,42,0.1);flex-shrink:0;margin-top:2px}
+.buytime-phrase-text{font-size:13px;color:#edeaf7;line-height:1.5;font-style:italic}
+.buytime-note-inline{font-size:10px;color:#8a87a0;line-height:1.4;padding-top:2px}
+.buytime-copy{font-size:10px;font-weight:700;color:#f5a52a;padding:3px 0;align-self:flex-start}
 .buytime-note{font-size:11px;color:#8a87a0;margin-top:8px;line-height:1.5}
 
 /* THINKING */
@@ -1149,47 +1150,86 @@ function addMsg(type, labelText, content, meta = null) {
   return wrap;
 }
 
-// ── BUY TIME PHRASES research-backed professional bridging techniques ────────
-// Based on executive interview coaching research: candidates who pause 2-4 seconds
-// before answering are rated as MORE credible (not less). These phrases signal
-// composure and thoughtfulness the #1 trait interviewers look for under pressure.
-const BUY_TIME_PHRASES = [
-  // Clarifying approach buys 5-10 seconds, also shows strategic thinking
-  {
-    text: "Before I answer just to make sure I give you the most relevant response are you asking more about [X aspect] or [Y aspect]?",
-    note: "Asking a clarifying question signals strategic thinking, not stalling."
-  },
-  {
-    text: "I want to give you a specific answer on this, not a generic one give me just a moment to think through the right example.",
-    note: "Signals you have real depth and care about quality over speed."
-  },
-  {
-    text: "That's a question I want to be precise on. Let me make sure I'm giving you the most relevant context.",
-    note: "Projects confidence and conscientiousness simultaneously."
-  },
-  {
-    text: "There are a few different ways I've approached this let me think about which situation best illustrates what you're asking.",
-    note: "Implies rich experience while buying time to select the best story."
-  },
-  {
-    text: "I want to think through this carefully rather than just give you the first thing that comes to mind.",
-    note: "Strong signal of self-awareness something senior leaders specifically look for."
-  },
-  {
-    text: "Could you tell me a bit more about what's driving that question? It'll help me give you the most useful answer.",
-    note: "Turns the table briefly shows you think in terms of the interviewer's actual need."
-  },
-  {
-    text: "I've navigated this in a couple of different ways depending on context let me make sure I give you the example that's most relevant here.",
-    note: "Suggests versatility and experience while you formulate your best answer."
-  },
-  {
-    text: "Let me think through this out loud for a second I want to be specific rather than vague.",
-    note: "Framing the pause as intentional signals confidence, not uncertainty."
-  }
-];
+// ── BUY TIME PHRASES — research-backed, question-type-aware bridging techniques ─
+// Candidates who pause intentionally before answering are rated as MORE credible,
+// not less (Cialdini; HBR research on executive presence). These phrases signal
+// composure and thoughtfulness — the #1 trait interviewers score under pressure.
+// Phrases are categorized by question type so the panel shows contextually relevant
+// phrases based on what the interviewer actually asked.
+const BUY_TIME_BY_TYPE = {
+  departure: [
+    { text: "That's an important question — let me give you a considered answer rather than a rehearsed one.", note: "Departure questions are the #1 trap. Framing your pause as deliberate signals maturity, not defensiveness." },
+    { text: "I want to be candid here rather than give you the polished version — give me just a moment.", note: "Authenticity on a sensitive topic builds trust faster than a perfect answer." },
+    { text: "I want to make sure I frame this accurately so you get the real picture, not just the short version.", note: "Implies the full story is worth hearing — and that you have nothing to hide." }
+  ],
+  fiveYear: [
+    { text: "I want to give you an honest answer here, not just the answer I think you want to hear.", note: "Authenticity on trajectory questions scores higher than scripted ambition. Most candidates over-rehearse this one." },
+    { text: "That's something I've thought about carefully — let me share what I've actually landed on.", note: "Signals deliberate career thinking. 'Actually landed on' implies you've done real reflection." },
+    { text: "I've reflected on this more than most questions — I want to be specific rather than vague.", note: "Most candidates give a generic non-answer. Signaling specificity before you answer sets the right expectation." }
+  ],
+  weakness: [
+    { text: "I want to answer this one honestly — not with the 'weakness that's secretly a strength' version.", note: "Naming the cliché you're avoiding earns immediate credibility. Interviewers have heard it 10,000 times." },
+    { text: "Let me think about the right example — I want to pick one that shows genuine self-awareness, not just a safe answer.", note: "Having standards for your answer signals depth. 'Safe' answers are perceived as evasive." },
+    { text: "There are a few I could mention — I want to give you one that's real and shows where I've actually grown.", note: "Having multiple weaknesses to choose from implies you've actually reflected, not just prepared a script." }
+  ],
+  conflict: [
+    { text: "Let me think about the right example — I want to give you one that represents how I actually approach this, not just the version where I came out right.", note: "Acknowledging complexity before you even start signals EQ — the exact thing this question measures." },
+    { text: "I've navigated this in a few different ways — let me find the example that shows the most honest version of my approach.", note: "'Honest version' signals you're not going to make yourself the hero of every story." },
+    { text: "I want to give you one that's fair to both sides of the situation.", note: "The best conflict answers show you understand the other person's perspective. This signals it before you start." }
+  ],
+  tellMe: [
+    { text: "Let me give you the version that's most relevant to this specific role, rather than my whole career history.", note: "Signal immediately that you're filtering for relevance — not reciting a monologue. This sets executive presence." },
+    { text: "I'll give you the thread that connects everything, rather than a chronological walk-through.", note: "Narrative framing beats a career biography every time. Names your approach before you execute it." },
+    { text: "Rather than start from the beginning, let me show you the through-line that leads directly to why I'm here.", note: "Opening with 'through-line' signals sophisticated self-awareness. Most candidates just start with their first job." }
+  ],
+  motivation: [
+    { text: "I want to answer this specifically to your company — not generically — so give me one moment.", note: "Specificity is the ONLY thing that makes a motivation answer credible. Generic answers don't differentiate." },
+    { text: "There's a specific reason this opportunity stood out from others I've looked at — let me make sure I articulate it clearly.", note: "Implies you're selective. Companies want to hire candidates who chose them, not just accepted them." },
+    { text: "I did some research on your company before this conversation — I want to give you the informed answer, not the generic one.", note: "Signals preparation before you demonstrate it. Sets a strong expectation." }
+  ],
+  failure: [
+    { text: "I want to give you a real example, not a sanitized one — let me think about the one that actually taught me something.", note: "Framing 'real' vs 'sanitized' immediately signals authenticity before your first word." },
+    { text: "Let me find the example where I take full ownership — not the one where the circumstances explain most of it.", note: "Naming ownership before you start is an extremely high EQ signal. Interviewers respond to this." },
+    { text: "I've learned more from the things that went wrong than the things that went right — let me give you a real one.", note: "Opening with this reframe puts the failure in a growth context immediately." }
+  ],
+  gap: [
+    { text: "I have a clear answer to this — I just want to make sure I give you the full context rather than the short version.", note: "Confidence removes the interviewer's implicit concern. If you treat it as a non-issue, they will too." },
+    { text: "Let me give you the honest picture on this — the context matters more than the headline.", note: "Preparing them for nuance signals you're not hiding anything." },
+    { text: "I want to frame this accurately, because the short version doesn't do the actual story justice.", note: "Signals the gap has a real narrative. Vague gaps create suspicion; explained gaps are non-issues." }
+  ],
+  salary: [
+    { text: "Before I answer — is there a published range for this role? It'll help me give you the most useful response.", note: "This is the #1 negotiation tactic: whoever names first loses leverage. This is how to avoid it gracefully." },
+    { text: "I've done market research on this and I want to make sure we're aligned on scope before we talk numbers.", note: "Anchoring in market data is more credible than personal need. This frames your next answer correctly." },
+    { text: "I want to give you a number that's grounded in market data, not just what I need — give me a moment.", note: "Signals you're approaching this as a professional, not as someone negotiating from desperation." }
+  ],
+  general: [
+    { text: "I want to give you a specific answer on this, not a generic one — give me just a moment to think through the right example.", note: "Signals you have real depth and care about quality over speed." },
+    { text: "That's a question I want to be precise on — let me make sure I'm giving you the most relevant context.", note: "Projects confidence and conscientiousness simultaneously." },
+    { text: "There are a few different ways I've approached this — let me think about which situation best illustrates what you're asking.", note: "Implies rich experience while buying time to select your best story." },
+    { text: "I want to think through this carefully rather than just give you the first thing that comes to mind.", note: "Strong signal of self-awareness — something senior leaders specifically look for." },
+    { text: "Could you tell me a bit more about what's driving that question? It'll help me give you the most useful answer.", note: "Turns the table briefly — shows you think in terms of the interviewer's actual need." },
+    { text: "Let me think through this for a second — I want to be specific rather than give you a vague answer.", note: "Framing the pause as intentional signals confidence, not uncertainty." },
+    { text: "I've navigated this in a couple of different ways depending on context — let me find the most relevant example.", note: "Suggests versatility and experience while you formulate your best answer." },
+    { text: "Before I answer — just to make sure I give you the most relevant response — are you asking more about the technical side or the team/leadership side?", note: "Asking a clarifying question signals strategic thinking, not stalling." }
+  ]
+};
 
-function showThinking(label = 'Building your answer...') {
+// Classify the question type for contextual buy-time phrase selection
+function classifyQuestion(text) {
+  const q = (text || '').toLowerCase();
+  if (/why.*leave|why.*left|left.*last|leaving.*current|leaving.*job|why.*resign|why.*quit|left.*position|departing|transition.*from/i.test(q)) return 'departure';
+  if (/5.?year|five.?year|see yourself|where.*you.*be|long.?term goal|career.*goal|career.*path|future.*goal|goal.*next.*few/i.test(q)) return 'fiveYear';
+  if (/greatest.*weakness|biggest.*weakness|areas.*to improve|not.*your.*strong|development.*area|struggle.*with|work.*on.*yourself/i.test(q)) return 'weakness';
+  if (/conflict|disagree|difficult.*colleague|difficult.*coworker|difficult.*manager|challenging.*relationship|clash|tension.*with/i.test(q)) return 'conflict';
+  if (/tell me about yourself|introduce yourself|walk me through.*background|tell us about yourself|start.*by telling/i.test(q)) return 'tellMe';
+  if (/why.*this.*company|why.*us\b|why.*apply|why.*interest.*in|what.*draws|what.*attract|why.*this.*role|why.*want.*work/i.test(q)) return 'motivation';
+  if (/failure|biggest.*mistake|went wrong|could.*have.*done.*better|biggest.*regret|wish.*handled|failed.*at/i.test(q)) return 'failure';
+  if (/employment.*gap|gap.*employment|break.*career|time.*off.*work|between.*job|out.*of.*work|weren.*working/i.test(q)) return 'gap';
+  if (/salary.*expect|expect.*salary|compensation.*expect|what.*you.*looking.*for|pay.*expect|negotiat|counter.?offer/i.test(q)) return 'salary';
+  return 'general';
+}
+
+function showThinking(label = 'Building your answer...', questionText = '') {
   const area = document.getElementById('chatArea');
 
   // Show the thinking indicator
@@ -1198,26 +1238,52 @@ function showThinking(label = 'Building your answer...') {
   el.innerHTML = `<div class="think-dots"><div class="think-dot"></div><div class="think-dot"></div><div class="think-dot"></div></div><span class="think-label">${label}</span>`;
   area.appendChild(el);
 
-  // Pick 3 random phrases
-  const shuffled = [...BUY_TIME_PHRASES].sort(() => Math.random() - 0.5).slice(0, 3);
+  // Only show buy-time panel when there's a question to classify
+  if (!questionText) { area.scrollTop = area.scrollHeight; return; }
+
+  // Classify question type → pick contextual phrases (always show 3)
+  const qType  = classifyQuestion(questionText);
+  const pool   = BUY_TIME_BY_TYPE[qType] || BUY_TIME_BY_TYPE.general;
+  // Fill to 3 by pulling from general if the type-specific pool is small
+  const general = BUY_TIME_BY_TYPE.general;
+  let combined  = [...pool];
+  if (combined.length < 3) combined = combined.concat(general.filter(p => !pool.includes(p)));
+  const phrases = combined.sort(() => Math.random() - 0.5).slice(0, 3);
+
+  // Type-specific header text
+  const typeLabels = {
+    departure: '⚠️ Trap question — buy yourself time with one of these:',
+    fiveYear:  '⚠️ Trap question — buy yourself time with one of these:',
+    weakness:  '⚠️ Trap question — buy yourself time with one of these:',
+    conflict:  '⚠️ EQ probe — buy yourself time with one of these:',
+    failure:   '⚠️ Trap question — buy yourself time with one of these:',
+    salary:    '⚠️ Salary trap — buy yourself time with one of these:',
+    gap:       '⚠️ Gap question — buy yourself time with one of these:',
+    tellMe:    '⏱ While your answer loads — say one of these:',
+    motivation:'⏱ While your answer loads — say one of these:',
+    general:   '⏱ While your answer loads — say one of these:'
+  };
+  const headerLabel = typeLabels[qType] || '⏱ While your answer loads — say one of these:';
+  const isTrap = ['departure','fiveYear','weakness','conflict','failure','salary','gap'].includes(qType);
 
   const panel = document.createElement('div');
   panel.id = 'buytimePanel';
   panel.className = 'buytime-panel';
   panel.innerHTML = `
-    <div class="buytime-label">⏱ While you wait say one of these</div>
+    <div class="buytime-label" style="${isTrap ? 'color:#ef9a1e' : ''}">${headerLabel}</div>
     <div class="buytime-phrases">
-      ${shuffled.map((p, i) => `
+      ${phrases.map((p, i) => `
         <div class="buytime-phrase" onclick="copyBuyTime(this, ${i})" title="Click to copy">
           <div class="buytime-phrase-text">"${p.text}"</div>
+          <div class="buytime-note-inline">${p.note}</div>
           <div class="buytime-copy" id="btcopy${i}">Tap to copy</div>
         </div>
       `).join('')}
     </div>
-    <div class="buytime-note">💡 Research shows candidates who pause briefly before answering are rated as more thoughtful and credible not less. These phrases signal composure under pressure.</div>`;
+    <div class="buytime-note">💡 Research: candidates who pause intentionally before answering are rated as <strong>more</strong> credible — not less. These phrases signal composure under pressure.</div>`;
 
   // Store phrases for copy function
-  panel._phrases = shuffled;
+  panel._phrases = phrases;
   area.appendChild(panel);
   area.scrollTop = area.scrollHeight;
 }
@@ -1429,7 +1495,7 @@ async function sendQuestion() {
 
   document.getElementById('sendBtn').disabled = true;
   addMsg('q', '🎙 Interviewer asked', q);
-  showThinking();
+  showThinking('Building your answer...', q);
 
   try {
     const ctx = getContext();

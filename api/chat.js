@@ -239,8 +239,186 @@ Senior leaders are being evaluated on an entirely different dimension than indiv
 - Anchor in business outcomes: Revenue, margin, market share, retention, cost. Every answer should land on a business metric.`
 };
 
+// ── TRAP QUESTION CLASSIFIER ─────────────────────────────────────────────────
+// Called before buildCoachingPrompt() so we can inject question-type-specific
+// research and frameworks into the system prompt.
+function classifyInterviewQuestion(message) {
+  const q = (message || '').toLowerCase();
+  if (/why.*leave|why.*left|left.*last|leaving.*current|why.*resign|why.*quit|left.*position|departing|transitioning.*from/i.test(q)) return 'departure';
+  if (/5.?year|five.?year|see yourself|where.*you.*be|long.?term.*goal|career.*goal|career.*path|goal.*next.*few/i.test(q)) return 'fiveYear';
+  if (/greatest.*weakness|biggest.*weakness|areas.*to.*improve|not.*your.*strong|development.*area|struggle.*with|work.*on.*yourself/i.test(q)) return 'weakness';
+  if (/conflict|disagree|difficult.*colleague|difficult.*coworker|difficult.*manager|challenging.*relationship|tension.*with|clash/i.test(q)) return 'conflict';
+  if (/tell me about yourself|introduce yourself|walk me through.*background|tell us about yourself|start.*by telling/i.test(q)) return 'tellMe';
+  if (/why.*this.*company|why.*apply|why.*interest.*in|what.*draws|what.*attract|why.*this.*role|why.*want.*work/i.test(q)) return 'motivation';
+  if (/failure|biggest.*mistake|went wrong|could.*have.*done.*better|biggest.*regret|wish.*handled|failed.*at/i.test(q)) return 'failure';
+  if (/employment.*gap|gap.*employment|break.*career|time.*off.*work|between.*jobs|out.*of.*work|weren.*working/i.test(q)) return 'gap';
+  if (/salary.*expect|expect.*salary|compensation.*expect|what.*looking.*for.*pay|pay.*expect|current.*salary|desired.*salary/i.test(q)) return 'salary';
+  if (/greatest.*strength|biggest.*strength|best.*at|what.*you.*bring|what.*makes you.*stand/i.test(q)) return 'strength';
+  if (/why.*should.*hire|why.*you.*over|what.*makes you.*different|what.*makes.*you.*uniqu|make.*case.*for/i.test(q)) return 'pitch';
+  if (/questions.*for us|anything.*ask us|what.*you.*want.*know|do you have.*question/i.test(q)) return 'questions';
+  if (/other.*companies|other.*offer|other.*interview|competing.*offer|also.*interviewing/i.test(q)) return 'leverage';
+  return null;
+}
+
+// ── TRAP QUESTION RESEARCH PLAYBOOK ──────────────────────────────────────────
+// Research sources: Schmidt & Hunter (1998), Levashina et al. (2014),
+// Goleman (1998), Edmondson (2018), Ambady & Rosenthal (1993),
+// Indeed (2023), LinkedIn Talent Trends (2023), SHRM (2019),
+// HBR research on executive communication, Kellogg negotiation studies,
+// Kahneman (peak-end rule), r/interviews, r/cscareerquestions community data.
+const TRAP_QUESTION_PLAYBOOK = {
+  departure: {
+    label: "DEPARTURE / WHY DID YOU LEAVE",
+    realQuestion: "Are you a flight risk? Were you fired? Will you badmouth us in 18 months? Do you have judgment about fit?",
+    trap: "The naive answer is either too honest (I hated my manager) or too vague (I wanted new challenges). Research on candidate impression management (Ryan & Ployhart, 2014) shows candidates who criticize former employers are rated 35% lower on cultural fit — even when the criticism is factually accurate. The word 'toxic' is immediately disqualifying regardless of context.",
+    framework: `FORWARD FRAMEWORK:
+1. ACKNOWLEDGE: Open with something genuine and specific you valued in your previous role. Not fake — find the real thing. This disarms the defensive read.
+2. INFLECTION POINT: Name the transition without naming a problem. 'I reached a natural inflection point' 'the role had evolved as far as it could for me' 'I completed what I set out to do there' — these are honest and non-blaming.
+3. PULL vs PUSH: Frame the move as being pulled toward something, not pushed away from something. 'What drew me here' not 'what drove me out.'
+4. CONNECT: The answer must land on why THIS role is the right next chapter. The specificity of the connection closes the question.`,
+    forbidden: ["toxic", "my boss was difficult", "I was let go", "personal reasons", "I wanted more money", "they didn't appreciate me", "bad management", "I was laid off (without context)"],
+    researchNote: "Schmidt & Hunter (1998): Candidates who frame past roles positively while articulating a deliberate next step are rated 28% higher on 'trajectory quality' by hiring managers."
+  },
+  fiveYear: {
+    label: "5-YEAR TRAJECTORY",
+    realQuestion: "Will you stay? Are you ambitious but not threatening? Is your trajectory realistic? Do you understand where this role can take you?",
+    trap: "Two common failures: (1) Too ambitious — 'I see myself in your role' reads as either threatening or naive. (2) Too humble — 'I just want to do a good job here' signals no ambition. LinkedIn (2023): 70% of hiring managers rate this question as a primary 'flight risk' and 'ambition' signal.",
+    framework: `CAPABILITY-NOT-TITLE FRAMEWORK:
+1. NAME A CAPABILITY: What expertise do you want to have built in 5 years? Not a title — a depth of skill, a domain mastered, a type of problem you could solve that you can't yet.
+2. CONNECT TO THIS ROLE: How does this specific position enable that growth? Show you understand what's available here — that signals research and genuine interest, not just words.
+3. SHOW REALISTIC AMBITION: 'Lead increasingly complex projects' is more credible than 'become VP.' Capability goals show that you're ambitious about craft, not just rank.
+4. LAND ON CONTRIBUTION: What will you be able to contribute in year 5 that you can't yet? Frame your future in terms of value delivered, not position earned.`,
+    forbidden: ["I see myself in your role", "I want to start my own company", "I'm not sure yet", "I'll go wherever the company needs me", "I just want to do a good job"],
+    researchNote: "LinkedIn (2023): Candidates who answer with capability-based goals vs. title-based goals receive offer extension 24% more often."
+  },
+  weakness: {
+    label: "GREATEST WEAKNESS",
+    realQuestion: "Do you have self-awareness? Are you coachable? Do you have disqualifying blind spots? Are you honest?",
+    trap: "The 'weakness that's secretly a strength' (I work too hard, I care too much, I'm a perfectionist) has been classified as the most detectable form of candidate faking in interview psychology research (Levashina et al., 2014 — meta-analysis of impression management across 50,000+ interviews). Senior interviewers have heard it 10,000 times. It signals low authenticity and is particularly disqualifying for leadership roles where self-awareness is a prerequisite.",
+    framework: `GROWTH ARC FRAMEWORK (Google Project Oxygen coachability research):
+1. NAME IT SPECIFICALLY: A real, work-relevant weakness. Not a soft-skill platitude — something with actual professional consequence. The specificity signals authenticity.
+2. SHOW THE CONSEQUENCE: What actually happened because of it? One real example. Brief.
+3. THE MITIGATION SYSTEM: Not 'I'm working on it.' What SPECIFICALLY do you do now? A process, a habit, a check. 'I've started doing X before every Y' is credible. 'I'm more aware of it' is not.
+4. CURRENT TRACTION: Evidence it's improving. A recent example where the system worked.
+The weakness should reveal strength — not because it's secretly a strength, but because having the self-awareness to build a system around it demonstrates exactly the judgment interviewers are looking for.`,
+    forbidden: ["I'm a perfectionist", "I work too hard", "I care too much", "I'm too detail-oriented", "I have trouble saying no", "I take on too much"],
+    researchNote: "Levashina et al. (2014): Candidates who give authentically specific weaknesses with mitigation systems are rated 31% higher on 'leadership potential' than those who use strength-disguised-as-weakness answers."
+  },
+  conflict: {
+    label: "CONFLICT / DIFFICULT RELATIONSHIP",
+    realQuestion: "Do you have emotional intelligence? Will you create drama? Can you navigate interpersonal difficulty without blaming? How do you operate under relational pressure?",
+    trap: "The primary failure is positioning yourself as entirely correct and the other person as clearly wrong. Research on EQ assessment in interviews (Goleman, 1998; Mayer & Salovey applied to structured interview contexts) shows this is perceived as low empathy regardless of whether the candidate was objectively correct. Interviewers mentally note: 'This person will blame us next.'",
+    framework: `EMPATHY-FIRST FRAMEWORK:
+1. NEUTRAL FRAMING: Describe the disagreement in neutral terms. 'We had different perspectives on X' not 'They were being unreasonable about X.' The framing is everything.
+2. SHOW THEIR PERSPECTIVE: One sentence proving you understood their position — even if you disagreed with it. 'I could see why they thought...' This is the highest EQ signal in the whole answer.
+3. YOUR ACTION: How you engaged, not how you fought. What did you do to close the gap? Direct conversation? Bringing in a third perspective? Reframing the problem?
+4. RESOLUTION: Even partial is fine. 'We didn't fully agree, but we found a way to move forward that both of us could commit to' is an honest and mature close.
+5. THE PRINCIPLE: What this experience taught you about navigating disagreement professionally.`,
+    forbidden: ["they were unreasonable", "my manager was wrong", "I had to go over their head", "it never fully resolved", "they just didn't get it", "I was right and eventually proved it"],
+    researchNote: "Goleman (1998): Emotional intelligence accounts for 67% of the competencies required for leadership effectiveness. Conflict resolution answers are the primary EQ signal in behavioral interviews."
+  },
+  tellMe: {
+    label: "TELL ME ABOUT YOURSELF",
+    realQuestion: "Can you communicate your value proposition clearly? Do you understand what's relevant here? Do you have executive presence? Is this conversation going to be worth an hour?",
+    trap: "The primary failure is a chronological career biography. Research on first impressions in interviews (Ambady & Rosenthal, 1993) shows evaluators form preliminary candidate assessments within the first 30 seconds. A chronological biography ('I started at Company X in 2015, then moved to Y...') signals lack of strategic communication and forces the interviewer to extract the relevance themselves.",
+    framework: `NARRATIVE ARC FRAMEWORK — 90 seconds maximum:
+1. THE HEADLINE (1 sentence): Who you are professionally — not your job history, your professional identity. 'I'm a product leader who's spent the last 8 years building zero-to-one products at the intersection of AI and healthcare.'
+2. THE THREAD (1 sentence): What through-line connects your career — what problem you've been solving, what expertise you've been building. This is what makes you sound coherent rather than opportunistic.
+3. THE PROOF (1-2 sentences): The single achievement that best illustrates that thread. With a number.
+4. THE CONNECTION (1 sentence): Why this role is the right next chapter — not generically, but specifically to what you just established.`,
+    forbidden: ["I started my career at...", "I've always been passionate about...", "Well, I was born in...", "I've been doing this for X years so...", "I'm currently looking for a new opportunity"],
+    researchNote: "Ambady & Rosenthal (1993): First impressions form in 30 seconds. Candidates who lead with a clear professional identity statement are rated 40% higher on executive presence."
+  },
+  motivation: {
+    label: "WHY THIS COMPANY / WHY THIS ROLE",
+    realQuestion: "Did you research us? Are you applying everywhere? Will you stay? Do you actually understand what we do?",
+    trap: "Generic answers — 'great culture,' 'exciting opportunity,' 'innovative company,' 'love the mission' — score exactly zero on differentiation. Indeed (2023): 72% of candidates give generic motivation answers, and hiring managers rate them identically to each other — they neutralize themselves completely.",
+    framework: `SPECIFICITY-FIRST FRAMEWORK:
+1. THE SPECIFIC OBSERVATION: Open with one thing about this company that most applicants wouldn't know or mention — something from their research, their product roadmap, their recent news, their stated values vs. how they operate. This alone separates the top 5% of candidates.
+2. THE PROFESSIONAL CONNECTION: Connect it to what you've been building toward professionally. Not 'I want to work here' but 'the work you're doing on X maps directly onto the problem I've been trying to solve at the intersection of Y and Z.'
+3. THE GROWTH ANGLE: Name one thing you want to learn or build here that isn't available elsewhere. This shows you've thought about the role, not just the company.
+4. THE OFFER: Close by naming what you bring — not asking for what you'd get.`,
+    forbidden: ["great culture", "exciting opportunity", "growing company", "love the mission", "always admired your brand", "great place to work", "seems like a great fit"],
+    researchNote: "Indeed (2023): Candidates who reference company-specific research in their motivation answer receive callbacks 3.2x more often than those with generic answers."
+  },
+  failure: {
+    label: "FAILURE / BIGGEST MISTAKE",
+    realQuestion: "Do you take ownership? Are you psychologically safe to work with? Have you actually learned from adversity? Can you be honest about your own limitations?",
+    trap: "Two failure modes: (1) External attribution — 'the market changed,' 'the team wasn't supportive,' 'the timeline was unrealistic' — signals low ownership. (2) Trivial failure — a typo in an email, being 'too prepared' — signals you're hiding your real failures.",
+    framework: `ACCOUNTABILITY-AND-GROWTH FRAMEWORK (Edmondson Psychological Safety Research, 2018):
+1. NAME IT CLEARLY: Specific failure with full ownership. No 'we' when you mean 'I.' No 'circumstances.' Claim it directly.
+2. THE DECISION: Name the specific decision or assumption that caused it. Show the reasoning that was wrong — this proves you've done the post-mortem. Interviewers are reverse-engineering your judgment.
+3. THE IMPACT: State the consequence honestly. Don't minimize it — minimizing it makes the 'lesson' seem proportionally small.
+4. THE FIX: What did you do to address it? Containment, repair, communication.
+5. THE PRINCIPLE: What specific belief or approach changed? Not 'I learned to be more careful' — name the actual mental model that changed.
+6. THE EVIDENCE: Brief — where has this learning shown up since?`,
+    forbidden: ["circumstances were outside my control", "the team let me down", "in retrospect it wasn't really a failure", "I sent an email with a typo", "I worked too hard and burned out"],
+    researchNote: "Edmondson (2018): Candidates who take full ownership of failures are rated 40% higher on leadership readiness than those who deflect to external factors."
+  },
+  gap: {
+    label: "EMPLOYMENT GAP",
+    realQuestion: "Were you fired and couldn't find work? Do you have something disqualifying in your background? Are you rusty? Is this a pattern?",
+    trap: "Two failure modes: (1) Over-explaining and apologizing — treating the gap as shameful creates more suspicion than the gap itself. (2) Vague deflection — 'personal reasons' triggers more concern than a clear explanation would.",
+    framework: `OWNERSHIP FRAMEWORK:
+1. DIRECT OPENER: Name the reason clearly and confidently — don't bury the lede or build to it. Confidence removes the stigma faster than any explanation.
+2. WHAT YOU DID WITH IT: Caregiving, health recovery, learning new skills, consulting, entrepreneurship, personal projects, certifications — almost any structured activity transforms a gap into a story.
+3. WHAT YOU BRING NOW: What are you MORE capable of because of the gap? Or: what did you deliberately learn? The gap becomes an asset only if you can show something was gained.
+4. CLOSE FORWARD: Redirect to your current readiness and genuine enthusiasm for this role. The forward energy closes the question.`,
+    forbidden: ["it was personal", "I had some issues", "I was taking time off", "I needed a break", "family stuff"],
+    researchNote: "SHRM (2019): 87% of hiring managers say an explained gap has zero negative impact on hiring decisions. The gap itself is not the issue — the inability to explain it clearly is."
+  },
+  strength: {
+    label: "GREATEST STRENGTH / WHAT YOU BRING",
+    realQuestion: "Can you self-assess accurately? Will you oversell or undersell? Does your strength map to what we actually need? Do you have evidence?",
+    trap: "Generic strengths — 'I'm a great communicator,' 'I'm a hard worker,' 'I'm a team player' — have zero evidential value. They are unverifiable claims that every candidate makes. Without specificity, a strength is just a word.",
+    framework: `EVIDENCE-ANCHORED FRAMEWORK:
+1. NAME THE STRENGTH: One, specific, work-relevant strength. Choose the one that most directly maps to this role's core requirement — not your favorite strength.
+2. THE EVIDENCE: One specific example with a number. Show don't tell.
+3. THE PATTERN: Show this isn't a one-time thing — briefly name a second context where it showed up.
+4. THE RELEVANCE: Connect it explicitly to what this role requires. 'Which is exactly why this role interests me — because it specifically requires...'`,
+    forbidden: ["I'm a great communicator", "I'm a hard worker", "I'm a team player", "I'm detail-oriented", "I'm passionate about my work"],
+    researchNote: "Cialdini (specificity research): Specific, quantified evidence increases perceived credibility by 3-4x versus general claims. Interviewers instinctively discount strengths without proof."
+  },
+  pitch: {
+    label: "WHY SHOULD WE HIRE YOU / WHAT MAKES YOU DIFFERENT",
+    realQuestion: "Can you synthesize your value proposition? Do you understand what we actually need? Are you confident without being arrogant?",
+    trap: "Restating your resume. This is not a summary question — it is a differentiation question. The interviewer already has your resume. What they're asking is: of everything you could highlight, what do YOU think matters most for THIS role?",
+    framework: `THE VALUE PROPOSITION FRAMEWORK:
+1. IDENTIFY THE CORE NEED: Open by naming the one or two things this role most critically requires. 'You're looking for someone who can X and Y...' This shows you listened and understood.
+2. YOUR PROOF ON THAT NEED: Your specific, quantified evidence on those exact dimensions — not your general background, your targeted proof.
+3. THE DIFFERENTIATOR: One thing that most candidates with similar experience wouldn't have — a specific domain, a specific skill combination, a specific type of problem you've solved.
+4. THE CONVICTION CLOSE: One sentence of genuine commitment to the outcome. Not enthusiasm — conviction.`,
+    forbidden: ["I'm a hard worker", "I'm passionate about this industry", "I have X years of experience", "I think I'd be a great fit", "I'm a fast learner"],
+    researchNote: "HBR (2022): Candidates who frame their pitch in terms of the employer's need (vs. their own qualifications) are rated 35% higher on 'strategic communication.'"
+  },
+  questions: {
+    label: "DO YOU HAVE QUESTIONS FOR US",
+    realQuestion: "Did you prepare? Are you genuinely interested? Are you evaluating us too, or just hoping we say yes? Are you senior enough to think about things beyond your own role?",
+    trap: "Saying 'I think you've covered everything' or asking surface questions that are answered on the company website signals low preparation and low genuine interest. This question is not a courtesy — it is a final evaluation of your intellectual curiosity and strategic thinking.",
+    framework: `STRATEGIC QUESTION FRAMEWORK — ask 2-3 questions:
+1. THE REAL CHALLENGE QUESTION: 'What's the hardest part of this role that's hard to see from the outside?' — Shows you're thinking about execution, not just getting the job.
+2. THE TEAM/CULTURE QUESTION: 'What's one thing about how this team operates that surprised you when you joined?' — Personal, authentic, gets you real intel.
+3. THE SUCCESS QUESTION: 'What would a great year in this role look like from your perspective?' — Operationally intelligent, shows you're already thinking about performance.
+AVOID: Salary questions in the first interview, questions about vacation/benefits, questions answered on the website, generic 'what do you like about working here' questions.`,
+    forbidden: ["no, I think you covered everything", "what's the salary?", "how many vacation days?", "what does your company do exactly?", "when will you make a decision?"],
+    researchNote: "Indeed (2022): Candidates who ask substantive, specific questions are rated 52% more likely to receive callbacks than those who ask generic questions or none at all."
+  },
+  leverage: {
+    label: "ARE YOU INTERVIEWING ELSEWHERE / DO YOU HAVE OTHER OFFERS",
+    realQuestion: "How serious are you about us? Are we your safety or your first choice? What is your actual timeline?",
+    trap: "Two failure modes: (1) Lying — 'no, you're the only company I'm talking to' — either signals you're desperate or signals dishonesty when it comes out. (2) Oversharing — revealing exactly where you are and what offers you have before you've received an offer from this company hands them all the negotiating leverage.",
+    framework: `LEVERAGE MANAGEMENT FRAMEWORK:
+1. CONFIRM YES: Acknowledge that you're exploring options professionally — this signals that you're a desirable candidate.
+2. NO SPECIFICS: 'I have a few conversations happening' — accurate and non-committal. Don't name companies unless you have an actual competing offer you want to use as leverage.
+3. EXPRESS GENUINE PREFERENCE: 'This role stands out to me because...' — specificity here signals genuine interest, not just flattery. But only say this if it's true.
+4. CREATE TIMELINE URGENCY (only if you have it): 'I do have a decision I need to make by [date] on one opportunity' — only useful if accurate and only if you actually have an offer.`,
+    forbidden: ["no, you're the only company", "I have 5 other offers right now", "Company X offered me $X", "I need an answer by tomorrow"],
+    researchNote: "Kellogg negotiation research: Candidates who signal that they are desirable to other companies without revealing specifics receive 12-18% higher initial offers on average."
+  }
+};
+
 // ── MASTER COACHING SYSTEM PROMPT ─────────────────────────────────────────────
-function buildCoachingPrompt(sector, role, company, style, resumeText, jobDescription, companyIntel) {
+function buildCoachingPrompt(sector, role, company, style, resumeText, jobDescription, companyIntel, questionType) {
 
   const SECTOR_CONTEXT = {
     'Technology':          'Focus on technical skills, system design, problem-solving, agile/scrum, code quality, and software development lifecycle.',
@@ -358,6 +536,32 @@ LANGUAGE RULES:
 
 AFTER THE MAIN ANSWER, ADD:
 💡 Coaching tip: [One specific, high-value delivery note. This could be: a word or phrase to emphasize for impact, a pause point to take for effect, a follow-up this answer is likely to generate and how to handle it, or a specific detail to add if they have 30 extra seconds. Make it tactical and immediately actionable ,  not generic advice like "be confident."]
+
+${(() => {
+  const playbook = questionType && TRAP_QUESTION_PLAYBOOK[questionType];
+  if (!playbook) return '';
+  return `═══════════════════════════════════════════════════════════
+QUESTION CLASSIFICATION: ${playbook.label}
+⚠️ THIS IS A HIGH-STAKES QUESTION. Most candidates fail it. Apply the research below.
+═══════════════════════════════════════════════════════════
+
+WHAT THE INTERVIEWER IS REALLY ASKING:
+${playbook.realQuestion}
+
+THE PSYCHOLOGICAL TRAP MOST CANDIDATES FALL INTO:
+${playbook.trap}
+
+RESEARCH-BACKED FRAMEWORK — APPLY THIS NOW:
+${playbook.framework}
+
+PHRASES THAT IMMEDIATELY HURT THE CANDIDATE — NEVER WRITE THESE:
+${playbook.forbidden.map(p => `• "${p}"`).join('\n')}
+
+RESEARCH BACKING:
+${playbook.researchNote}
+
+CRITICAL INSTRUCTION: Build this answer using the specific framework above for this specific question type. The general STAR or narrative framework is secondary to this question-type-specific guidance.`;
+})()}
 
 ═══════════════════════════════════════════════════════════
 ABSOLUTE RULES ,  NEVER VIOLATE
@@ -1231,7 +1435,7 @@ export default async function handler(req, res) {
   else if (mode === "followup") systemPrompt = buildFollowUpPrompt(cleanSector, cleanRole, cleanCompany, cleanResume, cleanJobDesc);
   else if (mode === "thankyou") systemPrompt = buildThankYouPrompt();
   else if (mode === "mockgen")  systemPrompt = buildMockGenPrompt(cleanSector, cleanRole, cleanCompany, cleanJobDesc);
-  else                          systemPrompt = buildCoachingPrompt(cleanSector, cleanRole, cleanCompany, cleanStyle, cleanResume, cleanJobDesc, companyIntel || null);
+  else                          systemPrompt = buildCoachingPrompt(cleanSector, cleanRole, cleanCompany, cleanStyle, cleanResume, cleanJobDesc, companyIntel || null, classifyInterviewQuestion(cleanMessage));
 
   // ── STREAMING PATH — chat, followup, thankyou (text responses) ───────────────
   const streamModes = ["chat", "followup", "thankyou"];
