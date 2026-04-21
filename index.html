@@ -58,6 +58,8 @@
 :root.light{
   --bg:#f4f4f8;--s1:#eaeaf0;--s2:#ffffff;
   --gr:#0d6e36;
+  --gold:#8b5e00;
+  --gold2:#9c6800;
   /* s3/s4 were undefined in light mode — using dark values, causing dark-bg cards */
   --s3:#e4e4f0;--s4:#dcdcec;
   --tx:#0f0f1c;--tx2:#3a3858;
@@ -871,8 +873,8 @@ footer {
 :root.light .faq-item { border-color: rgba(0,0,0,0.08); }
 :root.light .faq-q { color: #0f0f1c; }
 :root.light .faq-q::after { color: #7b6df4; }
-:root.light .section-eyebrow { color: #c8a84b; }
-:root.light .section-eyebrow::before { background: #c8a84b; }
+:root.light .section-eyebrow { color: #8b5e00; }
+:root.light .section-eyebrow::before { background: #8b5e00; }
 :root.light .np-feature { color: #2d2b45; }
 :root.light .np-tier { color: rgba(0,0,0,0.5); }
 :root.light .np-amount { color: #0f0f1c; }
@@ -1034,6 +1036,15 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 :root.light .privacy-green,
 :root.light [style*="; color:#45de7a"] {
   color: #0d6e36 !important;
+}
+
+/* Site-wide: darken all gold/yellow (#e6c668, #c8a84b) text in light mode */
+:root.light [style*=";color:#e6c668"],
+:root.light [style^="color:#e6c668"],
+:root.light [style*="; color:#e6c668"],
+:root.light [style*=";color:#c8a84b"],
+:root.light [style^="color:#c8a84b"] {
+  color: #9c6800 !important;
 }
 
 /* ==========================================================
