@@ -1038,11 +1038,17 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
   color: #0d6e36 !important;
 }
 
-/* Exception: hero phone mockup keeps its bright green (dark UI, looks great) */
+/* Exception: hero phone mockup keeps its bright green AND gold (dark UI) */
 :root.light .hero-right [style*=";color:#45de7a"],
 :root.light .hero-right [style^="color:#45de7a"],
 :root.light .hero-right [style*="; color:#45de7a"] {
   color: #45de7a !important;
+}
+:root.light .hero-right [style*=";color:#e6c668"],
+:root.light .hero-right [style^="color:#e6c668"],
+:root.light .hero-right [style*=";color:#c8a84b"],
+:root.light .hero-right [style^="color:#c8a84b"] {
+  color: #e6c668 !important;
 }
 
 /* Site-wide: darken all gold/yellow (#e6c668, #c8a84b) text in light mode */
@@ -1323,12 +1329,12 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
             </span>
           </div>
           <!-- Question bubble -->
-          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px 10px 10px 3px;padding:10px 12px;margin-bottom:10px">
+          <div style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.15);border-radius:10px 10px 10px 3px;padding:10px 12px;margin-bottom:10px">
             <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#8a87a0;margin-bottom:5px;font-weight:700">Interviewer asked</div>
             <div style="font-size:11px;color:#ccc9e0;line-height:1.5">Tell me about a time you led a team through a high-pressure deadline.</div>
           </div>
           <!-- Coached answer bubble -->
-          <div style="background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.28);border-radius:3px 10px 10px 10px;padding:12px;margin-bottom:10px">
+          <div style="background:rgba(123,109,244,0.18);border:1px solid rgba(123,109,244,0.42);border-radius:3px 10px 10px 10px;padding:12px;margin-bottom:10px">
             <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#a498ff;margin-bottom:6px;font-weight:700">Coached answer</div>
             <div style="font-size:11px;color:#edeaf7;line-height:1.65">
               <strong style="color:#a498ff">S:</strong> Our launch date moved up three weeks — no scope reduction.
