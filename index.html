@@ -1038,6 +1038,13 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
   color: #0d6e36 !important;
 }
 
+/* Exception: hero phone mockup keeps its bright green (dark UI, looks great) */
+:root.light .hero-right [style*=";color:#45de7a"],
+:root.light .hero-right [style^="color:#45de7a"],
+:root.light .hero-right [style*="; color:#45de7a"] {
+  color: #45de7a !important;
+}
+
 /* Site-wide: darken all gold/yellow (#e6c668, #c8a84b) text in light mode */
 :root.light [style*=";color:#e6c668"],
 :root.light [style^="color:#e6c668"],
