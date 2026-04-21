@@ -1064,6 +1064,55 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 :root.light #phoneMockAnswer [style^="color:#a498ff"] { color: #a498ff !important; }
 :root.light #phoneMockAnswer [style^="color:#45de7a"] { color: #45de7a !important; }
 
+/* ── LIGHT MODE LEGIBILITY SWEEP ──────────────────────────────────────────────
+
+   All sections below had white/near-white text that became invisible
+   on light backgrounds. Fixed batch April 2026.
+─────────────────────────────────────────────────────────────────────────── */
+
+/* 1. Product cards: prod-title (#edeaf7 inline) and prod-desc (#ccc9e0 inline) */
+:root.light .prod-title { color: #0f0f1c !important; }
+:root.light .prod-desc  { color: #2d2b45 !important; }
+
+/* 2. Demo screen buttons (Challenge me / Copy) and timer — white text on white bg */
+:root.light .demo-screen [style*="color:#ccc9e0"] {
+  color: #3a3858 !important;
+}
+:root.light .demo-screen [style*="background:rgba(255,255,255,0.05)"] {
+  background: rgba(0,0,0,0.06) !important;
+  border: 1px solid rgba(0,0,0,0.1) !important;
+}
+:root.light .demo-timer { color: #5a5770 !important; }
+
+/* 3. Leave-a-review section: heading + paragraph on light --s1 bg */
+:root.light [style*="color:#edeaf7;line-height:1.1;margin-bottom:14px"] {
+  color: #0f0f1c !important;
+}
+:root.light [style*="color:#ccc9e0;line-height:1.7;max-width:520px"] {
+  color: #2d2b45 !important;
+}
+
+/* 4. "One offer. Lifetime ROI." pricing box — ghost bg + white title on light page */
+:root.light [style*="background:rgba(255,255,255,0.03)"][style*="border-radius:14px"] {
+  background: rgba(0,0,0,0.04) !important;
+  border-color: rgba(0,0,0,0.1) !important;
+}
+:root.light [style*="background:rgba(255,255,255,0.03)"] [style*="color:#edeaf7"] {
+  color: #0f0f1c !important;
+}
+
+/* 5. Any remaining hardcoded #edeaf7 headings in sections with light backgrounds
+      (section-title overrides handle class-based ones; this catches inline) */
+:root.light [style*="color:#edeaf7;line-height:1.1"] { color: #0f0f1c !important; }
+:root.light [style*="color:#edeaf7;margin-bottom:8px"] { color: #0f0f1c !important; }
+
+/* 6. Sticky footer bar — always dark bg, always readable — no change needed */
+
+/* 7. Catch-all for stray #ccc9e0 text on light sections */
+:root.light [style*="color:#ccc9e0;text-decoration:underline"] {
+  color: #4a4768 !important;
+}
+
 /* Phone companion demo: lock text white regardless of mode */
 #phoneMockAnswer { color: #ffffff !important; font-size: 14px !important; line-height: 1.75 !important; }
 #phoneMockQ      { color: #c8c5e0 !important; }
