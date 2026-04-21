@@ -57,6 +57,7 @@
 }
 :root.light{
   --bg:#f4f4f8;--s1:#eaeaf0;--s2:#ffffff;
+  --gr:#0d6e36;
   /* s3/s4 were undefined in light mode — using dark values, causing dark-bg cards */
   --s3:#e4e4f0;--s4:#dcdcec;
   --tx:#0f0f1c;--tx2:#3a3858;
@@ -1027,8 +1028,11 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
   font-weight: 900 !important;
 }
 
-/* Privacy section green text in light mode */
-:root.light .privacy-green {
+/* Site-wide: darken all bright green (#45de7a) text in light mode */
+:root.light [style*=";color:#45de7a"],
+:root.light [style^="color:#45de7a"],
+:root.light .privacy-green,
+:root.light [style*="; color:#45de7a"] {
   color: #0d6e36 !important;
 }
 
