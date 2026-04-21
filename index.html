@@ -1021,10 +1021,15 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 
 /* SAVE 17% badge */
 :root.light #saveBadge {
-  background: rgba(22,120,55,0.14) !important;
-  border-color: rgba(22,120,55,0.5) !important;
-  color: #156b30 !important;
+  background: rgba(12,110,50,0.82) !important;
+  border-color: rgba(10,90,40,0.9) !important;
+  color: #ffffff !important;
   font-weight: 900 !important;
+}
+
+/* Privacy section green text in light mode */
+:root.light .privacy-green {
+  color: #0d6e36 !important;
 }
 
 /* ==========================================================
@@ -1808,15 +1813,15 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
     <div style="background:rgba(69,222,122,0.04);border:1px solid rgba(69,222,122,0.12);border-radius:16px;padding:32px;display:flex;align-items:flex-start;gap:28px;flex-wrap:wrap">
       <div style="flex-shrink:0;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(69,222,122,0.1);border:1px solid rgba(69,222,122,0.2);border-radius:12px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#45de7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
       <div style="flex:1;min-width:260px">
-        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#45de7a;margin-bottom:8px">Privacy First. Always.</div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#45de7a;margin-bottom:8px" class="privacy-green">Privacy First. Always.</div>
         <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--tx);margin-bottom:10px;letter-spacing:-0.3px">Your resume and interview data are never stored.</div>
         <div style="font-size:14px;color:var(--tx2);line-height:1.7">Everything you share with PREPT AI is processed in real time and discarded the moment your session ends. No transcripts saved. No resumes logged. No interview answers stored on our servers. A major competitor exposed 83,000 users private interview transcripts and screenshots through a basic security flaw in 2025. PREPT AI is web-based with zero local storage of your sensitive data.</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;flex-shrink:0;justify-content:center;align-self:center">
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#45de7a"><span>✓</span> Resume discarded after session</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#45de7a"><span>✓</span> Interview transcripts never saved</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#45de7a"><span>✓</span> No data sold or shared</div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#45de7a"><span>✓</span> By design, no customer data persisted past your session</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#45de7a" class="privacy-green"><span>✓</span> Resume discarded after session</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#45de7a" class="privacy-green"><span>✓</span> Interview transcripts never saved</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#45de7a" class="privacy-green"><span>✓</span> No data sold or shared</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:#45de7a" class="privacy-green"><span>✓</span> By design, no customer data persisted past your session</div>
       </div>
     </div>
   </div>
