@@ -1059,6 +1059,15 @@ html:not(.light) a[title="TikTok"] { background: rgba(255,255,255,0.04) !importa
 :root.light [style^="color:#c8a84b"] {
   color: #9c6800 !important;
 }
+/* Phone companion demo always dark — keep labels vivid */
+:root.light #phoneMockAnswer [style^="color:#e6c668"] { color: #e6c668 !important; }
+:root.light #phoneMockAnswer [style^="color:#a498ff"] { color: #a498ff !important; }
+:root.light #phoneMockAnswer [style^="color:#45de7a"] { color: #45de7a !important; }
+
+/* Phone companion demo: lock text white regardless of mode */
+#phoneMockAnswer { color: #ffffff !important; font-size: 14px !important; line-height: 1.75 !important; }
+#phoneMockQ      { color: #c8c5e0 !important; }
+#phoneMockAnswer strong { font-weight: 700 !important; }
 
 /* ==========================================================
    MOBILE LAYOUT FIXES — added April 2026
