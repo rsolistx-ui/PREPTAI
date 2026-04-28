@@ -599,11 +599,7 @@ footer span{color:var(--gold);font-weight:600}
         <div class="ls-item" id="ls3"><div class="ls-dot"></div>Running ATS compatibility check</div>
         <div class="ls-item" id="ls4"><div class="ls-dot"></div>Scoring section by section</div>
         <div class="ls-item" id="ls5"><div class="ls-dot"></div>Rewriting for maximum match</div>
-<<<<<<< HEAD
         <div class="ls-item" id="ls6"><div class="ls-dot"></div>Finalizing your full report</div>
-=======
-        <div class="ls-item" id="ls6"><div class="ls-dot"></div>Finalizing optimization report</div>
->>>>>>> bd5ed9f2cf49c152a062e41440d989d2e946c292
       </div>
     </div>
 
@@ -1153,19 +1149,11 @@ Return ONLY valid JSON (no markdown, no explanation):
       throw new Error('Optimizer did not return analysis data. Please retry.');
     }
 
-<<<<<<< HEAD
-    const raw = (data.answer || '').replace(/```json|```/g,'').replace(/^[\s\S]*?(?=\{)/,'').trim();
-    const jm  = raw.match(/\{[\s\S]*\}/);
-    if (!jm) throw new Error('Could not parse response. Please try again.');
-    try { analysis = JSON.parse(jm[0]); }
-    catch(pe) { throw new Error('Response was not valid JSON — please try again. (' + pe.message + ')'); }
-=======
     analysis = extractJsonPayload(data.answer || '');
     analysis.interviewQuestions = (analysis.interviewQuestions || []).map(q => ({
       ...q,
       objective: q.objective || composeQuestionObjective(q)
     }));
->>>>>>> bd5ed9f2cf49c152a062e41440d989d2e946c292
 
     // Save to analysis history
     saveAnalysisHistory({
@@ -1190,12 +1178,9 @@ Return ONLY valid JSON (no markdown, no explanation):
     }, 800);
 
   } catch(e) {
-<<<<<<< HEAD
     clearTimeout(abortTimeout);
-    if (e.name === 'AbortError') return; // timeout handler already showed toast & reset UI
-=======
+    if (e.name === 'AbortError') return;
     console.error('runAnalysis error:', e);
->>>>>>> bd5ed9f2cf49c152a062e41440d989d2e946c292
     document.getElementById('stageLoading').style.display = 'none';
     document.getElementById('stageInput').style.display = 'block';
     setStep(1);
