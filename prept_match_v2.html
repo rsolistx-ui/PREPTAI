@@ -957,9 +957,13 @@ function extractJsonPayload(rawText) {
   throw new Error('Optimizer returned invalid JSON. Please try again.');
 }
 
-function parseJSONOrThrow(raw, label = 'Response') {
-  try { return JSON.parse(raw); }
-  catch (_) { throw new Error(`${label} was not valid JSON.`); }
+function composeQuestionObjective(q) {
+  const category = (q?.category || 'this role').toString().toLowerCase();
+  if (category.includes('technical')) return 'Prove you can do the core work of the role without ramp risk.';
+  if (category.includes('behavior')) return 'Show repeatable decision-making and ownership under pressure.';
+  if (category.includes('culture')) return 'Demonstrate team fit and motivation aligned to the company.';
+  if (category.includes('gap')) return 'Address the risk signal directly and show a concrete mitigation plan.';
+  return 'Show clear, role-relevant impact with specific examples and outcomes.';
 }
 
 // ── LOADING ANIMATION ─────────────────────────────────────────────────────────
@@ -989,7 +993,73 @@ async function runAnalysis() {
   document.getElementById('stageLoading').style.display = 'flex';
   setStep(2); animateLoading();
 
-  const prompt = `RESUME:\n${resumeContent}\n\nJOB DESCRIPTION:\n${jobContent}\n\nRun PREPT Match optimization at maximum quality.\nReturn only valid JSON with specific, evidence-based findings from this resume and job description.`;
+  const prompt = `RESUME:\n${resumeContent}\n\nJOB DESCRIPTION:\n${jobContent}\n\nAnalyze this resume against this job description. Every finding must reference actual content from the provided resume — no generic observations.
+
+Return ONLY valid JSON (no markdown, no explanation):
+{
+  "overallScore": 64,
+  "projectedScore": 89,
+  "grade": "C",
+  "benchmarkNote": "Top candidates for this role typically score 85+",
+  "verdict": "2-3 sentence specific verdict referencing actual gaps between THIS resume and THIS job",
+  "toneAnalysis": {
+    "resumeTone": "casual",
+    "jdTone": "corporate-formal",
+    "mismatch": true,
+    "mismatchNote": "Specific example of language mismatch from the actual resume"
+  },
+  "salaryData": {
+    "low": "$52,000",
+    "mid": "$68,000",
+    "high": "$84,000",
+    "negotiationTip": "Specific tactic for this role and market"
+  },
+  "sectionScores": {"summary": 50, "experience": 68, "skills": 45, "education": 82},
+  "quantificationScore": 30,
+  "quantifiedBullets": 3,
+  "totalBullets": 10,
+  "actionVerbScore": 45,
+  "formatWarnings": ["Specific format issue found, e.g. special characters detected that ATS misreads"],
+  "contactInfoIssues": ["Specific missing contact field, e.g. LinkedIn URL not found"],
+  "topPriorityFixes": [
+    {"rank": 1, "title": "Highest-impact fix title", "impact": "+X ATS points", "action": "Exact instruction"},
+    {"rank": 2, "title": "Second fix title", "impact": "+X ATS points", "action": "Exact instruction"},
+    {"rank": 3, "title": "Third fix title", "impact": "+X ATS points", "action": "Exact instruction"}
+  ],
+  "keywordsFound": ["actual keyword from resume that matches JD"],
+  "keywordsMissing": ["actual keyword from JD missing in resume"],
+  "keywordsCritical": ["most critical missing keywords — in job title or repeated 3+ times in JD"],
+  "keywordAnalysis": "Specific analysis of the keyword gap for THIS job",
+  "atsIssues": [
+    {
+      "severity": "high",
+      "title": "Specific issue title",
+      "description": "Specific description based on actual resume content",
+      "fix": "Exact actionable fix"
+    }
+  ],
+  "weakBullets": [
+    {
+      "original": "Exact bullet copied from the resume",
+      "rewritten": "Rewritten version: strong verb + specific what + quantified result + JD keyword",
+      "improvement": "Why this version scores higher in ATS and with recruiters"
+    }
+  ],
+  "rewrittenSummary": "Complete rewritten professional summary with at least 4 critical keywords naturally embedded",
+  "rewrittenSkills": "Complete rewritten skills section with all missing critical keywords added",
+  "rewrittenExperience": "Complete rewritten experience bullets using \\n as line separator",
+  "linkedinHeadline": "Optimized LinkedIn headline under 220 characters",
+  "linkedinAbout": "Complete LinkedIn About section 250-300 words using \\n for paragraph breaks",
+  "linkedinSkills": "Comma-separated top 10 skills aligned to JD",
+  "interviewQuestions": [
+    {
+      "category": "Behavioral|Technical|Gap-based|Culture",
+      "question": "Specific question based on actual gap between resume and JD",
+      "objective": "What interviewer is trying to validate with this question for this role",
+      "why": "Why this will be asked — references specific gap found"
+    }
+  ]
+}`;
 
   try {
     const res = await fetch('/api/chat', {
@@ -1047,11 +1117,11 @@ async function runAnalysis() {
       throw new Error('Optimizer did not return analysis data. Please retry.');
     }
 
-    try {
-      analysis = extractJsonPayload(data.answer);
-    } catch (_) {
-      throw new Error('Optimizer response format was invalid. Please run it again.');
-    }
+    analysis = extractJsonPayload(data.answer || '');
+    analysis.interviewQuestions = (analysis.interviewQuestions || []).map(q => ({
+      ...q,
+      objective: q.objective || composeQuestionObjective(q)
+    }));
 
     // Save to analysis history
     saveAnalysisHistory({
@@ -1628,6 +1698,27 @@ function renderLIContent(r) {
       <svg width="15" height="15" viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
       Apply on LinkedIn Jobs with Easy Apply filter →
     </a>`;
+}
+
+function renderInterviewPrep(r) {
+  const qs = r.interviewQuestions || [];
+  document.getElementById('rp7').innerHTML = `
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:18px;line-height:1.6">Based on your resume gaps and this specific job description these are the questions you are most likely to face. Know these cold before you walk in.</div>
+    <div class="iq-list">${qs.map(q=>`
+      <div class="iq-item">
+        <div class="iq-cat">${escH(q.category)}</div>
+        <div class="iq-q">${escH(q.question)}</div>
+        <div style="margin-top:8px;font-size:12px;color:#c8a84b;line-height:1.55"><strong style="color:#e6c668">Objective:</strong> ${escH(q.objective || composeQuestionObjective(q))}</div>
+        <div class="iq-why">⚡ ${escH(q.why)}</div>
+      </div>`).join('')}
+    </div>
+    <div class="iq-cta">
+      <div>
+        <div class="iq-cta-t">Ready to nail these questions?</div>
+        <div class="iq-cta-s">PREPT Live coaches you through every answer in real time with your specific role and company pre-loaded.</div>
+      </div>
+      <button class="iq-launch" onclick="window.open('prept_v2.html','_blank')">Open PREPT Live →</button>
+    </div>`;
 }
 
 // ── EMAIL TEMPLATES ───────────────────────────────────────────────────────────
