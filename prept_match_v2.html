@@ -601,8 +601,7 @@ footer span{color:var(--gold);font-weight:600}
           <button class="rtab" id="rt4" onclick="swRT(4)">📄 Rewritten Resume</button>
           <button class="rtab" id="rt5" onclick="swRT(5)">📧 Cover Letter</button>
           <button class="rtab" id="rt6" onclick="swRT(6)">💼 LinkedIn</button>
-          <button class="rtab" id="rt7" onclick="swRT(7)">🎯 Interview Prep</button>
-          <button class="rtab" id="rt8" onclick="swRT(8)">✉ Emails</button>
+          <button class="rtab" id="rt7" onclick="swRT(7)">✉ Emails</button>
         </div>
         <div class="rpanes-wrap">
           <div class="rpane on" id="rp1"></div>
@@ -612,7 +611,6 @@ footer span{color:var(--gold);font-weight:600}
           <div class="rpane" id="rp5"></div>
           <div class="rpane" id="rp6"></div>
           <div class="rpane" id="rp7"></div>
-          <div class="rpane" id="rp8"></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;gap:10px">
@@ -1074,7 +1072,13 @@ Return ONLY valid JSON (no markdown, no explanation):
       })
     });
 
-    const data = await res.json();
+    const rawResponse = await res.text();
+    let data = {};
+    try {
+      data = rawResponse ? JSON.parse(rawResponse) : {};
+    } catch (err) {
+      throw new Error('Optimizer service returned an invalid response. Please retry.');
+    }
 
     if (res.status === 403 && data.error === 'free_limit_reached') {
       document.getElementById('stageLoading').style.display = 'none';
@@ -1108,7 +1112,10 @@ Return ONLY valid JSON (no markdown, no explanation):
       return;
     }
 
-    if (!res.ok) throw new Error(data.message || data.error || 'Something went wrong');
+    if (!res.ok) throw new Error(data.message || data.error || 'Optimizer request failed.');
+    if (!data || typeof data.answer !== 'string') {
+      throw new Error('Optimizer did not return analysis data. Please retry.');
+    }
 
     analysis = extractJsonPayload(data.answer || '');
     analysis.interviewQuestions = (analysis.interviewQuestions || []).map(q => ({
@@ -1138,10 +1145,11 @@ Return ONLY valid JSON (no markdown, no explanation):
     }, 800);
 
   } catch(e) {
+    console.error('runAnalysis error:', e);
     document.getElementById('stageLoading').style.display = 'none';
     document.getElementById('stageInput').style.display = 'block';
     setStep(1);
-    showToast('Error: ' + (e.message || 'Something went wrong. Please try again.'));
+    showToast('Error: Optimizer response failed validation. Please try again.');
   }
 }
 
@@ -1285,7 +1293,7 @@ async function generateCL() {
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         try {
-          const d = JSON.parse(line.slice(6));
+          const d = parseJSONOrThrow(line.slice(6), 'Stream event');
           if (d.text) { coverLetter += d.text; out.textContent = coverLetter; }
           if (d.done) { if (acts) acts.style.display = 'flex'; showToast('Cover letter ready — unique to this role'); }
           if (d.error) throw new Error(d.message || 'Stream error');
@@ -1326,7 +1334,7 @@ Return ONLY this JSON (no markdown):
     const raw = (data.answer || '').replace(/```json|```/g,'');
     const jm  = raw.match(/\{[\s\S]*\}/);
     if (!jm) throw new Error('No JSON in response');
-    const d = JSON.parse(jm[0]);
+    const d = parseJSONOrThrow(jm[0], 'LinkedIn response');
     content.innerHTML = renderLIContent(d);
     showToast('LinkedIn optimization ready');
   } catch(e) {
@@ -1345,7 +1353,6 @@ function renderAll(r) {
   renderRewrite(r);
   renderCoverLetterPane();
   renderLinkedInPane(r);
-  renderInterviewPrep(r);
   renderEmailTemplates(r);
 }
 
@@ -1720,7 +1727,7 @@ window._emailOutputs = {};
 function renderEmailTemplates(r) {
   const company = document.getElementById('matchCompanyInput')?.value?.trim() || '';
   const salaryMid = r?.salaryData?.mid || '';
-  document.getElementById('rp8').innerHTML = `
+  document.getElementById('rp7').innerHTML = `
     <div style="font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.6">3 emails that move hiring decisions — each written from your actual resume and this job, never a template.</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
       <button class="em-tab on" id="emtab-followup" onclick="showEmailTab('followup')">📬 Follow-up</button>
@@ -1863,9 +1870,11 @@ function downloadAll() {
 
 // ── TAB & STEP SWITCHING ──────────────────────────────────────────────────────
 function swRT(n) {
-  for(let i=1;i<=8;i++){
-    document.getElementById('rt'+i).classList.toggle('on',i===n);
-    document.getElementById('rp'+i).classList.toggle('on',i===n);
+  for(let i=1;i<=7;i++){
+    const tab = document.getElementById('rt'+i);
+    const pane = document.getElementById('rp'+i);
+    if (tab) tab.classList.toggle('on',i===n);
+    if (pane) pane.classList.toggle('on',i===n);
   }
 }
 
@@ -2060,10 +2069,10 @@ async function buildGapEntry() {
     const objMatch  = raw.match(/\{[\s\S]*\}/);
     let entries = [];
     if (arrMatch) {
-      const parsed = JSON.parse(arrMatch[0]);
+      const parsed = parseJSONOrThrow(arrMatch[0], 'Gap entries response');
       entries = Array.isArray(parsed) ? parsed : [parsed];
     } else if (objMatch) {
-      entries = [JSON.parse(objMatch[0])];
+      entries = [parseJSONOrThrow(objMatch[0], 'Gap entries response')];
     } else {
       throw new Error('No JSON in response');
     }
@@ -2607,7 +2616,7 @@ async function matchResearchCompany() {
     const d = await res.json();
     const rawIntel = (d.answer || '').replace(/```json|```/g,'');
     const jmIntel = rawIntel.match(/\{[\s\S]*\}/);
-    const intel = jmIntel ? JSON.parse(jmIntel[0]) : null;
+    const intel = jmIntel ? parseJSONOrThrow(jmIntel[0], 'Company intel response') : null;
     if (!intel) throw new Error('No JSON in response');
     window.matchCompanyIntel = intel;
     card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(intel.industry || '')} &middot; ${escH(intel.size || '')}<br>
@@ -2788,7 +2797,7 @@ async function runSkillsGap() {
       const rawSg = (data.answer || '').replace(/```json|```/g,'');
       const jmSg  = rawSg.match(/\{[\s\S]*\}/);
       if (!jmSg) throw new Error('no json');
-      parsed = JSON.parse(jmSg[0]);
+      parsed = parseJSONOrThrow(jmSg[0], 'Skills gap response');
     } catch(e) {
       result.innerHTML = `<div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:20px;white-space:pre-wrap;font-size:13px;color:var(--tx);line-height:1.7">${escH(data.answer || '')}</div>`;
       return;
@@ -3189,7 +3198,7 @@ function downloadAll() { downloadResume('txt'); }
     if (!hash.startsWith('#prept=')) return;
 
     const encoded = hash.slice(7);
-    const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    const data = parseJSONOrThrow(decodeURIComponent(escape(atob(encoded))), 'Extension payload');
 
     if (data.description) {
       const jdEl = document.getElementById('jobText');
