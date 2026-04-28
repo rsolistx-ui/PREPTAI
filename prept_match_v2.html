@@ -2067,6 +2067,7 @@ function shareResult() {
   }
 }
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function parseJSONOrThrow(str, label) { try { return JSON.parse(str); } catch(e) { throw new Error((label || 'JSON') + ' parse error: ' + e.message); } }
 
 // ── ANALYSIS HISTORY (localStorage, last 5 analyses) ─────────────────────────
 function saveAnalysisHistory(entry) {
