@@ -763,7 +763,13 @@ RULES:
 // ── RESUME MATCH PROMPT ───────────────────────────────────────────────────────
 function buildMatchPrompt(atsIntelDoc = null) {
   const doc = atsIntelDoc || ATS_INTEL_BASELINE;
-  const atsBlock = `\nCURRENT ATS SYSTEM INTELLIGENCE (version: ${doc.version || 'baseline'}, updated: ${(doc.updated_at || '').slice(0,10)}):\n${doc.content}\n`;
+  // Only inject the ATS intel block when it has been customized via the admin endpoint.
+  // The baseline content duplicates the MODERN SCREENING REALITY bullets and adds ~800
+  // tokens to every prompt, significantly increasing latency. Skip it for baseline.
+  const isCustom = doc !== ATS_INTEL_BASELINE && doc?.content && doc.content !== ATS_INTEL_BASELINE.content;
+  const atsBlock = isCustom
+    ? `\nCURRENT ATS SYSTEM INTELLIGENCE (version: ${doc.version || 'custom'}, updated: ${(doc.updated_at || '').slice(0,10)}):\n${doc.content}\n`
+    : '';
 
   return `You are PREPT AI Match — a precision ATS optimization engine trained on how Applicant Tracking Systems actually score resumes and what human recruiters look for in the first 6 seconds of review.
 
