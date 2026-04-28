@@ -2101,26 +2101,42 @@ function parseJSONOrThrow(str, label) { try { return JSON.parse(str); } catch(e)
 
 function autoFillCompanyFromJD(text) {
   const inp = document.getElementById('matchCompanyInput');
-  if (!inp || inp.value.trim()) return; // don't overwrite if user already typed something
-  const sample = text.slice(0, 800);
-  const patterns = [
-    /(?:about|join|at|with)\s+([A-Z][A-Za-z0-9&,.\- ]{2,40})(?:\s*[,\-–|]|\s*\n)/,
-    /^([A-Z][A-Za-z0-9&,.\- ]{2,40})\s+is\s+(?:a|an|the)\s/m,
-    /company(?:\s+name)?[:\s]+([A-Z][A-Za-z0-9&,.\- ]{2,40})/i,
-    /employer[:\s]+([A-Z][A-Za-z0-9&,.\- ]{2,40})/i,
-    /([A-Z][A-Za-z0-9&]{1,25}(?:\s+[A-Z][A-Za-z0-9&]{1,20}){0,3})\s+(?:is hiring|is looking|seeks|seeks a)/,
+  if (!inp || inp.value.trim()) return;
+  const sample = text.slice(0, 1500);
+  const skipWord = /^(the|a|an|this|our|we|us|looking|hiring|seeking|qualified|about|join|summary|overview|responsibilities|requirements|benefits|description)$/i;
+
+  // Pass 1: explicit labels (works for most private sector JDs)
+  const labeled = [
+    /organization[:\s]+([A-Z][A-Za-z0-9&,.\- ]{2,50})/i,
+    /agency[:\s]+([A-Z][A-Za-z0-9&,.\- ]{2,50})/i,
+    /company(?:\s+name)?[:\s]+([A-Z][A-Za-z0-9&,.\- ]{2,50})/i,
+    /employer[:\s]+([A-Z][A-Za-z0-9&,.\- ]{2,50})/i,
+    /posted\s+by[:\s]+([A-Z][A-Za-z0-9&,.\- ]{2,50})/i,
+    /(?:about|join)\s+([A-Z][A-Za-z0-9&,.\- ]{2,40})(?:\s*[,\-–|]|\s*\n)/,
+    /([A-Z][A-Za-z0-9&,.\- ]{2,40})\s+is\s+(?:a|an|the)\s/,
+    /([A-Z][A-Za-z0-9&]{1,25}(?:\s+[A-Z][A-Za-z0-9&]{1,20}){0,3})\s+(?:is hiring|is looking|seeks)/,
   ];
-  for (const re of patterns) {
+  for (const re of labeled) {
     const m = sample.match(re);
-    if (m && m[1]) {
-      const candidate = m[1].trim().replace(/\s+/g, ' ').slice(0, 60);
-      // sanity check — skip generic words
-      const skip = /^(the|a|an|this|our|we|us|we are|looking|hiring|seeking|qualified)$/i;
-      if (!skip.test(candidate) && candidate.length > 1) {
-        inp.value = candidate;
-        matchClearIntel();
-        break;
-      }
+    if (m?.[1]) {
+      const c = m[1].trim().replace(/\s+/g, ' ').slice(0, 60);
+      if (!skipWord.test(c) && c.length > 2) { inp.value = c; matchClearIntel(); return; }
+    }
+  }
+
+  // Pass 2: scan first 8 non-empty lines for a standalone org name
+  // (catches government/municipal postings that lead with the agency name)
+  const skipLine = /^(job|position|title|location|department|type|date|number|salary|schedule|opening|closing|posted|requisition|req\b|status|category|division|full.?time|part.?time|remote|hybrid|on.?site|\d)/i;
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  for (const line of lines.slice(0, 8)) {
+    if (line.length < 3 || line.length > 72) continue;
+    if (skipLine.test(line)) continue;
+    if (/[:;=]/.test(line)) continue;        // skip label: value lines
+    if (/\d{4}/.test(line)) continue;        // skip lines with years/IDs
+    if (/^[A-Z]/.test(line)) {               // starts with a capital — likely an org name
+      inp.value = line.slice(0, 60);
+      matchClearIntel();
+      return;
     }
   }
 }
