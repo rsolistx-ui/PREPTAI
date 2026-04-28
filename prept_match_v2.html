@@ -411,6 +411,11 @@ footer span{color:var(--gold);font-weight:600}
 :root.light .form-group input, :root.light .form-group select, :root.light .form-group textarea { color: #0f0f1c; }
 :root.light .tp-logo-text { color: #0f0f1c; }
 :root.light .trust-divider { background: rgba(0,0,0,0.1); }
+/* ── Light mode: optimizer-specific overrides ── */
+:root.light .hero-eyebrow { color: #4338a0; background: rgba(123,109,244,0.1); border-color: rgba(123,109,244,0.3); }
+:root.light .ico-gold { background: rgba(200,168,75,0.18); border-color: rgba(200,168,75,0.45); }
+:root.light #matchIntelCard { background: rgba(0,160,140,0.07) !important; border-color: rgba(0,140,125,0.3) !important; }
+:root.light { --cy: #0d7a6c; }
 
 /* ── Email Templates ── */
 .em-tab{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--b1);background:var(--s3);color:var(--tx3);cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.18s}
@@ -550,12 +555,12 @@ footer span{color:var(--gold);font-weight:600}
             <div><div class="ucard-title">Job Description</div><div class="ucard-sub">Paste the full posting</div></div>
           </div>
           <div class="ucard-body">
-            <textarea class="bta" id="jobText" placeholder="Paste the complete job description title, responsibilities, requirements, preferred qualifications, company overview..." oninput="updateCC('jobText','jcc')" style="min-height:300px;flex:1"></textarea>
+            <textarea class="bta" id="jobText" placeholder="Paste the complete job description title, responsibilities, requirements, preferred qualifications, company overview..." oninput="updateCC('jobText','jcc');autoFillCompanyFromJD(this.value)" style="min-height:300px;flex:1"></textarea>
             <div class="cc" id="jcc">0 characters</div>
             <div class="pro-tip"><strong style="color:var(--am)">💡 Pro tip:</strong> Copy the entire posting including the company section. ATS systems often pull keywords from the company description, not just the requirements list.</div>
             <!-- COMPANY RESEARCH IN MATCH PAGE -->
             <div style="margin-top:10px;display:flex;gap:6px;align-items:center">
-              <input id="matchCompanyInput" placeholder="Company name (for cover letter intel)" type="text" style="flex:1;background:var(--inp-bg,#111120);border:1px solid rgba(255,255,255,0.09);color:#edeaf7;font-family:'Outfit',sans-serif;font-size:12px;padding:7px 10px;border-radius:7px;outline:none" oninput="matchClearIntel()" onkeydown="if(event.key==='Enter')matchResearchCompany()"/>
+              <input id="matchCompanyInput" placeholder="Company name (for cover letter intel)" type="text" style="flex:1;background:var(--inp-bg,#111120);border:1px solid var(--inp-border,rgba(255,255,255,0.09));color:var(--tx);font-family:'Outfit',sans-serif;font-size:12px;padding:7px 10px;border-radius:7px;outline:none" oninput="matchClearIntel()" onkeydown="if(event.key==='Enter')matchResearchCompany()"/>
               <button onclick="matchResearchCompany()" id="matchResearchBtn" style="padding:7px 11px;background:rgba(56,217,192,0.08);border:1px solid rgba(56,217,192,0.22);color:#38d9c0;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;border-radius:7px;cursor:pointer;white-space:nowrap">🔍 Research</button>
             </div>
             <div id="matchIntelCard" style="display:none;margin-top:6px;padding:10px 12px;background:rgba(56,217,192,0.05);border:1px solid rgba(56,217,192,0.18);border-radius:8px;font-size:12px;color:#ccc9e0;line-height:1.6"></div>
@@ -1061,6 +1066,12 @@ Return ONLY valid JSON (no markdown, no explanation):
       "improvement": "Why this version scores higher in ATS and with recruiters"
     }
   ],
+  "keywordPlacement": [
+    {"keyword": "actual keyword", "currentLocation": "skills_only", "recommendation": "Move to a bullet under your most recent role where you used it"}
+  ],
+  "skillsConsistency": {"score": 72, "unsupportedSkills": ["Skill listed in skills section with no experience evidence"], "note": "Brief summary"},
+  "tenureRisk": {"flagged": false, "issues": [], "note": "Employment timeline assessment"},
+  "targetObjective": "1-2 sentence ATS-optimized objective statement built from this candidate's actual experience and the JD requirements",
   "rewrittenSummary": "Complete rewritten professional summary with at least 4 critical keywords naturally embedded",
   "rewrittenSkills": "Complete rewritten skills section with all missing critical keywords added",
   "rewrittenExperience": "Complete rewritten experience bullets using \\n as line separator",
@@ -2074,6 +2085,32 @@ function shareResult() {
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function parseJSONOrThrow(str, label) { try { return JSON.parse(str); } catch(e) { throw new Error((label || 'JSON') + ' parse error: ' + e.message); } }
 
+function autoFillCompanyFromJD(text) {
+  const inp = document.getElementById('matchCompanyInput');
+  if (!inp || inp.value.trim()) return; // don't overwrite if user already typed something
+  const sample = text.slice(0, 800);
+  const patterns = [
+    /(?:about|join|at|with)\s+([A-Z][A-Za-z0-9&,.\- ]{2,40})(?:\s*[,\-–|]|\s*\n)/,
+    /^([A-Z][A-Za-z0-9&,.\- ]{2,40})\s+is\s+(?:a|an|the)\s/m,
+    /company(?:\s+name)?[:\s]+([A-Z][A-Za-z0-9&,.\- ]{2,40})/i,
+    /employer[:\s]+([A-Z][A-Za-z0-9&,.\- ]{2,40})/i,
+    /([A-Z][A-Za-z0-9&]{1,25}(?:\s+[A-Z][A-Za-z0-9&]{1,20}){0,3})\s+(?:is hiring|is looking|seeks|seeks a)/,
+  ];
+  for (const re of patterns) {
+    const m = sample.match(re);
+    if (m && m[1]) {
+      const candidate = m[1].trim().replace(/\s+/g, ' ').slice(0, 60);
+      // sanity check — skip generic words
+      const skip = /^(the|a|an|this|our|we|us|we are|looking|hiring|seeking|qualified)$/i;
+      if (!skip.test(candidate) && candidate.length > 1) {
+        inp.value = candidate;
+        matchClearIntel();
+        break;
+      }
+    }
+  }
+}
+
 // ── ANALYSIS HISTORY (localStorage, last 5 analyses) ─────────────────────────
 function saveAnalysisHistory(entry) {
   try {
@@ -2697,10 +2734,10 @@ async function matchResearchCompany() {
 
   btn.disabled = true; btn.textContent = '⏳';
   card.style.display = 'block';
-  card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(fallbackIntel.industry || 'Not available')}<br>
-    <span style="color:#e6c668">Interview style:</span> ${escH(fallbackIntel.interviewStyle || 'Structured interviews')}<br>
-    <span style="color:#e6c668">What they look for:</span> ${escH(fallbackIntel.whatTheyLookFor || 'Ownership and measurable impact')}<br>
-    <span style="font-size:11px;color:#8a87a0">Loading live company intel...</span>`;
+  card.innerHTML = `<strong style="color:var(--cy)">${escH(company)}</strong> &middot; ${escH(fallbackIntel.industry || 'Not available')}<br>
+    <span style="color:var(--gold2)">Interview style:</span> ${escH(fallbackIntel.interviewStyle || 'Structured interviews')}<br>
+    <span style="color:var(--gold2)">What they look for:</span> ${escH(fallbackIntel.whatTheyLookFor || 'Ownership and measurable impact')}<br>
+    <span style="font-size:11px;color:var(--tx3)">Loading live company intel...</span>`;
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
@@ -2714,10 +2751,10 @@ async function matchResearchCompany() {
     const intel = jmIntel ? parseJSONOrThrow(jmIntel[0], 'Company intel response') : null;
     if (!intel) throw new Error('No JSON in response');
     window.matchCompanyIntel = intel;
-    card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(intel.industry || '')} &middot; ${escH(intel.size || '')}<br>
-      <span style="color:#e6c668">Interview style:</span> ${escH(intel.interviewStyle || '—')}<br>
-      <span style="color:#e6c668">What they look for:</span> ${escH(intel.whatTheyLookFor || '—')}<br>
-      <span style="font-size:11px;color:#8a87a0">Intel injected into cover letter &amp; LinkedIn optimizer</span>`;
+    card.innerHTML = `<strong style="color:var(--cy)">${escH(company)}</strong> &middot; ${escH(intel.industry || '')} &middot; ${escH(intel.size || '')}<br>
+      <span style="color:var(--gold2)">Interview style:</span> ${escH(intel.interviewStyle || '—')}<br>
+      <span style="color:var(--gold2)">What they look for:</span> ${escH(intel.whatTheyLookFor || '—')}<br>
+      <span style="font-size:11px;color:var(--tx3)">Intel injected into cover letter &amp; LinkedIn optimizer</span>`;
     showToast('Company intel loaded');
   } catch(e) {
     const intel = buildCompanyIntelFallback(company);
