@@ -1458,8 +1458,24 @@ export default async function handler(req, res) {
         system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
         messages: [{ role: "user", content: userMsg }],
       });
-      const answer = response.content[0]?.text;
+      let answer = response.content[0]?.text;
       if (!answer) throw new Error("No response");
+
+      // Enforce strict JSON for utility modes that are consumed as JSON by the client.
+      if (mode === "company") {
+        let parsed = tryParseJSONObject(answer);
+        if (!parsed) {
+          const repair = await anthropic.messages.create({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 800,
+            system: [{ type: "text", text: "Convert the following content into strict valid JSON object only. No markdown. No prose.", cache_control: { type: "ephemeral" } }],
+            messages: [{ role: "user", content: answer }],
+          });
+          parsed = tryParseJSONObject(repair.content[0]?.text || "");
+        }
+        if (!parsed) throw new Error("company_json_invalid");
+        answer = JSON.stringify(parsed);
+      }
       return res.status(200).json({ answer, plan: "free", remaining: "unlimited" });
     } catch (error) {
       console.error(`${mode} error:`, error);
