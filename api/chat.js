@@ -108,6 +108,45 @@ function detectPromptInjection(text) {
   ].some(p => p.test(text));
 }
 
+function tryParseJSONObject(raw) {
+  const text = String(raw || "").replace(/```json|```/gi, "").trim();
+  if (!text) return null;
+  const start = text.indexOf("{");
+  if (start < 0) return null;
+
+  let depth = 0, inStr = false, esc = false, end = -1;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (inStr) {
+      if (esc) { esc = false; continue; }
+      if (ch === "\\") { esc = true; continue; }
+      if (ch === "\"") inStr = false;
+      continue;
+    }
+    if (ch === "\"") { inStr = true; continue; }
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) { end = i; break; }
+    }
+  }
+  if (end < 0) return null;
+
+  const candidate = text.slice(start, end + 1);
+  const attempts = [
+    candidate,
+    candidate.replace(/,\s*([}\]])/g, "$1"),
+    candidate
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, "\"")
+      .replace(/,\s*([}\]])/g, "$1")
+  ];
+  for (const attempt of attempts) {
+    try { return JSON.parse(attempt); } catch {}
+  }
+  return null;
+}
+
 // ── BLS SALARY BENCHMARKS (2023-2024 Occupational Employment & Wage Statistics) ─
 const SALARY_BENCHMARKS = [
   // Technology
@@ -649,15 +688,11 @@ RULES:
 function buildMatchPrompt() {
   return `You are PREPT AI Match — a precision ATS optimization engine trained on how Applicant Tracking Systems actually score resumes and what human recruiters look for in the first 6 seconds of review.
 
-THE RESEARCH BEHIND THIS ANALYSIS:
-- 75% of resumes are rejected by ATS before a human sees them (Jobscan, 2024)
-- Recruiters spend an average of 6-7 seconds on initial resume review (Ladders eye-tracking study, 2024)
-- Resumes with quantified achievements are 40% more likely to receive callbacks (LinkedIn Talent Trends, 2025)
-- Keyword matching is the #1 ATS ranking factor — exact phrase match outperforms semantic match in most systems
-- Resumes with tables, columns, or graphics score 30-60% lower in ATS systems (Jobscan format study)
-- 46% of recruiters now use AI-content detection tools to screen for AI-generated resumes (Resume Genius, 2025)
-- Resumes flagged as AI-generated are 60% less likely to receive an interview (Canva/Zety hiring survey, 2025)
-- 72% of companies using Workday, Greenhouse, or Lever now have AI screening enabled by default (LinkedIn Hiring Report, 2025)
+MODERN SCREENING REALITY (2025+):
+- Many enterprise stacks now use hybrid matching: exact keyword matching + skills/semantic inference.
+- Skills-first hiring is mainstream, so transferable skills and adjacent tool experience should be surfaced explicitly.
+- Recruiters still scan fast, so clarity, measurable outcomes, and role-language alignment remain critical.
+- ATS parsing is still fragile with non-standard formatting (tables/columns/graphics), so format compliance matters.
 
 YOUR ANALYSIS MUST BE SURGICAL AND SPECIFIC. Every finding must reference actual content from the resume. No generic advice.
 
@@ -697,6 +732,7 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
 {
   "overallScore": <integer 0-100>,
   "projectedScore": <integer — realistic score after fixes>,
+  "targetRole": <string — inferred from job title in JD; concise>,
   "grade": <"A"|"B"|"C"|"D">,
   "benchmarkNote": <string — e.g. "Top candidates for this role score 85+">,
   "verdict": <string — 2-3 sentences specific to THIS resume vs THIS job. Name actual gaps.>,
@@ -754,13 +790,6 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
   "linkedinHeadline": <string — optimized headline under 220 characters>,
   "linkedinAbout": <string — About section 250-300 words, under 2600 characters total, uses \\n for paragraphs>,
   "linkedinSkills": <string — comma-separated top 10 skills aligned to JD>,
-  "interviewQuestions": [
-    {
-      "category": <string — e.g. "Behavioral" | "Technical" | "Gap-based">,
-      "question": <string — specific question based on actual resume gaps vs JD requirements>,
-      "why": <string — why this question will be asked based on specific gap found>
-    }
-  ],
   "aiDetectionRisk": {
     "score": <integer 0-100 — calculated AI likelihood score>,
     "level": <"low"|"medium"|"high">,
@@ -773,7 +802,6 @@ QUALITY RULES — NEVER VIOLATE:
 - Every atsIssue must reference specific content from the actual resume provided
 - Every weakBullet.original must be an actual bullet from the resume — do not fabricate
 - rewrittenSummary must incorporate at least 4 keywords from keywordsCritical or keywordsMissing
-- interviewQuestions must be based on actual gaps between the resume and JD — not generic questions
 - salaryData ranges must be realistic for the role title and location context in the JD
 - If the resume has no professional summary, still provide a rewrittenSummary based on their experience
 - quantificationScore of 0 means zero bullets have metrics — be accurate, not generous`;
@@ -1491,13 +1519,30 @@ export default async function handler(req, res) {
     const answer = response.content[0]?.text;
     if (!answer) throw new Error("No response from AI");
 
+    let finalAnswer = answer;
+    if (mode === "match") {
+      let parsed = tryParseJSONObject(answer);
+      if (!parsed) {
+        const repair = await anthropic.messages.create({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 4096,
+          system: [{ type: "text", text: 'You convert resume analysis text into strict valid JSON. Output JSON only. Do not add or remove keys, only fix JSON validity.', cache_control: { type: "ephemeral" } }],
+          messages: [{ role: "user", content: answer }],
+        });
+        const repaired = repair.content[0]?.text || "";
+        parsed = tryParseJSONObject(repaired);
+      }
+      if (!parsed) throw new Error("Could not produce valid JSON for match response");
+      finalAnswer = JSON.stringify(parsed);
+    }
+
     let remaining = "unlimited";
     if (plan === "free" && cleanEmail) {
       const used = await getMonthlyUsage(cleanEmail, limitKey);
       remaining = Math.max(0, limits[limitKey] - used);
     }
 
-    return res.status(200).json({ answer, plan, remaining });
+    return res.status(200).json({ answer: finalAnswer, plan, remaining });
 
   } catch (error) {
     console.error("Anthropic API error:", error);
