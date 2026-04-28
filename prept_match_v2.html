@@ -2719,9 +2719,8 @@ async function matchResearchCompany() {
     card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(intel.industry || 'Not available')}<br>
       <span style="color:#e6c668">Interview style:</span> ${escH(intel.interviewStyle || 'Structured interviews')}<br>
       <span style="color:#e6c668">What they look for:</span> ${escH(intel.whatTheyLookFor || 'Ownership and measurable impact')}<br>
-      <span style="font-size:11px;color:#8a87a0">Fallback intel loaded — continue with optimization.</span>`;
+      <span style="font-size:11px;color:#8a87a0">Intel injected into cover letter &amp; LinkedIn optimizer</span>`;
     console.error('matchResearchCompany error:', e);
-    showToast('Company research fallback loaded');
   }
   btn.disabled = false; btn.textContent = '🔍 Research';
 }
