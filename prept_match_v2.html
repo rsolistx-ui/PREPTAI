@@ -555,7 +555,7 @@ footer span{color:var(--gold);font-weight:600}
             <div class="pro-tip"><strong style="color:var(--am)">💡 Pro tip:</strong> Copy the entire posting including the company section. ATS systems often pull keywords from the company description, not just the requirements list.</div>
             <!-- COMPANY RESEARCH IN MATCH PAGE -->
             <div style="margin-top:10px;display:flex;gap:6px;align-items:center">
-              <input id="matchCompanyInput" placeholder="Company name (for cover letter intel)" type="text" style="flex:1;background:var(--inp-bg,#111120);border:1px solid rgba(255,255,255,0.09);color:#edeaf7;font-family:'Outfit',sans-serif;font-size:12px;padding:7px 10px;border-radius:7px;outline:none" oninput="matchClearIntel()"/>
+              <input id="matchCompanyInput" placeholder="Company name (for cover letter intel)" type="text" style="flex:1;background:var(--inp-bg,#111120);border:1px solid rgba(255,255,255,0.09);color:#edeaf7;font-family:'Outfit',sans-serif;font-size:12px;padding:7px 10px;border-radius:7px;outline:none" oninput="matchClearIntel()" onkeydown="if(event.key==='Enter')matchResearchCompany()"/>
               <button onclick="matchResearchCompany()" id="matchResearchBtn" style="padding:7px 11px;background:rgba(56,217,192,0.08);border:1px solid rgba(56,217,192,0.22);color:#38d9c0;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;border-radius:7px;cursor:pointer;white-space:nowrap">🔍 Research</button>
             </div>
             <div id="matchIntelCard" style="display:none;margin-top:6px;padding:10px 12px;background:rgba(56,217,192,0.05);border:1px solid rgba(56,217,192,0.18);border-radius:8px;font-size:12px;color:#ccc9e0;line-height:1.6"></div>
