@@ -900,6 +900,7 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
       "improvement": <string — why the rewrite is stronger>
     }
   ],
+  "targetObjective": <string — 1-2 sentence ATS-optimized objective statement synthesized from this candidate's actual experience and the JD requirements; sounds human and specific, never generic; no placeholder text>,
   "rewrittenSummary": <string — complete professional summary with JD keywords naturally embedded>,
   "rewrittenSkills": <string — complete skills section with missing keywords added>,
   "rewrittenExperience": <string — rewritten bullets using \\n as line separator>,
@@ -929,6 +930,7 @@ QUALITY RULES — NEVER VIOLATE:
 - interviewQuestions must be based on actual gaps between the resume and JD — not generic questions
 - every interviewQuestions item must include objective that is role-specific and concrete
 - salaryData ranges must be realistic for the role title and location context in the JD
+- targetObjective must be built from actual job titles and skills found in the resume combined with the target role and 2-3 keywords from keywordsCritical — never generic filler like "seeking a challenging role"
 - If the resume has no professional summary, still provide a rewrittenSummary based on their experience
 - quantificationScore of 0 means zero bullets have metrics — be accurate, not generous
 - skillsConsistency.unsupportedSkills must list actual skills from the resume skills section
