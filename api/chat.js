@@ -913,18 +913,6 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
   "targetObjective": <string — 1-2 sentence ATS-optimized objective statement synthesized from this candidate's actual experience and the JD requirements; sounds human and specific, never generic; no placeholder text>,
   "rewrittenSummary": <string — complete professional summary with JD keywords naturally embedded>,
   "rewrittenSkills": <string — complete skills section with missing keywords added>,
-  "rewrittenExperience": <string — rewritten bullets using \\n as line separator>,
-  "linkedinHeadline": <string — optimized headline under 220 characters>,
-  "linkedinAbout": <string — About section 250-300 words, under 2600 characters total, uses \\n for paragraphs>,
-  "linkedinSkills": <string — comma-separated top 10 skills aligned to JD>,
-  "interviewQuestions": [
-    {
-      "category": <string — e.g. "Behavioral" | "Technical" | "Gap-based">,
-      "question": <string — specific question based on actual resume gaps vs JD requirements>,
-      "objective": <string — what this question is designed to evaluate for this specific role>,
-      "why": <string — why this question will be asked based on specific gap found>
-    }
-  ],
   "aiDetectionRisk": {
     "score": <integer 0-100 — calculated AI likelihood score>,
     "level": <"low"|"medium"|"high">,
@@ -937,8 +925,6 @@ QUALITY RULES — NEVER VIOLATE:
 - Every atsIssue must reference specific content from the actual resume provided
 - Every weakBullet.original must be an actual bullet from the resume — do not fabricate
 - rewrittenSummary must incorporate at least 4 keywords from keywordsCritical or keywordsMissing
-- interviewQuestions must be based on actual gaps between the resume and JD — not generic questions
-- every interviewQuestions item must include objective that is role-specific and concrete
 - salaryData ranges must be realistic for the role title and location context in the JD
 - targetObjective must be built from actual job titles and skills found in the resume combined with the target role and 2-3 keywords from keywordsCritical — never generic filler like "seeking a challenging role"
 - If the resume has no professional summary, still provide a rewrittenSummary based on their experience
@@ -1381,7 +1367,7 @@ export default async function handler(req, res) {
     previousQuestion, userAnswer, answers, systemOverride, companyIntel
   } = req.body;
 
-  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company","gapentry","appfollowup","emailthankyou","negotiation","ats_update"];
+  const validModes = ["chat","match","match_expand","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company","gapentry","appfollowup","emailthankyou","negotiation","ats_update"];
   if (!message || typeof message !== "string") return res.status(400).json({ error: "Message is required" });
   if (!mode || !validModes.includes(mode)) return res.status(400).json({ error: "Invalid mode" });
 
@@ -1445,6 +1431,7 @@ export default async function handler(req, res) {
   const proOnlyModes    = ["coverletter","linkedin","mockanswer","mockgen","debrief","adaptive","appfollowup","emailthankyou"];
   const careerOnlyModes = ["salary","asyncvideo","negotiation"];
   const trulyFreeModes  = ["skillsgap","company","gapentry","jenn"]; // no plan needed
+  const authFreeModes   = ["match_expand"]; // free, but login required — part of an existing match analysis
 
   if (proOnlyModes.includes(mode)) {
     if (!cleanEmail) return res.status(403).json({ error: "login_required", message: "Sign in to access this feature.", loginUrl: "/login.html" });
@@ -1456,8 +1443,12 @@ export default async function handler(req, res) {
   }
 
   // Utility modes: prompt routing for all plan-verified modes above + truly free modes
-  const utilityModes = [...proOnlyModes, ...careerOnlyModes, ...trulyFreeModes];
+  const utilityModes = [...proOnlyModes, ...careerOnlyModes, ...trulyFreeModes, ...authFreeModes];
   if (utilityModes.includes(mode)) {
+    // Auth-free modes require login but consume no credits
+    if (authFreeModes.includes(mode)) {
+      if (!cleanEmail) return res.status(403).json({ error: "login_required", message: "Sign in to use this feature.", loginUrl: "/login.html" });
+    }
     // Only IP-rate-limit the truly free anonymous modes; paid plans have already verified credentials
     if (trulyFreeModes.includes(mode)) {
       const callerIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
@@ -1582,6 +1573,25 @@ export default async function handler(req, res) {
         systemPrompt = buildNegotiationEmailPrompt();
         userMsg = cleanMessage;
         maxTok = 700;
+      } else if (mode === "match_expand") {
+        // Lazy-generate heavy fields on demand — part of an existing match analysis, no credit consumed
+        const field = (req.body.field || "").trim();
+        if (field === "rewrittenExperience") {
+          systemPrompt = `You are a senior resume writer. Rewrite ALL experience section bullets from the provided resume to naturally incorporate the most important missing keywords from the job description.
+
+Rules:
+- Keep every bullet grounded in the candidate's ACTUAL experience — never invent or embellish
+- Start each bullet with a strong past-tense action verb
+- Add quantifiable results where the resume already implies them (revenue, %, time saved, team size, etc.)
+- Weave in 3-5 critical JD keywords naturally — do not keyword-stuff
+- Separate bullets with \\n
+- Group bullets by role using a header line: "ROLE TITLE | Company Name (Start Date – End Date)\\n"
+- Output ONLY the rewritten bullets and role headers — no JSON, no markdown, no explanation`;
+          userMsg = `RESUME:\n${cleanResume}\n\nJOB DESCRIPTION:\n${cleanJobDesc}\n\nRewrite all experience bullets.`;
+          maxTok = 2500;
+        } else {
+          return res.status(400).json({ error: "invalid_field", message: "Unsupported expand field." });
+        }
       }
 
       // Prompt caching on free-mode system prompts (reduces cost ~80% on repeated calls)
@@ -1703,7 +1713,7 @@ export default async function handler(req, res) {
   try {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: mode === "match" ? 5000 : 2048,
+      max_tokens: mode === "match" ? 3000 : 2048,
       system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
       messages: [{ role: "user", content: cleanMessage }],
     });

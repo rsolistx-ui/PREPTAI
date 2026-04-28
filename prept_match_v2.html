@@ -1094,19 +1094,7 @@ Return ONLY valid JSON (no markdown, no explanation):
   "tenureRisk": {"flagged": false, "issues": [], "note": "Employment timeline assessment"},
   "targetObjective": "1-2 sentence ATS-optimized objective statement built from this candidate's actual experience and the JD requirements",
   "rewrittenSummary": "Complete rewritten professional summary with at least 4 critical keywords naturally embedded",
-  "rewrittenSkills": "Complete rewritten skills section with all missing critical keywords added",
-  "rewrittenExperience": "Complete rewritten experience bullets using \\n as line separator",
-  "linkedinHeadline": "Optimized LinkedIn headline under 220 characters",
-  "linkedinAbout": "Complete LinkedIn About section 250-300 words using \\n for paragraph breaks",
-  "linkedinSkills": "Comma-separated top 10 skills aligned to JD",
-  "interviewQuestions": [
-    {
-      "category": "Behavioral|Technical|Gap-based|Culture",
-      "question": "Specific question based on actual gap between resume and JD",
-      "objective": "What interviewer is trying to validate with this question for this role",
-      "why": "Why this will be asked — references specific gap found"
-    }
-  ]
+  "rewrittenSkills": "Complete rewritten skills section with all missing critical keywords added"
 }`;
 
   try {
@@ -1167,10 +1155,6 @@ Return ONLY valid JSON (no markdown, no explanation):
     }
 
     analysis = extractJsonPayload(data.answer || '');
-    analysis.interviewQuestions = (analysis.interviewQuestions || []).map(q => ({
-      ...q,
-      objective: q.objective || composeQuestionObjective(q)
-    }));
 
     // Save to analysis history
     saveAnalysisHistory({
@@ -1688,13 +1672,18 @@ function renderBullets(r) {
 }
 
 function renderRewrite(r) {
-  const sections = [
+  const staticSections = [
     {id:'sum',label:'Summary',content:r.rewrittenSummary||''},
     {id:'skl',label:'Skills',content:r.rewrittenSkills||''},
-    {id:'exp',label:'Experience',content:(r.rewrittenExperience||'').replace(/\\n/g,'\n')},
   ].filter(s=>s.content);
 
-  let active = sections[0]?.id || 'sum';
+  const hasExp = !!(r.rewrittenExperience && r.rewrittenExperience.trim());
+  const allSections = [...staticSections];
+  if (hasExp) allSections.push({id:'exp',label:'Experience',content:(r.rewrittenExperience||'').replace(/\\n/g,'\n')});
+
+  let active = allSections[0]?.id || 'sum';
+
+  const expTabBtn = `<button class="rw-sbtn" id="rw-sbtn-exp" onclick="showRWS('exp')">${hasExp ? 'Experience' : 'Experience ✦'}</button>`;
 
   document.getElementById('rp4').innerHTML = `
     <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
@@ -1705,21 +1694,79 @@ function renderRewrite(r) {
         <button class="rw-btn" style="background:#4d4a66;color:#fff;border-color:#4d4a66" onclick="downloadResume('pdf')">🖨 PDF</button>
       </div>
     </div>
-    <div class="rw-toolbar">${sections.map(s=>`<button class="rw-sbtn ${s.id===active?'on':''}" onclick="showRWS('${s.id}')">${s.label}</button>`).join('')}</div>
-    ${sections.map(s=>`
+    <div class="rw-toolbar">
+      ${allSections.map(s=>`<button class="rw-sbtn ${s.id===active?'on':''}" onclick="showRWS('${s.id}')">${s.label}</button>`).join('')}
+      ${!hasExp ? expTabBtn : ''}
+    </div>
+    ${allSections.map(s=>`
       <div id="rws-${s.id}" style="display:${s.id===active?'block':'none'}">
         <div class="rw-content" id="rwc-${s.id}">${hlKeywords(escH(s.content),r)}</div>
         <div class="rw-acts">
           <button class="rw-btn rw-primary" onclick="copyRW('${s.id}')">📋 Copy ${s.label}</button>
           <button class="rw-btn rw-sec" onclick="copyRWPlain('${s.id}')">Plain text</button>
         </div>
-      </div>`).join('')}`;
+      </div>`).join('')}
+    ${!hasExp ? `
+      <div id="rws-exp" style="display:none">
+        <div id="rw-exp-inner">
+          <div style="padding:24px 0 10px;text-align:center">
+            <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Rewrite your experience bullets with the top missing keywords from this job description woven in naturally.</div>
+            <button class="rw-btn rw-primary" style="font-size:13px;padding:10px 22px" onclick="generateRewrittenExperience()">✦ Generate Experience Rewrite</button>
+          </div>
+        </div>
+      </div>` : ''}`;
 
   window.showRWS = (id) => {
     active = id;
-    sections.forEach(s => { const w = document.getElementById('rws-'+s.id); if(w) w.style.display = s.id===id?'block':'none'; });
-    document.querySelectorAll('.rw-sbtn').forEach((b,i) => b.classList.toggle('on', sections[i]?.id === id));
+    const allIds = [...allSections.map(s=>s.id), 'exp'];
+    allIds.forEach(sid => { const w = document.getElementById('rws-'+sid); if(w) w.style.display = sid===id?'block':'none'; });
+    document.querySelectorAll('.rw-sbtn').forEach(b => b.classList.toggle('on', b.textContent.replace(' ✦','') === (id==='exp'?'Experience':allSections.find(s=>s.id===id)?.label||'')));
+    const expBtn = document.getElementById('rw-sbtn-exp'); if (expBtn) expBtn.classList.toggle('on', id==='exp');
   };
+}
+
+async function generateRewrittenExperience() {
+  const inner = document.getElementById('rw-exp-inner');
+  if (!inner) return;
+  if (!userEmail) {
+    inner.innerHTML = '<div style="color:var(--tx2);font-size:13px;padding:16px 0">Sign in to generate experience rewrites. <a href="/login.html" style="color:var(--pu);font-weight:700">Sign in →</a></div>';
+    return;
+  }
+  inner.innerHTML = '<div class="thinking" style="padding:20px 0"><div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><span class="tlbl">Rewriting experience bullets with your target keywords...</span></div>';
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: 'expand',
+        mode: 'match_expand',
+        field: 'rewrittenExperience',
+        userEmail: userEmail || null,
+        resumeText: resumeContent,
+        jobDescription: jobContent
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      if (data.error === 'login_required') { inner.innerHTML = '<div style="color:var(--tx2);font-size:13px;padding:16px 0">Sign in to generate experience rewrites. <a href="/login.html" style="color:var(--pu)">Sign in →</a></div>'; return; }
+      throw new Error(data.message || 'Failed to generate');
+    }
+    const text = (data.answer || '').trim();
+    if (!text) throw new Error('Empty response');
+    // Store on the analysis object so download/copy functions pick it up
+    if (analysis) analysis.rewrittenExperience = text;
+    const content = text.replace(/\\n/g, '\n');
+    inner.innerHTML = `
+      <div class="rw-content" id="rwc-exp" style="margin-top:4px">${hlKeywords(escH(content), analysis||{})}</div>
+      <div class="rw-acts">
+        <button class="rw-btn rw-primary" onclick="copyRW('exp')">📋 Copy Experience</button>
+        <button class="rw-btn rw-sec" onclick="copyRWPlain('exp')">Plain text</button>
+        <button class="rw-btn rw-sec" onclick="generateRewrittenExperience()">🔄 Regenerate</button>
+      </div>`;
+    showToast('Experience bullets rewritten');
+  } catch(e) {
+    inner.innerHTML = `<div style="color:var(--tx2);font-size:13px;padding:16px 0">Could not generate. <button class="rw-btn rw-sec" onclick="generateRewrittenExperience()" style="margin-left:8px">Try again</button></div>`;
+  }
 }
 
 function hlKeywords(text,r) {
