@@ -591,7 +591,7 @@ footer span{color:var(--gold);font-weight:600}
       <div class="loading-ring"></div>
       <div>
         <div style="font-size:18px;font-weight:700;color:var(--tx);margin-bottom:5px">Analyzing your resume...</div>
-        <div style="font-size:13px;color:var(--tx3)">15, 20 seconds. Worth every one.</div>
+        <div style="font-size:13px;color:var(--tx3)">Usually 45, 60 seconds. Worth every one.</div>
       </div>
       <div class="ls-list">
         <div class="ls-item active" id="ls1"><div class="ls-dot"></div>Parsing resume content</div>
@@ -599,7 +599,11 @@ footer span{color:var(--gold);font-weight:600}
         <div class="ls-item" id="ls3"><div class="ls-dot"></div>Running ATS compatibility check</div>
         <div class="ls-item" id="ls4"><div class="ls-dot"></div>Scoring section by section</div>
         <div class="ls-item" id="ls5"><div class="ls-dot"></div>Rewriting for maximum match</div>
+<<<<<<< HEAD
         <div class="ls-item" id="ls6"><div class="ls-dot"></div>Finalizing your full report</div>
+=======
+        <div class="ls-item" id="ls6"><div class="ls-dot"></div>Finalizing optimization report</div>
+>>>>>>> bd5ed9f2cf49c152a062e41440d989d2e946c292
       </div>
     </div>
 
@@ -615,8 +619,7 @@ footer span{color:var(--gold);font-weight:600}
           <button class="rtab" id="rt4" onclick="swRT(4)">📄 Rewritten Resume</button>
           <button class="rtab" id="rt5" onclick="swRT(5)">📧 Cover Letter</button>
           <button class="rtab" id="rt6" onclick="swRT(6)">💼 LinkedIn</button>
-          <button class="rtab" id="rt7" onclick="swRT(7)">🎯 Interview Prep</button>
-          <button class="rtab" id="rt8" onclick="swRT(8)">✉ Emails</button>
+          <button class="rtab" id="rt7" onclick="swRT(7)">✉ Emails</button>
         </div>
         <div class="rpanes-wrap">
           <div class="rpane on" id="rp1"></div>
@@ -626,7 +629,6 @@ footer span{color:var(--gold);font-weight:600}
           <div class="rpane" id="rp5"></div>
           <div class="rpane" id="rp6"></div>
           <div class="rpane" id="rp7"></div>
-          <div class="rpane" id="rp8"></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;gap:10px">
@@ -936,6 +938,52 @@ function updateCC(id,cid){
   el.className='cc'+(len>500?' ok':len>0?' warn':'');
 }
 
+function extractJsonPayload(rawText) {
+  const text = String(rawText || '').replace(/```json|```/gi, '').trim();
+  if (!text) throw new Error('Empty response from optimizer.');
+
+  const start = text.indexOf('{');
+  if (start < 0) throw new Error('No JSON object found in response.');
+
+  let depth = 0, inStr = false, esc = false, end = -1;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (inStr) {
+      if (esc) { esc = false; continue; }
+      if (ch === '\\') { esc = true; continue; }
+      if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') { inStr = true; continue; }
+    if (ch === '{') depth++;
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0) { end = i; break; }
+    }
+  }
+  if (end < 0) throw new Error('Incomplete JSON object returned.');
+
+  let candidate = text.slice(start, end + 1).trim();
+  const attempts = [
+    candidate,
+    candidate.replace(/,\s*([}\]])/g, '$1'),
+    candidate.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/,\s*([}\]])/g, '$1')
+  ];
+  for (const attempt of attempts) {
+    try { return JSON.parse(attempt); } catch (e) {}
+  }
+  throw new Error('Optimizer returned invalid JSON. Please try again.');
+}
+
+function composeQuestionObjective(q) {
+  const category = (q?.category || 'this role').toString().toLowerCase();
+  if (category.includes('technical')) return 'Prove you can do the core work of the role without ramp risk.';
+  if (category.includes('behavior')) return 'Show repeatable decision-making and ownership under pressure.';
+  if (category.includes('culture')) return 'Demonstrate team fit and motivation aligned to the company.';
+  if (category.includes('gap')) return 'Address the risk signal directly and show a concrete mitigation plan.';
+  return 'Show clear, role-relevant impact with specific examples and outcomes.';
+}
+
 // ── LOADING ANIMATION ─────────────────────────────────────────────────────────
 function animateLoading(){
   const delays=[0,2500,5000,7500,10500,14000];
@@ -1039,6 +1087,7 @@ Return ONLY valid JSON (no markdown, no explanation):
     {
       "category": "Behavioral|Technical|Gap-based|Culture",
       "question": "Specific question based on actual gap between resume and JD",
+      "objective": "What interviewer is trying to validate with this question for this role",
       "why": "Why this will be asked — references specific gap found"
     }
   ]
@@ -1056,7 +1105,13 @@ Return ONLY valid JSON (no markdown, no explanation):
       signal: abortCtrl.signal
     });
 
-    const data = await res.json();
+    const rawResponse = await res.text();
+    let data = {};
+    try {
+      data = rawResponse ? JSON.parse(rawResponse) : {};
+    } catch (err) {
+      throw new Error('Optimizer service returned an invalid response. Please retry.');
+    }
 
     if (res.status === 403 && data.error === 'free_limit_reached') {
       document.getElementById('stageLoading').style.display = 'none';
@@ -1090,13 +1145,24 @@ Return ONLY valid JSON (no markdown, no explanation):
       return;
     }
 
-    if (!res.ok) throw new Error(data.message || data.error || 'Something went wrong');
+    if (!res.ok) throw new Error(data.message || data.error || 'Optimizer request failed.');
+    if (!data || typeof data.answer !== 'string') {
+      throw new Error('Optimizer did not return analysis data. Please retry.');
+    }
 
+<<<<<<< HEAD
     const raw = (data.answer || '').replace(/```json|```/g,'').replace(/^[\s\S]*?(?=\{)/,'').trim();
     const jm  = raw.match(/\{[\s\S]*\}/);
     if (!jm) throw new Error('Could not parse response. Please try again.');
     try { analysis = JSON.parse(jm[0]); }
     catch(pe) { throw new Error('Response was not valid JSON — please try again. (' + pe.message + ')'); }
+=======
+    analysis = extractJsonPayload(data.answer || '');
+    analysis.interviewQuestions = (analysis.interviewQuestions || []).map(q => ({
+      ...q,
+      objective: q.objective || composeQuestionObjective(q)
+    }));
+>>>>>>> bd5ed9f2cf49c152a062e41440d989d2e946c292
 
     // Save to analysis history
     saveAnalysisHistory({
@@ -1121,12 +1187,16 @@ Return ONLY valid JSON (no markdown, no explanation):
     }, 800);
 
   } catch(e) {
+<<<<<<< HEAD
     clearTimeout(abortTimeout);
     if (e.name === 'AbortError') return; // timeout handler already showed toast & reset UI
+=======
+    console.error('runAnalysis error:', e);
+>>>>>>> bd5ed9f2cf49c152a062e41440d989d2e946c292
     document.getElementById('stageLoading').style.display = 'none';
     document.getElementById('stageInput').style.display = 'block';
     setStep(1);
-    showToast('Error: ' + (e.message || 'Something went wrong. Please try again.'));
+    showToast('Error: Optimizer response failed validation. Please try again.');
   }
 }
 
@@ -1270,7 +1340,7 @@ async function generateCL() {
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         try {
-          const d = JSON.parse(line.slice(6));
+          const d = parseJSONOrThrow(line.slice(6), 'Stream event');
           if (d.text) { coverLetter += d.text; out.textContent = coverLetter; }
           if (d.done) { if (acts) acts.style.display = 'flex'; showToast('Cover letter ready — unique to this role'); }
           if (d.error) throw new Error(d.message || 'Stream error');
@@ -1311,7 +1381,7 @@ Return ONLY this JSON (no markdown):
     const raw = (data.answer || '').replace(/```json|```/g,'');
     const jm  = raw.match(/\{[\s\S]*\}/);
     if (!jm) throw new Error('No JSON in response');
-    const d = JSON.parse(jm[0]);
+    const d = parseJSONOrThrow(jm[0], 'LinkedIn response');
     content.innerHTML = renderLIContent(d);
     showToast('LinkedIn optimization ready');
   } catch(e) {
@@ -1330,7 +1400,6 @@ function renderAll(r) {
   renderRewrite(r);
   renderCoverLetterPane();
   renderLinkedInPane(r);
-  renderInterviewPrep(r);
   renderEmailTemplates(r);
 }
 
@@ -1680,13 +1749,13 @@ function renderLIContent(r) {
 
 function renderInterviewPrep(r) {
   const qs = r.interviewQuestions || [];
-  setStep(4);
   document.getElementById('rp7').innerHTML = `
     <div style="font-size:13px;color:var(--tx2);margin-bottom:18px;line-height:1.6">Based on your resume gaps and this specific job description these are the questions you are most likely to face. Know these cold before you walk in.</div>
     <div class="iq-list">${qs.map(q=>`
       <div class="iq-item">
         <div class="iq-cat">${escH(q.category)}</div>
         <div class="iq-q">${escH(q.question)}</div>
+        <div style="margin-top:8px;font-size:12px;color:#c8a84b;line-height:1.55"><strong style="color:#e6c668">Objective:</strong> ${escH(q.objective || composeQuestionObjective(q))}</div>
         <div class="iq-why">⚡ ${escH(q.why)}</div>
       </div>`).join('')}
     </div>
@@ -1705,7 +1774,7 @@ window._emailOutputs = {};
 function renderEmailTemplates(r) {
   const company = document.getElementById('matchCompanyInput')?.value?.trim() || '';
   const salaryMid = r?.salaryData?.mid || '';
-  document.getElementById('rp8').innerHTML = `
+  document.getElementById('rp7').innerHTML = `
     <div style="font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.6">3 emails that move hiring decisions — each written from your actual resume and this job, never a template.</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
       <button class="em-tab on" id="emtab-followup" onclick="showEmailTab('followup')">📬 Follow-up</button>
@@ -1848,9 +1917,11 @@ function downloadAll() {
 
 // ── TAB & STEP SWITCHING ──────────────────────────────────────────────────────
 function swRT(n) {
-  for(let i=1;i<=8;i++){
-    document.getElementById('rt'+i).classList.toggle('on',i===n);
-    document.getElementById('rp'+i).classList.toggle('on',i===n);
+  for(let i=1;i<=7;i++){
+    const tab = document.getElementById('rt'+i);
+    const pane = document.getElementById('rp'+i);
+    if (tab) tab.classList.toggle('on',i===n);
+    if (pane) pane.classList.toggle('on',i===n);
   }
 }
 
@@ -2045,10 +2116,10 @@ async function buildGapEntry() {
     const objMatch  = raw.match(/\{[\s\S]*\}/);
     let entries = [];
     if (arrMatch) {
-      const parsed = JSON.parse(arrMatch[0]);
+      const parsed = parseJSONOrThrow(arrMatch[0], 'Gap entries response');
       entries = Array.isArray(parsed) ? parsed : [parsed];
     } else if (objMatch) {
-      entries = [JSON.parse(objMatch[0])];
+      entries = [parseJSONOrThrow(objMatch[0], 'Gap entries response')];
     } else {
       throw new Error('No JSON in response');
     }
@@ -2579,9 +2650,15 @@ async function matchResearchCompany() {
   if (!company) { showToast('Enter a company name first'); return; }
   const btn  = document.getElementById('matchResearchBtn');
   const card = document.getElementById('matchIntelCard');
+  const fallbackIntel = buildCompanyIntelFallback(company);
+  window.matchCompanyIntel = fallbackIntel;
+
   btn.disabled = true; btn.textContent = '⏳';
   card.style.display = 'block';
-  card.innerHTML = '<span style="color:#8a87a0">Researching ' + escH(company) + '...</span>';
+  card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(fallbackIntel.industry || 'Not available')}<br>
+    <span style="color:#e6c668">Interview style:</span> ${escH(fallbackIntel.interviewStyle || 'Structured interviews')}<br>
+    <span style="color:#e6c668">What they look for:</span> ${escH(fallbackIntel.whatTheyLookFor || 'Ownership and measurable impact')}<br>
+    <span style="font-size:11px;color:#8a87a0">Loading live company intel...</span>`;
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
@@ -2592,7 +2669,7 @@ async function matchResearchCompany() {
     const d = await res.json();
     const rawIntel = (d.answer || '').replace(/```json|```/g,'');
     const jmIntel = rawIntel.match(/\{[\s\S]*\}/);
-    const intel = jmIntel ? JSON.parse(jmIntel[0]) : null;
+    const intel = jmIntel ? parseJSONOrThrow(jmIntel[0], 'Company intel response') : null;
     if (!intel) throw new Error('No JSON in response');
     window.matchCompanyIntel = intel;
     card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(intel.industry || '')} &middot; ${escH(intel.size || '')}<br>
@@ -2601,10 +2678,31 @@ async function matchResearchCompany() {
       <span style="font-size:11px;color:#8a87a0">Intel injected into cover letter &amp; LinkedIn optimizer</span>`;
     showToast('Company intel loaded');
   } catch(e) {
-    card.innerHTML = '<span style="color:#ef5f5f">Could not fetch. Try again.</span>';
-    window.matchCompanyIntel = null;
+    const intel = buildCompanyIntelFallback(company);
+    window.matchCompanyIntel = intel;
+    card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(intel.industry || 'Not available')}<br>
+      <span style="color:#e6c668">Interview style:</span> ${escH(intel.interviewStyle || 'Structured interviews')}<br>
+      <span style="color:#e6c668">What they look for:</span> ${escH(intel.whatTheyLookFor || 'Ownership and measurable impact')}<br>
+      <span style="font-size:11px;color:#8a87a0">Fallback intel loaded — continue with optimization.</span>`;
+    console.error('matchResearchCompany error:', e);
+    showToast('Company research fallback loaded');
   }
   btn.disabled = false; btn.textContent = '🔍 Research';
+}
+
+function buildCompanyIntelFallback(company) {
+  const c = (company || '').toLowerCase();
+  const govSignals = ['city', 'county', 'state', 'municipal', 'public', 'transit', 'utility', 'utilities'];
+  const isGov = govSignals.some(s => c.includes(s));
+  return {
+    industry: isGov ? 'Public sector / municipal services' : 'General',
+    interviewStyle: isGov
+      ? 'Panel-based interviews focused on compliance, process reliability, and stakeholder communication'
+      : 'Structured, competency-based interviews focused on role fit',
+    whatTheyLookFor: isGov
+      ? 'Execution consistency, policy awareness, cross-team communication, and measurable service outcomes'
+      : 'Role alignment, measurable outcomes, collaboration, and communication'
+  };
 }
 
 // ── RESUME VERSIONING (localStorage, up to 5 versions) ───────────────────────
@@ -2773,7 +2871,7 @@ async function runSkillsGap() {
       const rawSg = (data.answer || '').replace(/```json|```/g,'');
       const jmSg  = rawSg.match(/\{[\s\S]*\}/);
       if (!jmSg) throw new Error('no json');
-      parsed = JSON.parse(jmSg[0]);
+      parsed = parseJSONOrThrow(jmSg[0], 'Skills gap response');
     } catch(e) {
       result.innerHTML = `<div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:20px;white-space:pre-wrap;font-size:13px;color:var(--tx);line-height:1.7">${escH(data.answer || '')}</div>`;
       return;
@@ -3174,7 +3272,7 @@ function downloadAll() { downloadResume('txt'); }
     if (!hash.startsWith('#prept=')) return;
 
     const encoded = hash.slice(7);
-    const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    const data = parseJSONOrThrow(decodeURIComponent(escape(atob(encoded))), 'Extension payload');
 
     if (data.description) {
       const jdEl = document.getElementById('jobText');
