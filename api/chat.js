@@ -91,6 +91,76 @@ async function logUsage(email, mode) {
   return !error;
 }
 
+// ── ATS INTELLIGENCE MODULE ───────────────────────────────────────────────────
+// Baseline knowledge compiled from Workday, Greenhouse, Lever, iCIMS, Taleo,
+// SmartRecruiters, BambooHR, and ADP research (Q2 2026).
+// Override this at runtime by inserting a row into the Supabase `ats_intel` table
+// via POST /api/chat with mode:"ats_update" and a valid ATS_ADMIN_SECRET.
+const ATS_INTEL_BASELINE = {
+  version: "2026-Q2-baseline",
+  updated_at: "2026-04-28",
+  content: `WORKDAY (2025-2026 dominant in Fortune 500):
+Skills Cloud ontology: uses semantic graph matching — explicitly name standard skill taxonomy terms (e.g., "Microsoft Excel" not "Excel spreadsheets"; "Salesforce CRM" not "CRM platforms"). Skills listed in skills section but absent from experience bullets trigger Skills Inflation flag (added 2024). Parser fails on: two-column layouts, text in tables, fonts below 10pt. Date format required: Month YYYY.
+
+GREENHOUSE (mid-market to enterprise):
+Parser: Textkernel/Sovren. Scorecard-based — job title, first two required qualifications, and "must-have" fields carry disproportionate weight vs. preferred. AI Candidate Signals (2024): scores tenure progression, leadership indicators, growth trajectory from experience history — not keyword density alone. Known parse failure: hyperlinked text covering section headers. Accepts PDF/DOCX; rejects .pages.
+
+LEVER / JOBVITE (Employ Inc. unified platform, 2023+):
+Job-title-biased keyword extraction — the target job title appearing verbatim in the candidate's experience job titles is the single highest-weighted signal. Candidates should ensure their held titles are as close as possible to the target title (or note equivalency in the summary). Modern parser; handles single-column PDFs well. No native table parsing.
+
+iCIMS (mid-market; IntelliSearch engine):
+TF-IDF + semantic expansion. Known parse failures: PDF text layers below images, headers/footers (content dropped entirely — contact info in Word header element is lost), resumes over 3 pages (silently truncated), .docx files renamed from .doc. Added AI Copilot scoring in 2023; criteria set per-job by recruiter so keyword weights are configurable, not universal. iCIMS Copilot surfaces a rank score — consistent, specific experience descriptions score higher than vague summaries.
+
+TALEO / ORACLE (legacy; common in government, healthcare, old enterprise):
+Weakest semantic layer of major systems — exact-match keyword weighting still dominates in 2025. Exact phrase repetition matters here more than any other system. Known failures: PDF from Mac Word (encoding issues), Unicode bullet characters (▪ ◦), files over 2MB, date formats other than Month YYYY or MM/YYYY. No AI screening layer as of 2025.
+
+SMARTRECRUITERS (Hiring Success methodology):
+Two-stage: (1) knockout questions (structured pre-screen) applied before resume is parsed — candidates who fail knockouts never reach ATS scoring. Advise candidates to read knockout questions carefully. (2) Textkernel parser for remaining candidates; resume matching score is secondary to knockout pass/fail. Emphasis on culture-fit and competency indicators.
+
+BAMBOOHR (SMB market):
+Lightweight ATS, minimal AI screening. Human recruiter reads resumes directly — visual formatting quality matters more here than parser compliance. Busy templates, color blocks, sidebar sections hurt readability on small screens. Standard format with clear section breaks performs best.
+
+ADP WORKFORCE NOW:
+Below-average parser quality. Known to drop: content in tables (entire table dropped), text in shapes, resume content after page 2. Keyword matching relies on requisition-level terms set by HR admin. No semantic inference layer. Standard Arial/Calibri, single-column, body-text-only contact info required.
+
+UNIVERSAL RULES (all systems 2025+):
+- Contact info must be in document body (not Word header/footer element)
+- Date format: "Month YYYY" or "MM/YYYY" — avoid "2021-present", "Jan '21", slashes like 1/2021
+- Font: 10-12pt minimum; sub-10pt content may be skipped by parser
+- No shapes, SmartArt, charts, or embedded objects — content is silently dropped
+- File name: use alphanumeric only, no spaces or special chars (e.g., FirstName_LastName_Resume.pdf)
+- AI content detection is now NATIVE in Workday, Greenhouse, SmartRecruiters (2025) — it is embedded in the screening score, not a separate third-party tool
+- Skills-experience consistency: every technical skill listed must appear in at least one experience bullet`
+};
+
+// Module-level cache so each serverless instance fetches at most once per hour
+let _atsCache = { doc: null, fetchedAt: 0 };
+const ATS_CACHE_TTL = 60 * 60 * 1000; // 1 hour
+
+async function getATSIntelDoc() {
+  const now = Date.now();
+  if (_atsCache.doc && (now - _atsCache.fetchedAt) < ATS_CACHE_TTL) {
+    return _atsCache.doc;
+  }
+  try {
+    const { data } = await supabase
+      .from('ats_intel')
+      .select('content, updated_at, version')
+      .eq('is_active', true)
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .single();
+    const doc = data || ATS_INTEL_BASELINE;
+    _atsCache = { doc, fetchedAt: now };
+    return doc;
+  } catch {
+    // Supabase unavailable or table doesn't exist yet — fall back to baseline
+    _atsCache = { doc: ATS_INTEL_BASELINE, fetchedAt: now };
+    return ATS_INTEL_BASELINE;
+  }
+}
+
+
 // ── SANITIZATION ──────────────────────────────────────────────────────────────
 function sanitize(str, maxLen = 8000) {
   if (typeof str !== "string") return "";
@@ -687,7 +757,10 @@ RULES:
 }
 
 // ── RESUME MATCH PROMPT ───────────────────────────────────────────────────────
-function buildMatchPrompt() {
+function buildMatchPrompt(atsIntelDoc = null) {
+  const doc = atsIntelDoc || ATS_INTEL_BASELINE;
+  const atsBlock = `\nCURRENT ATS SYSTEM INTELLIGENCE (version: ${doc.version || 'baseline'}, updated: ${(doc.updated_at || '').slice(0,10)}):\n${doc.content}\n`;
+
   return `You are PREPT AI Match — a precision ATS optimization engine trained on how Applicant Tracking Systems actually score resumes and what human recruiters look for in the first 6 seconds of review.
 
 MODERN SCREENING REALITY (2025+):
@@ -695,7 +768,14 @@ MODERN SCREENING REALITY (2025+):
 - Skills-first hiring is mainstream, so transferable skills and adjacent tool experience should be surfaced explicitly.
 - Recruiters still scan fast, so clarity, measurable outcomes, and role-language alignment remain critical.
 - ATS parsing is still fragile with non-standard formatting (tables/columns/graphics), so format compliance matters.
-
+- Skills inflation is now detected: skills listed but not backed by any experience bullet trigger automated flags in Workday Skills Cloud and Greenhouse Signals.
+- Keyword LOCATION determines weight: job title > experience bullet > skills section. A keyword only in the skills section scores 30-50% lower than the same term in a bullet or held job title.
+- Semantic/ontological matching is mainstream (Workday Skills Cloud, iCIMS IntelliSearch, LinkedIn): adjacent skill terms count, but explicit canonical naming scores highest.
+- Tenure patterns are AI-scored: consecutive short stints (<12 months), unexplained gaps >6 months, and career level reversals generate automated risk flags in Greenhouse Signals and Workday AI.
+- AI content detection is now NATIVE in enterprise ATS (2025): embedded in Workday, Greenhouse, and SmartRecruiters screening scores — not a separate third-party tool.
+- Date format failures: formats other than "Month YYYY" or "MM/YYYY" cause parse errors in Taleo and older iCIMS.
+- Content in Word header/footer elements, shapes, SmartArt, and fonts below 10pt are silently dropped by ADP and iCIMS parsers.
+${atsBlock}
 YOUR ANALYSIS MUST BE SURGICAL AND SPECIFIC. Every finding must reference actual content from the resume. No generic advice.
 
 QUANTIFICATION ANALYSIS:
@@ -703,6 +783,14 @@ Count every bullet point in the work experience section. Identify which ones con
 
 FORMAT COMPLIANCE ANALYSIS:
 Scan for ATS-hostile formatting: tables, multi-column layouts, headers/footers, text boxes, graphics, special characters (■, ●, →, etc.), non-standard section titles, missing standard sections. Each issue reduces ATS parse accuracy by 10-30%.
+Also flag these 2025-specific failures:
+- Contact info placed in Word header/footer element (dropped entirely by iCIMS and ADP — must be in document body)
+- Date formats other than "Month YYYY" or "MM/YYYY" (parse failures in Taleo and older iCIMS)
+- Font size below 10pt in any section (content may be skipped entirely by some parsers)
+- Text embedded in shapes, charts, SmartArt, or objects (silently dropped by ADP, Taleo, older iCIMS)
+- Resume length exceeding 2 pages for non-executive / non-academic roles (many systems truncate at page 3)
+- File name issues (spaces or special characters in file name cause upload failures in some ATS implementations)
+- "References available upon request" as a section header (some parsers misread as a skill)
 
 CONTACT INFO AUDIT:
 Check for presence of: email address, phone number, LinkedIn URL, location (city/state minimum), GitHub or portfolio URL (for technical roles). Missing contact fields cause ATS rejection at the parsing stage.
@@ -713,8 +801,8 @@ Categorize every action verb:
 - WEAK (0 points): helped, worked on, assisted, was responsible for, participated in, involved in, supported, contributed to
 Calculate: actionVerbScore = (strongVerbs / totalVerbs) * 100
 
-AI WRITING DETECTION ANALYSIS (Critical — 46% of recruiters now use AI detectors):
-Employers use tools like Workday AI Screening, Greenhouse signal scoring, iCIMS IntelliSearch, Originality.ai, and GPTZero to automatically flag AI-generated resumes. Analyze this resume for these specific red flags:
+AI WRITING DETECTION ANALYSIS (Critical — AI detection is now native in enterprise ATS as of 2025):
+AI content detection is embedded directly in Workday AI Screening, Greenhouse Candidate Signals, and SmartRecruiters scoring — it is no longer only a third-party tool. Resumes with high AI detection scores receive lower automated rankings before a human sees them. Analyze this resume for these specific red flags:
 
 OVERUSED AI PHRASE MARKERS — flag each exact phrase found in the resume:
 High-risk (5 pts each): "leverage", "leveraging", "spearhead", "spearheaded", "streamline", "synergy", "cutting-edge", "proven track record", "results-driven", "dynamic professional", "detail-oriented", "innovative", "holistic approach", "robust", "seamlessly", "transformative", "actionable insights", "foster collaboration", "drive growth", "passionate about", "dedicated to", "strategic mindset", "thought leader", "best-in-class", "forward-thinking", "impactful", "meticulous"
@@ -729,6 +817,15 @@ Calculate aiDetectionScore: sum all penalties, cap at 100.
 - 0–25: Low risk — reads as human-authored
 - 26–55: Medium risk — some AI signals present, detectors may flag
 - 56–100: High risk — strong AI patterns, will likely be flagged by automated screening
+
+SKILLS-EXPERIENCE CONSISTENCY ANALYSIS:
+Cross-reference the skills section against the experience section. Identify any skill listed in the skills section that does not appear (explicitly or contextually) in any experience bullet. Skills inflation — claiming expertise with zero experience evidence — is flagged by Workday Skills Cloud and Greenhouse Signals and reduces automated screening scores. For each unsupported skill, flag as an atsIssue (severity: "high") with fix: add a specific experience bullet demonstrating that skill in context. Calculate skillsConsistency.score as: (skills with experience backing / total skills listed) * 100.
+
+KEYWORD LOCATION ANALYSIS:
+For each keyword in keywordsCritical and top 3 in keywordsMissing: determine where it currently appears in the resume (job title, experience bullet, skills section only, or absent). Report in keywordPlacement with a specific recommendation for where to add or move it. A keyword appearing only in the skills section scores 30-50% lower than in an experience bullet; a keyword in a held job title scores highest of all.
+
+TENURE AND CHRONOLOGY RISK ANALYSIS:
+Analyze the employment timeline for: (a) unexplained gaps longer than 6 months — flag with exact date range; (b) 3+ consecutive roles each shorter than 12 months; (c) career level reversals (senior to junior title). For each flag, create an atsIssue with severity "medium" and a specific mitigation (e.g., add a brief gap explanation line, reframe as contract/consulting work, address directly in summary). Note: these patterns are scored by automated AI screening at Greenhouse and Workday — proactive framing in the resume reduces their negative weight.
 
 RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the JSON):
 {
@@ -760,8 +857,8 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
   "quantifiedBullets": <integer — count of bullets with numbers>,
   "totalBullets": <integer — total experience bullets found>,
   "actionVerbScore": <integer 0-100>,
-  "formatWarnings": [<string — specific format issues found, e.g. "Table detected in experience section — ATS will misread column order">],
-  "contactInfoIssues": [<string — e.g. "LinkedIn URL missing — recruiters check LinkedIn before scheduling">],
+  "formatWarnings": [<string — specific format issues found>],
+  "contactInfoIssues": [<string — e.g. "LinkedIn URL missing">],
   "topPriorityFixes": [
     {"rank": 1, "title": <string>, "impact": <string — e.g. "+12 ATS points">, "action": <string — exact instruction>},
     {"rank": 2, "title": <string>, "impact": <string>, "action": <string>},
@@ -771,6 +868,23 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
   "keywordsMissing": [<strings — exact phrases from JD not in resume>],
   "keywordsCritical": [<strings — subset of missing that appear 3+ times in JD or are in job title>],
   "keywordAnalysis": <string — specific analysis of the keyword gap for THIS job>,
+  "keywordPlacement": [
+    {
+      "keyword": <string — the keyword>,
+      "currentLocation": <"job_title"|"experience_bullet"|"skills_only"|"missing">,
+      "recommendation": <string — exactly where to add or move it for maximum ATS weight>
+    }
+  ],
+  "skillsConsistency": {
+    "score": <integer 0-100 — % of listed skills backed by experience evidence>,
+    "unsupportedSkills": [<strings — skills listed but absent from experience bullets>],
+    "note": <string — brief summary>
+  },
+  "tenureRisk": {
+    "flagged": <boolean>,
+    "issues": [<strings — specific flags found, e.g. "Gap: Jun 2022 - Feb 2023 (8 months) — no explanation">],
+    "note": <string — overall tenure pattern assessment>
+  },
   "atsIssues": [
     {
       "severity": <"high"|"medium"|"low">,
@@ -803,8 +917,8 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
   "aiDetectionRisk": {
     "score": <integer 0-100 — calculated AI likelihood score>,
     "level": <"low"|"medium"|"high">,
-    "flaggedPhrases": [<strings — exact overused/AI-marker phrases found verbatim in the resume, empty array if none>],
-    "humanizeAdvice": <string — 1-2 specific, actionable sentences telling the candidate exactly how to rewrite to reduce AI signals, referencing actual flagged content>
+    "flaggedPhrases": [<strings — exact overused/AI-marker phrases found verbatim in the resume>],
+    "humanizeAdvice": <string — 1-2 specific actionable sentences referencing actual flagged content>
   }
 }
 
@@ -816,8 +930,13 @@ QUALITY RULES — NEVER VIOLATE:
 - every interviewQuestions item must include objective that is role-specific and concrete
 - salaryData ranges must be realistic for the role title and location context in the JD
 - If the resume has no professional summary, still provide a rewrittenSummary based on their experience
-- quantificationScore of 0 means zero bullets have metrics — be accurate, not generous`;
+- quantificationScore of 0 means zero bullets have metrics — be accurate, not generous
+- skillsConsistency.unsupportedSkills must list actual skills from the resume skills section
+- keywordPlacement must cover all keywordsCritical items plus top missing keywords
+- tenureRisk.issues must cite actual dates from the resume if flagging gaps or short stints`;
 }
+
+
 
 
 // ── MOCK QUESTION GENERATOR ,  free mode, no credit consumption ────────────────
@@ -1250,7 +1369,7 @@ export default async function handler(req, res) {
     previousQuestion, userAnswer, answers, systemOverride, companyIntel
   } = req.body;
 
-  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company","gapentry","appfollowup","emailthankyou","negotiation"];
+  const validModes = ["chat","match","followup","thankyou","mockgen","salary","skillsgap","asyncvideo","adaptive","debrief","jenn","coverletter","linkedin","mockanswer","company","gapentry","appfollowup","emailthankyou","negotiation","ats_update"];
   if (!message || typeof message !== "string") return res.status(400).json({ error: "Message is required" });
   if (!mode || !validModes.includes(mode)) return res.status(400).json({ error: "Invalid mode" });
 
@@ -1485,9 +1604,43 @@ export default async function handler(req, res) {
     }
   }
 
+  // ── ATS INTEL ADMIN UPDATE ──────────────────────────────────────────────────
+  // Requires ATS_ADMIN_SECRET env var to be set.
+  // POST body: { mode:"ats_update", adminSecret:"...", content:"...", version:"2026-Q3", notes:"..." }
+  if (mode === 'ats_update') {
+    const { adminSecret, content: intelContent, version: intelVersion, notes: intelNotes } = req.body;
+    const expectedSecret = process.env.ATS_ADMIN_SECRET;
+    if (!expectedSecret || adminSecret !== expectedSecret) {
+      return res.status(403).json({ error: 'unauthorized', message: 'Invalid admin secret.' });
+    }
+    if (!intelContent || intelContent.length < 100) {
+      return res.status(400).json({ error: 'invalid_content', message: 'Content too short (minimum 100 characters).' });
+    }
+    try {
+      // Deactivate existing active records
+      await supabase.from('ats_intel').update({ is_active: false }).eq('is_active', true);
+      // Insert new record
+      const { error: insertErr } = await supabase.from('ats_intel').insert({
+        version: intelVersion || new Date().toISOString().slice(0, 7),
+        content: intelContent,
+        notes: intelNotes || null,
+        updated_by: cleanEmail || 'admin',
+        is_active: true,
+        token_count: Math.ceil(intelContent.length / 4),
+      });
+      if (insertErr) throw insertErr;
+      // Flush module-level cache so next match request picks up new intel
+      _atsCache = { doc: null, fetchedAt: 0 };
+      return res.status(200).json({ ok: true, message: 'ATS intelligence updated. Cache flushed. Next analysis will use the new document.' });
+    } catch (err) {
+      console.error('ats_update error:', err);
+      return res.status(500).json({ error: 'db_error', message: err.message || 'Failed to update ATS intel.' });
+    }
+  }
+
   // Build system prompt
   let systemPrompt;
-  if      (mode === "match")    systemPrompt = buildMatchPrompt();
+  if      (mode === "match")  { const atsIntel = await getATSIntelDoc(); systemPrompt = buildMatchPrompt(atsIntel); }
   else if (mode === "followup") systemPrompt = buildFollowUpPrompt(cleanSector, cleanRole, cleanCompany, cleanResume, cleanJobDesc);
   else if (mode === "thankyou") systemPrompt = buildThankYouPrompt();
   else if (mode === "mockgen")  systemPrompt = buildMockGenPrompt(cleanSector, cleanRole, cleanCompany, cleanJobDesc);

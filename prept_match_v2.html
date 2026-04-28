@@ -1563,7 +1563,27 @@ function renderKeywords(r) {
       <div class="kwst"><span style="color:var(--am)">⚠</span> Critical add these first (${crit.length})</div>
       <div class="kwtags">${crit.map(k=>`<span class="kwtag kw-crit">${escH(k)}</span>`).join('')}</div>
     </div>`:''}
-    <div class="kw-analysis"><strong style="color:var(--gold2)">Why this matters:</strong> ${escH(r.keywordAnalysis||'Keywords are how ATS systems match your resume to the job. Missing keywords means filtered before a human reads it.')}</div>`;
+    <div class="kw-analysis"><strong style="color:var(--gold2)">Why this matters:</strong> ${escH(r.keywordAnalysis||'Keywords are how ATS systems match your resume to the job. Missing keywords means filtered before a human reads it.')}</div>
+    ${(()=>{
+      const kp = r.keywordPlacement || [];
+      if (!kp.length) return '';
+      const locColor = { job_title:'#45de7a', experience_bullet:'#38d9c0', skills_only:'#f5a52a', missing:'#ef5f5f' };
+      const locLabel = { job_title:'In title', experience_bullet:'In bullets', skills_only:'Skills only', missing:'Absent' };
+      return `<div style="margin-top:18px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);margin-bottom:10px">📍 Keyword placement strategy</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          ${kp.map(item=>{const c=locColor[item.currentLocation]||'#8a87a0';const l=locLabel[item.currentLocation]||item.currentLocation;return `<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px">
+            <div style="flex-shrink:0;margin-top:1px">
+              <span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:${c}22;border:1px solid ${c}44;color:${c}">${escH(l)}</span>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:2px">${escH(item.keyword||'')}</div>
+              <div style="font-size:11px;color:var(--tx3);line-height:1.5">${escH(item.recommendation||'')}</div>
+            </div>
+          </div>`;}).join('')}
+        </div>
+      </div>`;
+    })()}`;
 }
 
 function renderIssues(r) {
@@ -1579,12 +1599,40 @@ function renderIssues(r) {
 
   const allIssues = [...syntheticIssues, ...issues];
 
-  if (!allIssues.length) {
+  if (!allIssues.length && !r.skillsConsistency?.unsupportedSkills?.length && !r.tenureRisk?.flagged) {
     document.getElementById('rp2').innerHTML = '<div style="color:var(--gr);padding:30px;text-align:center;font-size:15px;font-weight:600">✓ No critical ATS issues detected</div>';
     return;
   }
+  const sc = r.skillsConsistency || {};
+  const tr = r.tenureRisk || {};
   document.getElementById('rp2').innerHTML = `
-    <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Found <strong style="color:var(--tx)">${allIssues.length} issue${allIssues.length!==1?'s':''}</strong> causing your resume to rank lower. Each has an exact fix.</div>
+    ${(()=>{
+      const parts = [];
+      // Skills consistency card
+      if ((sc.unsupportedSkills||[]).length > 0) {
+        const pct = sc.score ?? 0;
+        const col = pct >= 80 ? '#45de7a' : pct >= 50 ? '#f5a52a' : '#ef5f5f';
+        parts.push(`<div style="margin-bottom:14px;padding:12px 14px;background:rgba(239,95,95,0.05);border:1px solid rgba(239,95,95,0.18);border-radius:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3)">⚠ Skills-Experience Gap</div>
+            <div style="font-size:13px;font-weight:800;color:${col}">${pct}% backed</div>
+          </div>
+          <div style="font-size:12px;color:var(--tx2);margin-bottom:8px;line-height:1.55">${escH(sc.note||'Skills listed with no supporting experience evidence are flagged by Workday and Greenhouse.')}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px">${(sc.unsupportedSkills||[]).map(s=>`<span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;background:rgba(239,95,95,0.1);border:1px solid rgba(239,95,95,0.2);color:#ef9f9f">${escH(s)}</span>`).join('')}</div>
+          <div style="font-size:11px;color:var(--tx3);margin-top:8px">→ Add a bullet to at least one role demonstrating each flagged skill in context.</div>
+        </div>`);
+      }
+      // Tenure risk card
+      if (tr.flagged && (tr.issues||[]).length > 0) {
+        parts.push(`<div style="margin-bottom:14px;padding:12px 14px;background:rgba(245,165,42,0.05);border:1px solid rgba(245,165,42,0.2);border-radius:10px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:8px">⚠ Tenure Risk Flags</div>
+          <div style="font-size:12px;color:var(--tx2);margin-bottom:8px;line-height:1.55">${escH(tr.note||'These patterns trigger automated risk scores in Greenhouse Signals and Workday AI Screening.')}</div>
+          ${(tr.issues||[]).map(i=>`<div style="font-size:12px;color:var(--am);padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)">• ${escH(i)}</div>`).join('')}
+        </div>`);
+      }
+      return parts.join('');
+    })()}
+    ${allIssues.length ? `<div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Found <strong style="color:var(--tx)">${allIssues.length} issue${allIssues.length!==1?'s':''}</strong> causing your resume to rank lower. Each has an exact fix.</div>
     <div class="issue-list">${allIssues.map(i=>`
       <div class="issue-item">
         <div class="issue-sev sev-${i.severity==='high'?'h':i.severity==='medium'?'m':'l'}">${i.severity==='high'?'!':i.severity==='medium'?'~':'↑'}</div>
@@ -1594,7 +1642,7 @@ function renderIssues(r) {
           <div class="issue-fix">→ <span>${escH(i.fix)}</span></div>
         </div>
       </div>`).join('')}
-    </div>`;
+    </div>` : ''}`;
 }
 
 function renderBullets(r) {
