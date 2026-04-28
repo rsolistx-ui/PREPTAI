@@ -2625,10 +2625,31 @@ async function matchResearchCompany() {
       <span style="font-size:11px;color:#8a87a0">Intel injected into cover letter &amp; LinkedIn optimizer</span>`;
     showToast('Company intel loaded');
   } catch(e) {
-    card.innerHTML = '<span style="color:#ef5f5f">Could not fetch. Try again.</span>';
-    window.matchCompanyIntel = null;
+    const intel = buildCompanyIntelFallback(company);
+    window.matchCompanyIntel = intel;
+    card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(intel.industry || 'Not available')}<br>
+      <span style="color:#e6c668">Interview style:</span> ${escH(intel.interviewStyle || 'Structured interviews')}<br>
+      <span style="color:#e6c668">What they look for:</span> ${escH(intel.whatTheyLookFor || 'Ownership and measurable impact')}<br>
+      <span style="font-size:11px;color:#8a87a0">Fallback intel loaded — continue with optimization.</span>`;
+    console.error('matchResearchCompany error:', e);
+    showToast('Company research fallback loaded');
   }
   btn.disabled = false; btn.textContent = '🔍 Research';
+}
+
+function buildCompanyIntelFallback(company) {
+  const c = (company || '').toLowerCase();
+  const govSignals = ['city', 'county', 'state', 'municipal', 'public', 'transit', 'utility', 'utilities'];
+  const isGov = govSignals.some(s => c.includes(s));
+  return {
+    industry: isGov ? 'Public sector / municipal services' : 'General',
+    interviewStyle: isGov
+      ? 'Panel-based interviews focused on compliance, process reliability, and stakeholder communication'
+      : 'Structured, competency-based interviews focused on role fit',
+    whatTheyLookFor: isGov
+      ? 'Execution consistency, policy awareness, cross-team communication, and measurable service outcomes'
+      : 'Role alignment, measurable outcomes, collaboration, and communication'
+  };
 }
 
 // ── RESUME VERSIONING (localStorage, up to 5 versions) ───────────────────────
