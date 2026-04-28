@@ -455,7 +455,7 @@ footer span{color:var(--gold);font-weight:600}
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module" id="pdfjs-script"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <link rel="canonical" href="https://www.preptai.co/prept_match_v2.html">
   <script type="module" src="/speed-insights.js"></script>
@@ -531,7 +531,7 @@ footer span{color:var(--gold);font-weight:600}
               <div class="dz-sub">PDF, DOC, DOCX, or TXT</div>
               <div class="dz-btn">Browse files</div>
             </div>
-            <input type="file" id="rf" accept=".pdf,.doc,.docx,.txt" onchange="handleFile(event)" style="display:none"/>
+            <input type="file" id="rf" accept=".pdf,.doc,.docx,.txt,.PDF,.DOC,.DOCX,.TXT" onclick="this.value=''" onchange="handleFile(event)" style="display:none"/>
             <div class="ordiv">or paste text</div>
             <textarea class="bta" id="resumeText" placeholder="Paste your full resume here contact info, summary, experience, education, skills..." oninput="updateCC('resumeText','rcc')"></textarea>
             <div class="cc" id="rcc">0 characters</div>
@@ -862,9 +862,9 @@ function dzDrop(e){e.preventDefault();document.getElementById('dz').classList.re
 function handleFile(e){const f=e.target.files[0];if(f)processFile(f);}
 
 async function extractPdfText(arrayBuffer) {
-  // Load pdf.js dynamically (module script already loaded via CDN)
-  const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs');
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+  const pdfjsLib = window.pdfjsLib;
+  if (!pdfjsLib) throw new Error('PDF library not loaded — please paste your resume text instead.');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   let fullText = '';
   for (let i = 1; i <= pdf.numPages; i++) {
@@ -925,10 +925,13 @@ async function processFile(f) {
       showToast('For best results, paste your resume text directly.');
     }
   } catch(err) {
-    dz.innerHTML = `<div class="dz-icon">📄</div><div class="dz-title">Upload failed</div><div class="dz-sub" style="color:var(--re)">Please paste your resume text below instead.</div>`;
-    showToast('Could not read file — paste your resume text below.');
     console.error('File parse error:', err);
+    const errMsg = err?.message || 'Unknown error';
+    dz.innerHTML = `<div class="dz-icon">📄</div><div class="dz-title">Could not read file</div><div class="dz-sub" style="color:var(--re)">${escH(errMsg)}</div><div class="dz-sub" style="margin-top:4px">Please paste your resume text in the box below.</div>`;
+    showToast('File read failed — paste your resume text below.');
   }
+  // Always reset input so selecting the same file again triggers onchange
+  document.getElementById('rf').value = '';
 }
 
 function updateCC(id,cid){
