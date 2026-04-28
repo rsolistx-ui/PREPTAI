@@ -147,74 +147,6 @@ function tryParseJSONObject(raw) {
   return null;
 }
 
-function buildCompanyFallback(companyName = "") {
-  return {
-    company: companyName || "Company",
-    industry: "Not available",
-    size: "Not available",
-    interviewStyle: "Structured, competency-based interviews focused on role fit and execution.",
-    whatTheyLookFor: "Clear impact metrics, ownership, cross-functional collaboration, and communication clarity.",
-    culture: "Fast-paced, accountable, and collaborative.",
-    talkingPoint: "Highlight one quantified outcome that maps directly to the role’s top responsibility."
-  };
-}
-
-function buildMatchFallback(role = "") {
-  const inferredRole = role || "Target role";
-  return {
-    overallScore: 62,
-    projectedScore: 78,
-    targetRole: inferredRole,
-    grade: "C",
-    benchmarkNote: "Top candidates for this role usually score 80+.",
-    verdict: "The optimizer could not fully parse the model output. A fallback analysis was generated so you can continue. Re-run once for a fully detailed report.",
-    toneAnalysis: {
-      resumeTone: "neutral",
-      jdTone: "professional",
-      mismatch: false,
-      mismatchNote: "Tone analysis unavailable in fallback mode."
-    },
-    salaryData: {
-      low: "N/A",
-      mid: "N/A",
-      high: "N/A",
-      negotiationTip: "Anchor your ask to measurable impact and role scope."
-    },
-    sectionScores: { summary: 60, experience: 62, skills: 58, education: 70 },
-    quantificationScore: 40,
-    quantifiedBullets: 2,
-    totalBullets: 5,
-    actionVerbScore: 55,
-    formatWarnings: ["Fallback mode: run optimizer again for full format diagnostics."],
-    contactInfoIssues: [],
-    topPriorityFixes: [
-      { rank: 1, title: "Add quantified outcomes", impact: "+8 ATS points", action: "Add numbers to key experience bullets (revenue, time saved, % improvement)." },
-      { rank: 2, title: "Align skills section to JD", impact: "+6 ATS points", action: "Mirror exact role keywords from the job description in Skills." },
-      { rank: 3, title: "Strengthen summary", impact: "+4 ATS points", action: "Rewrite summary with role title + 2 strongest achievements + core tools." }
-    ],
-    keywordsFound: [],
-    keywordsMissing: [],
-    keywordsCritical: [],
-    keywordAnalysis: "Keyword analysis unavailable in fallback mode.",
-    atsIssues: [
-      { severity: "medium", title: "Detailed ATS diagnostics unavailable", description: "Fallback mode was used due to invalid AI JSON.", fix: "Re-run optimizer to generate full ATS diagnostics." }
-    ],
-    weakBullets: [],
-    rewrittenSummary: "Results-focused professional aligned to the target role, with experience delivering measurable business outcomes and cross-functional execution.",
-    rewrittenSkills: "Role-specific keywords, Core tools, Cross-functional collaboration, Process improvement, Communication",
-    rewrittenExperience: "Delivered measurable improvements in team outcomes and execution quality.",
-    linkedinHeadline: `${inferredRole} | Results-Driven Professional`,
-    linkedinAbout: "Experienced professional focused on measurable outcomes, stakeholder alignment, and continuous improvement.",
-    linkedinSkills: "Communication, Project Execution, Problem Solving, Collaboration, Process Improvement",
-    aiDetectionRisk: {
-      score: 25,
-      level: "low",
-      flaggedPhrases: [],
-      humanizeAdvice: "Use specific project names and quantified outcomes to improve authenticity signals."
-    }
-  };
-}
-
 // ── BLS SALARY BENCHMARKS (2023-2024 Occupational Employment & Wage Statistics) ─
 const SALARY_BENCHMARKS = [
   // Technology
@@ -858,6 +790,14 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
   "linkedinHeadline": <string — optimized headline under 220 characters>,
   "linkedinAbout": <string — About section 250-300 words, under 2600 characters total, uses \\n for paragraphs>,
   "linkedinSkills": <string — comma-separated top 10 skills aligned to JD>,
+  "interviewQuestions": [
+    {
+      "category": <string — e.g. "Behavioral" | "Technical" | "Gap-based">,
+      "question": <string — specific question based on actual resume gaps vs JD requirements>,
+      "objective": <string — what this question is designed to evaluate for this specific role>,
+      "why": <string — why this question will be asked based on specific gap found>
+    }
+  ],
   "aiDetectionRisk": {
     "score": <integer 0-100 — calculated AI likelihood score>,
     "level": <"low"|"medium"|"high">,
@@ -870,6 +810,8 @@ QUALITY RULES — NEVER VIOLATE:
 - Every atsIssue must reference specific content from the actual resume provided
 - Every weakBullet.original must be an actual bullet from the resume — do not fabricate
 - rewrittenSummary must incorporate at least 4 keywords from keywordsCritical or keywordsMissing
+- interviewQuestions must be based on actual gaps between the resume and JD — not generic questions
+- every interviewQuestions item must include objective that is role-specific and concrete
 - salaryData ranges must be realistic for the role title and location context in the JD
 - If the resume has no professional summary, still provide a rewrittenSummary based on their experience
 - quantificationScore of 0 means zero bullets have metrics — be accurate, not generous`;
@@ -1531,7 +1473,7 @@ export default async function handler(req, res) {
           });
           parsed = tryParseJSONObject(repair.content[0]?.text || "");
         }
-        if (!parsed) parsed = buildCompanyFallback(cleanCompany);
+        if (!parsed) throw new Error("company_json_invalid");
         answer = JSON.stringify(parsed);
       }
       return res.status(200).json({ answer, plan: "free", remaining: "unlimited" });
@@ -1616,7 +1558,7 @@ export default async function handler(req, res) {
         const repaired = repair.content[0]?.text || "";
         parsed = tryParseJSONObject(repaired);
       }
-      if (!parsed) parsed = buildMatchFallback(cleanRole || cleanJobDesc.split('\n')[0]?.trim());
+      if (!parsed) throw new Error("Could not produce valid JSON for match response");
       finalAnswer = JSON.stringify(parsed);
     }
 
