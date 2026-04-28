@@ -143,18 +143,22 @@ async function getATSIntelDoc() {
     return _atsCache.doc;
   }
   try {
-    const { data } = await supabase
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('ats_intel timeout')), 3000)
+    );
+    const query = supabase
       .from('ats_intel')
       .select('content, updated_at, version')
       .eq('is_active', true)
       .order('updated_at', { ascending: false })
       .limit(1)
       .single();
+    const { data } = await Promise.race([query, timeout]);
     const doc = data || ATS_INTEL_BASELINE;
     _atsCache = { doc, fetchedAt: now };
     return doc;
   } catch {
-    // Supabase unavailable or table doesn't exist yet — fall back to baseline
+    // Supabase unavailable, table missing, or timed out — use baseline immediately
     _atsCache = { doc: ATS_INTEL_BASELINE, fetchedAt: now };
     return ATS_INTEL_BASELINE;
   }
@@ -1657,8 +1661,8 @@ export default async function handler(req, res) {
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("X-Accel-Buffering", "no");
     res.setHeader("Access-Control-Allow-Origin", "https://www.preptai.co");
-    // Log usage before streaming starts — same reason as non-streaming path
-    if (cleanEmail) await logUsage(cleanEmail, mode);
+    // Log usage — fire and forget, never block streaming
+    if (cleanEmail) logUsage(cleanEmail, mode).catch(() => {});
     try {
       const stream = anthropic.messages.stream({
         model: "claude-sonnet-4-20250514",
@@ -1687,14 +1691,13 @@ export default async function handler(req, res) {
   }
 
   // ── NON-STREAMING PATH — match, mockgen, and fallback ────────────────────────
-  // Log usage BEFORE calling AI — ensures the slot is consumed even if response
-  // is interrupted. If logging fails, we still serve (UX) but it's visible in logs.
-  if (cleanEmail) await logUsage(cleanEmail, mode);
+  // Log usage — fire and forget so a slow/failed Supabase write never blocks the AI call
+  if (cleanEmail) logUsage(cleanEmail, mode).catch(() => {});
 
   try {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: mode === "match" ? 8192 : 2048,
+      max_tokens: mode === "match" ? 5000 : 2048,
       system: [{ type: "text", text: systemPrompt, cache_control: { type: "ephemeral" } }],
       messages: [{ role: "user", content: cleanMessage }],
     });
