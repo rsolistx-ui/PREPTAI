@@ -2808,7 +2808,7 @@ async function matchResearchCompany() {
     card.innerHTML = `<strong style="color:var(--cy)">${escH(company)}</strong> &middot; ${escH(intel.industry || '')} &middot; ${escH(intel.size || '')}<br>
       <span style="color:var(--gold2)">Interview style:</span> ${escH(intel.interviewStyle || '—')}<br>
       <span style="color:var(--gold2)">What they look for:</span> ${escH(intel.whatTheyLookFor || '—')}<br>
-      <span style="font-size:11px;color:var(--tx3)">Intel injected into cover letter &amp; LinkedIn optimizer</span>`;
+      <span style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:4px 10px;background:rgba(56,217,192,0.12);border:1px solid rgba(56,217,192,0.35);border-radius:20px;font-size:11px;font-weight:700;color:var(--cy);letter-spacing:0.3px">✓ Intel active — injected into cover letter &amp; LinkedIn</span>`;
     showToast('Company intel loaded');
   } catch(e) {
     const intel = buildCompanyIntelFallback(company);
