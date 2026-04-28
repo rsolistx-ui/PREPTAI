@@ -30,7 +30,9 @@ const PRO_LIMITS    = { chat: 200, match: 999 };
 const CAREER_LIMITS = { chat: 400, match: 999 };
 
 function getLimitKey(mode) {
-  return ["chat","followup","thankyou"].includes(mode) ? "chat" : "match";
+  if (["chat","followup","thankyou"].includes(mode)) return "chat";
+  if (["skillsgap","company","gapentry","jenn"].includes(mode)) return null; // truly free — no monthly limit
+  return "match";
 }
 
 // ── IP RATE LIMIT ─────────────────────────────────────────────────────────────
@@ -1239,7 +1241,7 @@ export default async function handler(req, res) {
   const limitKey = getLimitKey(mode);
   const limits   = { free: FREE_LIMITS, pro: PRO_LIMITS, career: CAREER_LIMITS }[plan] || FREE_LIMITS;
 
-  if (plan === "free") {
+  if (limitKey && plan === "free") {
     if (!cleanEmail) {
       return res.status(403).json({ error: "login_required", message: "Please create a free account to use PREPT AI.", loginUrl: "/login.html" });
     }
@@ -1254,14 +1256,14 @@ export default async function handler(req, res) {
     }
   }
 
-  if (plan === "pro" && cleanEmail) {
+  if (limitKey && plan === "pro" && cleanEmail) {
     const usage = await getMonthlyUsage(cleanEmail, limitKey);
     if (usage >= limits[limitKey]) {
       return res.status(403).json({ error: "pro_limit_reached", message: "You have reached your monthly limit. This resets on the 1st of next month.", upgradeUrl: "https://preptai.co/#pricing" });
     }
   }
 
-  if (plan === "career" && cleanEmail) {
+  if (limitKey && plan === "career" && cleanEmail) {
     const usage = await getMonthlyUsage(cleanEmail, limitKey);
     if (usage >= limits[limitKey]) {
       return res.status(403).json({ error: "career_limit_reached", message: "You have reached your monthly limit. This resets on the 1st of next month." });

@@ -562,6 +562,20 @@ footer span{color:var(--gold);font-weight:600}
           </div>
         </div>
       </div>
+      <!-- TARGET OBJECTIVE -->
+      <div style="max-width:900px;margin:0 auto 16px;width:100%;padding:0 2px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);margin-bottom:6px">
+          Target Objective <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--tx3)">(optional)</span>
+        </div>
+        <textarea id="objectiveText" rows="2"
+          placeholder="e.g. Seeking a Senior Product Manager role at a high-growth SaaS company where I can leverage 6 years of B2B product experience to drive roadmap and reduce churn."
+          style="width:100%;background:var(--s2);border:1px solid var(--b1);color:var(--tx);font-family:'Outfit',sans-serif;font-size:13px;padding:10px 13px;border-radius:var(--rs);outline:none;resize:vertical;line-height:1.55;box-sizing:border-box"
+          onfocus="this.style.borderColor='rgba(123,109,244,0.45)'" onblur="this.style.borderColor='var(--b1)'"></textarea>
+        <div style="font-size:11px;color:var(--tx3);margin-top:4px">
+          Injected into the rewritten summary and experience bullets to match your goal.
+        </div>
+      </div>
+
       <div class="analyze-row">
         <div id="freeUseBanner" style="padding:12px 20px;background:rgba(200,168,75,0.07);border:1px solid rgba(200,168,75,0.18);border-radius:10px;font-size:13px;color:#e6c668;text-align:center;width:100%;max-width:600px">
           ⚡ Free plan: <strong>1 resume analysis per month</strong>. Upgrade to Pro for unlimited.
@@ -585,7 +599,7 @@ footer span{color:var(--gold);font-weight:600}
         <div class="ls-item" id="ls3"><div class="ls-dot"></div>Running ATS compatibility check</div>
         <div class="ls-item" id="ls4"><div class="ls-dot"></div>Scoring section by section</div>
         <div class="ls-item" id="ls5"><div class="ls-dot"></div>Rewriting for maximum match</div>
-        <div class="ls-item" id="ls6"><div class="ls-dot"></div>Generating interview questions</div>
+        <div class="ls-item" id="ls6"><div class="ls-dot"></div>Finalizing your full report</div>
       </div>
     </div>
 
@@ -949,8 +963,22 @@ async function runAnalysis() {
   document.getElementById('stageLoading').style.display = 'flex';
   setStep(2); animateLoading();
 
+  // Abort + timeout — Vercel serverless hard-limits at ~30 s; 45 s gives headroom
+  // then falls back gracefully so user can retry rather than staring at a frozen spinner
+  const abortCtrl = new AbortController();
+  const abortTimeout = setTimeout(() => {
+    abortCtrl.abort();
+    document.getElementById('stageLoading').style.display = 'none';
+    document.getElementById('stageInput').style.display = 'block';
+    setStep(1);
+    showToast('Analysis is taking longer than expected — please try again.');
+  }, 45000);
+
+  const objectiveText = (document.getElementById('objectiveText')?.value || '').trim();
+
   const prompt = `RESUME:\n${resumeContent}\n\nJOB DESCRIPTION:\n${jobContent}\n\nAnalyze this resume against this job description. Every finding must reference actual content from the provided resume — no generic observations.
 
+${objectiveText ? `TARGET OBJECTIVE (incorporate into rewritten summary and experience):\n${objectiveText}\n` : ''}
 Return ONLY valid JSON (no markdown, no explanation):
 {
   "overallScore": 64,
@@ -1024,7 +1052,8 @@ Return ONLY valid JSON (no markdown, no explanation):
         message: prompt,
         mode: 'match',
         userEmail: userEmail || null
-      })
+      }),
+      signal: abortCtrl.signal
     });
 
     const data = await res.json();
@@ -1063,10 +1092,11 @@ Return ONLY valid JSON (no markdown, no explanation):
 
     if (!res.ok) throw new Error(data.message || data.error || 'Something went wrong');
 
-    const raw = data.answer || '';
-    const jm  = raw.replace(/```json|```/g,'').match(/\{[\s\S]*\}/);
+    const raw = (data.answer || '').replace(/```json|```/g,'').replace(/^[\s\S]*?(?=\{)/,'').trim();
+    const jm  = raw.match(/\{[\s\S]*\}/);
     if (!jm) throw new Error('Could not parse response. Please try again.');
-    analysis = JSON.parse(jm[0]);
+    try { analysis = JSON.parse(jm[0]); }
+    catch(pe) { throw new Error('Response was not valid JSON — please try again. (' + pe.message + ')'); }
 
     // Save to analysis history
     saveAnalysisHistory({
@@ -1081,6 +1111,7 @@ Return ONLY valid JSON (no markdown, no explanation):
       jobSnippet:    jobContent.slice(0, 80),
     });
 
+    clearTimeout(abortTimeout);
     setTimeout(() => {
       document.getElementById('stageLoading').style.display = 'none';
       const sr = document.getElementById('stageResults');
@@ -1090,6 +1121,8 @@ Return ONLY valid JSON (no markdown, no explanation):
     }, 800);
 
   } catch(e) {
+    clearTimeout(abortTimeout);
+    if (e.name === 'AbortError') return; // timeout handler already showed toast & reset UI
     document.getElementById('stageLoading').style.display = 'none';
     document.getElementById('stageInput').style.display = 'block';
     setStep(1);
@@ -2553,7 +2586,7 @@ async function matchResearchCompany() {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: 'Research this company.', mode: 'company', company, userEmail: userEmail || null })
+      body: JSON.stringify({ message: 'Research this company.', mode: 'company', company, role: (document.getElementById('jobText')?.value?.trim() || '').split('\n')[0].slice(0,200), userEmail: userEmail || null })
     });
     if (!res.ok) throw new Error('API error');
     const d = await res.json();
