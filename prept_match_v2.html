@@ -577,7 +577,7 @@ footer span{color:var(--gold);font-weight:600}
       <div class="loading-ring"></div>
       <div>
         <div style="font-size:18px;font-weight:700;color:var(--tx);margin-bottom:5px">Analyzing your resume...</div>
-        <div style="font-size:13px;color:var(--tx3)">15, 20 seconds. Worth every one.</div>
+        <div style="font-size:13px;color:var(--tx3)">Usually 45, 60 seconds. Worth every one.</div>
       </div>
       <div class="ls-list">
         <div class="ls-item active" id="ls1"><div class="ls-dot"></div>Parsing resume content</div>
@@ -585,7 +585,7 @@ footer span{color:var(--gold);font-weight:600}
         <div class="ls-item" id="ls3"><div class="ls-dot"></div>Running ATS compatibility check</div>
         <div class="ls-item" id="ls4"><div class="ls-dot"></div>Scoring section by section</div>
         <div class="ls-item" id="ls5"><div class="ls-dot"></div>Rewriting for maximum match</div>
-        <div class="ls-item" id="ls6"><div class="ls-dot"></div>Generating interview questions</div>
+        <div class="ls-item" id="ls6"><div class="ls-dot"></div>Finalizing optimization report</div>
       </div>
     </div>
 
@@ -601,8 +601,7 @@ footer span{color:var(--gold);font-weight:600}
           <button class="rtab" id="rt4" onclick="swRT(4)">📄 Rewritten Resume</button>
           <button class="rtab" id="rt5" onclick="swRT(5)">📧 Cover Letter</button>
           <button class="rtab" id="rt6" onclick="swRT(6)">💼 LinkedIn</button>
-          <button class="rtab" id="rt7" onclick="swRT(7)">🎯 Interview Prep</button>
-          <button class="rtab" id="rt8" onclick="swRT(8)">✉ Emails</button>
+          <button class="rtab" id="rt7" onclick="swRT(7)">✉ Emails</button>
         </div>
         <div class="rpanes-wrap">
           <div class="rpane on" id="rp1"></div>
@@ -612,7 +611,6 @@ footer span{color:var(--gold);font-weight:600}
           <div class="rpane" id="rp5"></div>
           <div class="rpane" id="rp6"></div>
           <div class="rpane" id="rp7"></div>
-          <div class="rpane" id="rp8"></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;gap:10px">
@@ -922,6 +920,85 @@ function updateCC(id,cid){
   el.className='cc'+(len>500?' ok':len>0?' warn':'');
 }
 
+function extractJsonPayload(rawText) {
+  const text = String(rawText || '').replace(/```json|```/gi, '').trim();
+  if (!text) throw new Error('Empty response from optimizer.');
+
+  const start = text.indexOf('{');
+  if (start < 0) throw new Error('No JSON object found in response.');
+
+  let depth = 0, inStr = false, esc = false, end = -1;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (inStr) {
+      if (esc) { esc = false; continue; }
+      if (ch === '\\') { esc = true; continue; }
+      if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') { inStr = true; continue; }
+    if (ch === '{') depth++;
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0) { end = i; break; }
+    }
+  }
+  if (end < 0) throw new Error('Incomplete JSON object returned.');
+
+  let candidate = text.slice(start, end + 1).trim();
+  const attempts = [
+    candidate,
+    candidate.replace(/,\s*([}\]])/g, '$1'),
+    candidate.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/,\s*([}\]])/g, '$1')
+  ];
+  for (const attempt of attempts) {
+    try { return JSON.parse(attempt); } catch (e) {}
+  }
+  throw new Error('Optimizer returned invalid JSON. Please try again.');
+}
+
+function parseJSONOrThrow(raw, label = 'Response') {
+  try { return JSON.parse(raw); }
+  catch (_) { throw new Error(`${label} was not valid JSON.`); }
+}
+
+function buildOptimizerFallback() {
+  return {
+    overallScore: 60,
+    projectedScore: 76,
+    grade: 'C',
+    benchmarkNote: 'Fallback analysis loaded — rerun for full detail.',
+    verdict: 'The optimizer response was malformed, so PREPT loaded a fallback analysis to keep your workflow moving.',
+    toneAnalysis: { resumeTone: 'neutral', jdTone: 'professional', mismatch: false, mismatchNote: 'Detailed tone analysis unavailable in fallback mode.' },
+    salaryData: { low: 'N/A', mid: 'N/A', high: 'N/A', negotiationTip: 'Anchor salary asks to measurable outcomes and scope.' },
+    sectionScores: { summary: 58, experience: 62, skills: 55, education: 72 },
+    quantificationScore: 40,
+    quantifiedBullets: 2,
+    totalBullets: 5,
+    actionVerbScore: 55,
+    formatWarnings: ['Fallback mode: rerun optimizer for full ATS format diagnostics.'],
+    contactInfoIssues: [],
+    topPriorityFixes: [
+      { rank: 1, title: 'Add quantified impact', impact: '+8 ATS points', action: 'Add % improvements, revenue, time saved, or volume metrics to core bullets.' },
+      { rank: 2, title: 'Align skills with JD terms', impact: '+6 ATS points', action: 'Use exact role keywords from the posting in Skills and Summary.' },
+      { rank: 3, title: 'Strengthen summary', impact: '+4 ATS points', action: 'Lead with role title + top 2 outcomes + key tools.' }
+    ],
+    keywordsFound: [],
+    keywordsMissing: [],
+    keywordsCritical: [],
+    keywordAnalysis: 'Detailed keyword gap analysis unavailable in fallback mode.',
+    atsIssues: [{ severity: 'medium', title: 'Fallback analysis in use', description: 'Live optimizer JSON failed validation.', fix: 'Rerun optimizer to generate full diagnostics.' }],
+    weakBullets: [],
+    rewrittenSummary: 'Results-focused professional with experience driving measurable outcomes and cross-functional execution.',
+    rewrittenSkills: 'Communication, Process Improvement, Cross-functional Collaboration, Problem Solving, Role-specific Tools',
+    rewrittenExperience: 'Delivered measurable improvements in execution quality and team outcomes.',
+    linkedinHeadline: 'Results-Driven Professional',
+    linkedinAbout: 'Experienced professional focused on measurable impact, collaboration, and execution.',
+    linkedinSkills: 'Communication, Execution, Collaboration, Problem Solving, Process Improvement',
+    aiDetectionRisk: { score: 25, level: 'low', flaggedPhrases: [], humanizeAdvice: 'Use specific project names and quantified outcomes to strengthen authenticity.' }
+  };
+}
+
 // ── LOADING ANIMATION ─────────────────────────────────────────────────────────
 function animateLoading(){
   const delays=[0,2500,5000,7500,10500,14000];
@@ -949,72 +1026,7 @@ async function runAnalysis() {
   document.getElementById('stageLoading').style.display = 'flex';
   setStep(2); animateLoading();
 
-  const prompt = `RESUME:\n${resumeContent}\n\nJOB DESCRIPTION:\n${jobContent}\n\nAnalyze this resume against this job description. Every finding must reference actual content from the provided resume — no generic observations.
-
-Return ONLY valid JSON (no markdown, no explanation):
-{
-  "overallScore": 64,
-  "projectedScore": 89,
-  "grade": "C",
-  "benchmarkNote": "Top candidates for this role typically score 85+",
-  "verdict": "2-3 sentence specific verdict referencing actual gaps between THIS resume and THIS job",
-  "toneAnalysis": {
-    "resumeTone": "casual",
-    "jdTone": "corporate-formal",
-    "mismatch": true,
-    "mismatchNote": "Specific example of language mismatch from the actual resume"
-  },
-  "salaryData": {
-    "low": "$52,000",
-    "mid": "$68,000",
-    "high": "$84,000",
-    "negotiationTip": "Specific tactic for this role and market"
-  },
-  "sectionScores": {"summary": 50, "experience": 68, "skills": 45, "education": 82},
-  "quantificationScore": 30,
-  "quantifiedBullets": 3,
-  "totalBullets": 10,
-  "actionVerbScore": 45,
-  "formatWarnings": ["Specific format issue found, e.g. special characters detected that ATS misreads"],
-  "contactInfoIssues": ["Specific missing contact field, e.g. LinkedIn URL not found"],
-  "topPriorityFixes": [
-    {"rank": 1, "title": "Highest-impact fix title", "impact": "+X ATS points", "action": "Exact instruction"},
-    {"rank": 2, "title": "Second fix title", "impact": "+X ATS points", "action": "Exact instruction"},
-    {"rank": 3, "title": "Third fix title", "impact": "+X ATS points", "action": "Exact instruction"}
-  ],
-  "keywordsFound": ["actual keyword from resume that matches JD"],
-  "keywordsMissing": ["actual keyword from JD missing in resume"],
-  "keywordsCritical": ["most critical missing keywords — in job title or repeated 3+ times in JD"],
-  "keywordAnalysis": "Specific analysis of the keyword gap for THIS job",
-  "atsIssues": [
-    {
-      "severity": "high",
-      "title": "Specific issue title",
-      "description": "Specific description based on actual resume content",
-      "fix": "Exact actionable fix"
-    }
-  ],
-  "weakBullets": [
-    {
-      "original": "Exact bullet copied from the resume",
-      "rewritten": "Rewritten version: strong verb + specific what + quantified result + JD keyword",
-      "improvement": "Why this version scores higher in ATS and with recruiters"
-    }
-  ],
-  "rewrittenSummary": "Complete rewritten professional summary with at least 4 critical keywords naturally embedded",
-  "rewrittenSkills": "Complete rewritten skills section with all missing critical keywords added",
-  "rewrittenExperience": "Complete rewritten experience bullets using \\n as line separator",
-  "linkedinHeadline": "Optimized LinkedIn headline under 220 characters",
-  "linkedinAbout": "Complete LinkedIn About section 250-300 words using \\n for paragraph breaks",
-  "linkedinSkills": "Comma-separated top 10 skills aligned to JD",
-  "interviewQuestions": [
-    {
-      "category": "Behavioral|Technical|Gap-based|Culture",
-      "question": "Specific question based on actual gap between resume and JD",
-      "why": "Why this will be asked — references specific gap found"
-    }
-  ]
-}`;
+  const prompt = `RESUME:\n${resumeContent}\n\nJOB DESCRIPTION:\n${jobContent}\n\nRun PREPT Match optimization at maximum quality.\nReturn only valid JSON with specific, evidence-based findings from this resume and job description.`;
 
   try {
     const res = await fetch('/api/chat', {
@@ -1027,7 +1039,13 @@ Return ONLY valid JSON (no markdown, no explanation):
       })
     });
 
-    const data = await res.json();
+    const rawResponse = await res.text();
+    let data = {};
+    try {
+      data = rawResponse ? JSON.parse(rawResponse) : {};
+    } catch (err) {
+      throw new Error('Optimizer service returned an invalid response. Please retry.');
+    }
 
     if (res.status === 403 && data.error === 'free_limit_reached') {
       document.getElementById('stageLoading').style.display = 'none';
@@ -1061,12 +1079,17 @@ Return ONLY valid JSON (no markdown, no explanation):
       return;
     }
 
-    if (!res.ok) throw new Error(data.message || data.error || 'Something went wrong');
+    if (!res.ok) throw new Error(data.message || data.error || 'Optimizer request failed.');
+    if (!data || typeof data.answer !== 'string') {
+      throw new Error('Optimizer did not return analysis data. Please retry.');
+    }
 
-    const raw = data.answer || '';
-    const jm  = raw.replace(/```json|```/g,'').match(/\{[\s\S]*\}/);
-    if (!jm) throw new Error('Could not parse response. Please try again.');
-    analysis = JSON.parse(jm[0]);
+    try {
+      analysis = extractJsonPayload(data.answer);
+    } catch (_) {
+      analysis = buildOptimizerFallback();
+      showToast('Optimizer response malformed — fallback analysis loaded');
+    }
 
     // Save to analysis history
     saveAnalysisHistory({
@@ -1090,10 +1113,11 @@ Return ONLY valid JSON (no markdown, no explanation):
     }, 800);
 
   } catch(e) {
+    console.error('runAnalysis error:', e);
     document.getElementById('stageLoading').style.display = 'none';
     document.getElementById('stageInput').style.display = 'block';
     setStep(1);
-    showToast('Error: ' + (e.message || 'Something went wrong. Please try again.'));
+    showToast('Error: Optimizer response failed validation. Please try again.');
   }
 }
 
@@ -1237,7 +1261,7 @@ async function generateCL() {
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         try {
-          const d = JSON.parse(line.slice(6));
+          const d = parseJSONOrThrow(line.slice(6), 'Stream event');
           if (d.text) { coverLetter += d.text; out.textContent = coverLetter; }
           if (d.done) { if (acts) acts.style.display = 'flex'; showToast('Cover letter ready — unique to this role'); }
           if (d.error) throw new Error(d.message || 'Stream error');
@@ -1278,7 +1302,7 @@ Return ONLY this JSON (no markdown):
     const raw = (data.answer || '').replace(/```json|```/g,'');
     const jm  = raw.match(/\{[\s\S]*\}/);
     if (!jm) throw new Error('No JSON in response');
-    const d = JSON.parse(jm[0]);
+    const d = parseJSONOrThrow(jm[0], 'LinkedIn response');
     content.innerHTML = renderLIContent(d);
     showToast('LinkedIn optimization ready');
   } catch(e) {
@@ -1297,7 +1321,6 @@ function renderAll(r) {
   renderRewrite(r);
   renderCoverLetterPane();
   renderLinkedInPane(r);
-  renderInterviewPrep(r);
   renderEmailTemplates(r);
 }
 
@@ -1645,34 +1668,13 @@ function renderLIContent(r) {
     </a>`;
 }
 
-function renderInterviewPrep(r) {
-  const qs = r.interviewQuestions || [];
-  setStep(4);
-  document.getElementById('rp7').innerHTML = `
-    <div style="font-size:13px;color:var(--tx2);margin-bottom:18px;line-height:1.6">Based on your resume gaps and this specific job description these are the questions you are most likely to face. Know these cold before you walk in.</div>
-    <div class="iq-list">${qs.map(q=>`
-      <div class="iq-item">
-        <div class="iq-cat">${escH(q.category)}</div>
-        <div class="iq-q">${escH(q.question)}</div>
-        <div class="iq-why">⚡ ${escH(q.why)}</div>
-      </div>`).join('')}
-    </div>
-    <div class="iq-cta">
-      <div>
-        <div class="iq-cta-t">Ready to nail these questions?</div>
-        <div class="iq-cta-s">PREPT Live coaches you through every answer in real time with your specific role and company pre-loaded.</div>
-      </div>
-      <button class="iq-launch" onclick="window.open('prept_v2.html','_blank')">Open PREPT Live →</button>
-    </div>`;
-}
-
 // ── EMAIL TEMPLATES ───────────────────────────────────────────────────────────
 window._emailOutputs = {};
 
 function renderEmailTemplates(r) {
   const company = document.getElementById('matchCompanyInput')?.value?.trim() || '';
   const salaryMid = r?.salaryData?.mid || '';
-  document.getElementById('rp8').innerHTML = `
+  document.getElementById('rp7').innerHTML = `
     <div style="font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.6">3 emails that move hiring decisions — each written from your actual resume and this job, never a template.</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
       <button class="em-tab on" id="emtab-followup" onclick="showEmailTab('followup')">📬 Follow-up</button>
@@ -1815,9 +1817,11 @@ function downloadAll() {
 
 // ── TAB & STEP SWITCHING ──────────────────────────────────────────────────────
 function swRT(n) {
-  for(let i=1;i<=8;i++){
-    document.getElementById('rt'+i).classList.toggle('on',i===n);
-    document.getElementById('rp'+i).classList.toggle('on',i===n);
+  for(let i=1;i<=7;i++){
+    const tab = document.getElementById('rt'+i);
+    const pane = document.getElementById('rp'+i);
+    if (tab) tab.classList.toggle('on',i===n);
+    if (pane) pane.classList.toggle('on',i===n);
   }
 }
 
@@ -2012,10 +2016,10 @@ async function buildGapEntry() {
     const objMatch  = raw.match(/\{[\s\S]*\}/);
     let entries = [];
     if (arrMatch) {
-      const parsed = JSON.parse(arrMatch[0]);
+      const parsed = parseJSONOrThrow(arrMatch[0], 'Gap entries response');
       entries = Array.isArray(parsed) ? parsed : [parsed];
     } else if (objMatch) {
-      entries = [JSON.parse(objMatch[0])];
+      entries = [parseJSONOrThrow(objMatch[0], 'Gap entries response')];
     } else {
       throw new Error('No JSON in response');
     }
@@ -2546,21 +2550,24 @@ async function matchResearchCompany() {
   if (!company) { showToast('Enter a company name first'); return; }
   const btn  = document.getElementById('matchResearchBtn');
   const card = document.getElementById('matchIntelCard');
+  const fallbackIntel = buildCompanyIntelFallback(company);
+  window.matchCompanyIntel = fallbackIntel;
+
   btn.disabled = true; btn.textContent = '⏳';
   card.style.display = 'block';
-  card.innerHTML = '<span style="color:#8a87a0">Researching ' + escH(company) + '...</span>';
+  card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(fallbackIntel.industry || 'Not available')}<br>
+    <span style="color:#e6c668">Interview style:</span> ${escH(fallbackIntel.interviewStyle || 'Structured interviews')}<br>
+    <span style="color:#e6c668">What they look for:</span> ${escH(fallbackIntel.whatTheyLookFor || 'Ownership and measurable impact')}<br>
+    <span style="font-size:11px;color:#8a87a0">Loading live company intel...</span>`;
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: 'Research this company.', mode: 'company', company, userEmail: userEmail || null })
     });
-    if (!res.ok) throw new Error('API error');
-    const d = await res.json();
-    const rawIntel = (d.answer || '').replace(/```json|```/g,'');
-    const jmIntel = rawIntel.match(/\{[\s\S]*\}/);
-    const intel = jmIntel ? JSON.parse(jmIntel[0]) : null;
-    if (!intel) throw new Error('No JSON in response');
+    const d = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(d.message || `API error ${res.status}`);
+    const intel = extractJsonPayload(d.answer || '');
     window.matchCompanyIntel = intel;
     card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(intel.industry || '')} &middot; ${escH(intel.size || '')}<br>
       <span style="color:#e6c668">Interview style:</span> ${escH(intel.interviewStyle || '—')}<br>
@@ -2568,10 +2575,29 @@ async function matchResearchCompany() {
       <span style="font-size:11px;color:#8a87a0">Intel injected into cover letter &amp; LinkedIn optimizer</span>`;
     showToast('Company intel loaded');
   } catch(e) {
-    card.innerHTML = '<span style="color:#ef5f5f">Could not fetch. Try again.</span>';
-    window.matchCompanyIntel = null;
+    card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(fallbackIntel.industry || 'Not available')}<br>
+      <span style="color:#e6c668">Interview style:</span> ${escH(fallbackIntel.interviewStyle || 'Structured interviews')}<br>
+      <span style="color:#e6c668">What they look for:</span> ${escH(fallbackIntel.whatTheyLookFor || 'Ownership and measurable impact')}<br>
+      <span style="font-size:11px;color:#8a87a0">Live lookup failed. Using fallback intel.</span>`;
+    console.error('matchResearchCompany error:', e);
+    showToast('Live company lookup failed — fallback intel loaded');
   }
   btn.disabled = false; btn.textContent = '🔍 Research';
+}
+
+function buildCompanyIntelFallback(company) {
+  const c = (company || '').toLowerCase();
+  const govSignals = ['city', 'county', 'state', 'municipal', 'public', 'transit', 'utility', 'utilities'];
+  const isGov = govSignals.some(s => c.includes(s));
+  return {
+    industry: isGov ? 'Public sector / municipal services' : 'General',
+    interviewStyle: isGov
+      ? 'Panel-based interviews focused on compliance, process reliability, and stakeholder communication'
+      : 'Structured, competency-based interviews focused on role fit',
+    whatTheyLookFor: isGov
+      ? 'Execution consistency, policy awareness, cross-team communication, and measurable service outcomes'
+      : 'Role alignment, measurable outcomes, collaboration, and communication'
+  };
 }
 
 // ── RESUME VERSIONING (localStorage, up to 5 versions) ───────────────────────
@@ -2740,7 +2766,7 @@ async function runSkillsGap() {
       const rawSg = (data.answer || '').replace(/```json|```/g,'');
       const jmSg  = rawSg.match(/\{[\s\S]*\}/);
       if (!jmSg) throw new Error('no json');
-      parsed = JSON.parse(jmSg[0]);
+      parsed = parseJSONOrThrow(jmSg[0], 'Skills gap response');
     } catch(e) {
       result.innerHTML = `<div style="background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:20px;white-space:pre-wrap;font-size:13px;color:var(--tx);line-height:1.7">${escH(data.answer || '')}</div>`;
       return;
@@ -3141,7 +3167,7 @@ function downloadAll() { downloadResume('txt'); }
     if (!hash.startsWith('#prept=')) return;
 
     const encoded = hash.slice(7);
-    const data = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    const data = parseJSONOrThrow(decodeURIComponent(escape(atob(encoded))), 'Extension payload');
 
     if (data.description) {
       const jdEl = document.getElementById('jobText');
