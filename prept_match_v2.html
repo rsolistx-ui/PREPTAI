@@ -577,7 +577,7 @@ footer span{color:var(--gold);font-weight:600}
       <div class="loading-ring"></div>
       <div>
         <div style="font-size:18px;font-weight:700;color:var(--tx);margin-bottom:5px">Analyzing your resume...</div>
-        <div style="font-size:13px;color:var(--tx3)">15, 20 seconds. Worth every one.</div>
+        <div style="font-size:13px;color:var(--tx3)">Usually 45, 60 seconds. Worth every one.</div>
       </div>
       <div class="ls-list">
         <div class="ls-item active" id="ls1"><div class="ls-dot"></div>Parsing resume content</div>
@@ -2603,9 +2603,15 @@ async function matchResearchCompany() {
   if (!company) { showToast('Enter a company name first'); return; }
   const btn  = document.getElementById('matchResearchBtn');
   const card = document.getElementById('matchIntelCard');
+  const fallbackIntel = buildCompanyIntelFallback(company);
+  window.matchCompanyIntel = fallbackIntel;
+
   btn.disabled = true; btn.textContent = '⏳';
   card.style.display = 'block';
-  card.innerHTML = '<span style="color:#8a87a0">Researching ' + escH(company) + '...</span>';
+  card.innerHTML = `<strong style="color:#38d9c0">${escH(company)}</strong> &middot; ${escH(fallbackIntel.industry || 'Not available')}<br>
+    <span style="color:#e6c668">Interview style:</span> ${escH(fallbackIntel.interviewStyle || 'Structured interviews')}<br>
+    <span style="color:#e6c668">What they look for:</span> ${escH(fallbackIntel.whatTheyLookFor || 'Ownership and measurable impact')}<br>
+    <span style="font-size:11px;color:#8a87a0">Loading live company intel...</span>`;
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
