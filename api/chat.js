@@ -790,6 +790,14 @@ RETURN ONLY THIS EXACT JSON STRUCTURE (no markdown, no explanation outside the J
   "linkedinHeadline": <string — optimized headline under 220 characters>,
   "linkedinAbout": <string — About section 250-300 words, under 2600 characters total, uses \\n for paragraphs>,
   "linkedinSkills": <string — comma-separated top 10 skills aligned to JD>,
+  "interviewQuestions": [
+    {
+      "category": <string — e.g. "Behavioral" | "Technical" | "Gap-based">,
+      "question": <string — specific question based on actual resume gaps vs JD requirements>,
+      "objective": <string — what this question is designed to evaluate for this specific role>,
+      "why": <string — why this question will be asked based on specific gap found>
+    }
+  ],
   "aiDetectionRisk": {
     "score": <integer 0-100 — calculated AI likelihood score>,
     "level": <"low"|"medium"|"high">,
@@ -802,6 +810,8 @@ QUALITY RULES — NEVER VIOLATE:
 - Every atsIssue must reference specific content from the actual resume provided
 - Every weakBullet.original must be an actual bullet from the resume — do not fabricate
 - rewrittenSummary must incorporate at least 4 keywords from keywordsCritical or keywordsMissing
+- interviewQuestions must be based on actual gaps between the resume and JD — not generic questions
+- every interviewQuestions item must include objective that is role-specific and concrete
 - salaryData ranges must be realistic for the role title and location context in the JD
 - If the resume has no professional summary, still provide a rewrittenSummary based on their experience
 - quantificationScore of 0 means zero bullets have metrics — be accurate, not generous`;
