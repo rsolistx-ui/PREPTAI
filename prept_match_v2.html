@@ -585,7 +585,7 @@ footer span{color:var(--gold);font-weight:600}
         <div class="ls-item" id="ls3"><div class="ls-dot"></div>Running ATS compatibility check</div>
         <div class="ls-item" id="ls4"><div class="ls-dot"></div>Scoring section by section</div>
         <div class="ls-item" id="ls5"><div class="ls-dot"></div>Rewriting for maximum match</div>
-        <div class="ls-item" id="ls6"><div class="ls-dot"></div>Generating interview questions</div>
+        <div class="ls-item" id="ls6"><div class="ls-dot"></div>Finalizing optimization report</div>
       </div>
     </div>
 
@@ -922,6 +922,52 @@ function updateCC(id,cid){
   el.className='cc'+(len>500?' ok':len>0?' warn':'');
 }
 
+function extractJsonPayload(rawText) {
+  const text = String(rawText || '').replace(/```json|```/gi, '').trim();
+  if (!text) throw new Error('Empty response from optimizer.');
+
+  const start = text.indexOf('{');
+  if (start < 0) throw new Error('No JSON object found in response.');
+
+  let depth = 0, inStr = false, esc = false, end = -1;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (inStr) {
+      if (esc) { esc = false; continue; }
+      if (ch === '\\') { esc = true; continue; }
+      if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') { inStr = true; continue; }
+    if (ch === '{') depth++;
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0) { end = i; break; }
+    }
+  }
+  if (end < 0) throw new Error('Incomplete JSON object returned.');
+
+  let candidate = text.slice(start, end + 1).trim();
+  const attempts = [
+    candidate,
+    candidate.replace(/,\s*([}\]])/g, '$1'),
+    candidate.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/,\s*([}\]])/g, '$1')
+  ];
+  for (const attempt of attempts) {
+    try { return JSON.parse(attempt); } catch (e) {}
+  }
+  throw new Error('Optimizer returned invalid JSON. Please try again.');
+}
+
+function composeQuestionObjective(q) {
+  const category = (q?.category || 'this role').toString().toLowerCase();
+  if (category.includes('technical')) return 'Prove you can do the core work of the role without ramp risk.';
+  if (category.includes('behavior')) return 'Show repeatable decision-making and ownership under pressure.';
+  if (category.includes('culture')) return 'Demonstrate team fit and motivation aligned to the company.';
+  if (category.includes('gap')) return 'Address the risk signal directly and show a concrete mitigation plan.';
+  return 'Show clear, role-relevant impact with specific examples and outcomes.';
+}
+
 // ── LOADING ANIMATION ─────────────────────────────────────────────────────────
 function animateLoading(){
   const delays=[0,2500,5000,7500,10500,14000];
@@ -1011,6 +1057,7 @@ Return ONLY valid JSON (no markdown, no explanation):
     {
       "category": "Behavioral|Technical|Gap-based|Culture",
       "question": "Specific question based on actual gap between resume and JD",
+      "objective": "What interviewer is trying to validate with this question for this role",
       "why": "Why this will be asked — references specific gap found"
     }
   ]
@@ -1063,10 +1110,11 @@ Return ONLY valid JSON (no markdown, no explanation):
 
     if (!res.ok) throw new Error(data.message || data.error || 'Something went wrong');
 
-    const raw = data.answer || '';
-    const jm  = raw.replace(/```json|```/g,'').match(/\{[\s\S]*\}/);
-    if (!jm) throw new Error('Could not parse response. Please try again.');
-    analysis = JSON.parse(jm[0]);
+    analysis = extractJsonPayload(data.answer || '');
+    analysis.interviewQuestions = (analysis.interviewQuestions || []).map(q => ({
+      ...q,
+      objective: q.objective || composeQuestionObjective(q)
+    }));
 
     // Save to analysis history
     saveAnalysisHistory({
@@ -1647,13 +1695,13 @@ function renderLIContent(r) {
 
 function renderInterviewPrep(r) {
   const qs = r.interviewQuestions || [];
-  setStep(4);
   document.getElementById('rp7').innerHTML = `
     <div style="font-size:13px;color:var(--tx2);margin-bottom:18px;line-height:1.6">Based on your resume gaps and this specific job description these are the questions you are most likely to face. Know these cold before you walk in.</div>
     <div class="iq-list">${qs.map(q=>`
       <div class="iq-item">
         <div class="iq-cat">${escH(q.category)}</div>
         <div class="iq-q">${escH(q.question)}</div>
+        <div style="margin-top:8px;font-size:12px;color:#c8a84b;line-height:1.55"><strong style="color:#e6c668">Objective:</strong> ${escH(q.objective || composeQuestionObjective(q))}</div>
         <div class="iq-why">⚡ ${escH(q.why)}</div>
       </div>`).join('')}
     </div>
