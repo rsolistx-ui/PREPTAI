@@ -630,7 +630,7 @@ footer span{color:var(--gold);font-weight:600}
         <div class="analyze-note">🔒 Your resume is never stored or shared. Processed in real time, discarded immediately after.</div>
       </div>
     </div>
-    <div id="analysisHistory" style="display:none;max-width:800px;margin:0 auto 32px;padding:0 24px"></div>
+    <div id="analysisHistory" style="display:none;max-width:800px;margin:28px auto 32px;padding:0 24px"></div>
 
     <div id="stageLoading">
       <div class="loading-ring"></div>
@@ -2336,7 +2336,9 @@ function renderAnalysisHistory() {
 
   el.style.display = 'block';
   el.innerHTML = `
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);margin-bottom:16px">Recent Analyses</div>
+    <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:20px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3)">Recent Analyses</div>
+    </div>
     <div style="display:flex;flex-direction:column;gap:12px">
       ${history.map(h => {
         const date = new Date(h.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
