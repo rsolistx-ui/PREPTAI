@@ -330,7 +330,39 @@ html,body{transition:background 0.3s,color 0.3s}
 :root.light .nav-links a:hover { color: #0f0f1c; }
 :root.light .btn-ghost { border-color: rgba(0,0,0,0.15); color: #3a3858; }
 :root.light .btn-ghost:hover { color: #0f0f1c; border-color: rgba(0,0,0,0.3); }
-:root.light .chip, :root.light .quick-chip { color: #5a50c4; }
+/* ── Right panel (chips bar + input bar) light mode ── */
+:root.light .chips-bar { background: #f0f0f8 !important; border-top: 1px solid rgba(0,0,0,0.07); }
+:root.light .chips-label { color: #5a5770 !important; }
+:root.light .chip, :root.light .quick-chip {
+  background: #ffffff !important;
+  border-color: rgba(123,109,244,0.25) !important;
+  color: #4a3daa !important;
+}
+:root.light .chip:hover, :root.light .quick-chip:hover {
+  background: rgba(123,109,244,0.08) !important;
+  border-color: rgba(123,109,244,0.45) !important;
+  color: #3a2e9e !important;
+}
+:root.light .input-bar { background: #f0f0f8 !important; border-top-color: rgba(0,0,0,0.08) !important; }
+:root.light #questionInput {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  color: #0f0f1c !important;
+}
+:root.light #questionInput::placeholder { color: #9090a8 !important; }
+:root.light #questionInput:focus { border-color: #7b6df4 !important; }
+:root.light .mic-btn {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  color: #7b6df4 !important;
+}
+:root.light .mic-btn:hover { background: rgba(123,109,244,0.08) !important; }
+:root.light .safari-note { color: rgba(0,0,0,0.45) !important; }
+:root.light .thinking { background: #ffffff !important; border-color: rgba(0,0,0,0.1) !important; }
+:root.light .think-label { color: #5a5770 !important; }
+:root.light .continuous-bar { background: rgba(21,140,64,0.07) !important; border-color: rgba(21,140,64,0.3) !important; }
+:root.light .cont-status { color: #1a7a3c !important; }
+:root.light .cont-toggle { background: rgba(21,140,64,0.08) !important; border-color: rgba(21,140,64,0.35) !important; color: #1a7a3c !important; }
 :root.light .info-label { color: #6b6882; }
 :root.light .info-value { color: #0f0f1c; }
 :root.light .info-note { color: #6b6882; }
