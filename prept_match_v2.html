@@ -1199,6 +1199,9 @@ Return ONLY valid JSON (no markdown, no explanation):
       topPriorityFixes: analysis.topPriorityFixes || [],
       resumeSnippet: resumeContent.slice(0, 120),
       jobSnippet:    jobContent.slice(0, 80),
+      analysisData:  analysis,
+      resumeFull:    resumeContent.slice(0, 8000),
+      jobFull:       jobContent.slice(0, 4000),
     });
 
     clearTimeout(abortTimeout);
@@ -2333,22 +2336,55 @@ function renderAnalysisHistory() {
 
   el.style.display = 'block';
   el.innerHTML = `
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);margin-bottom:12px">Recent Analyses</div>
-    <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);margin-bottom:16px">Recent Analyses</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
       ${history.map(h => {
         const date = new Date(h.date).toLocaleDateString('en-US',{month:'short',day:'numeric'});
-        return `<div style="padding:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;cursor:default">
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
-            <div style="font-size:22px;font-weight:900;color:${gc(h.score)};font-family:'Outfit',sans-serif">${h.score}</div>
-            <div style="flex:1">
+        const canResume = !!h.analysisData;
+        return `<div onclick="${canResume ? `resumeAnalysis(${h.id})` : ''}"
+          style="padding:16px 18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;cursor:${canResume ? 'pointer' : 'default'};transition:border-color 0.18s,background 0.18s"
+          onmouseenter="if(${canResume}){this.style.borderColor='rgba(123,109,244,0.35)';this.style.background='rgba(123,109,244,0.05)'}"
+          onmouseleave="if(${canResume}){this.style.borderColor='rgba(255,255,255,0.07)';this.style.background='rgba(255,255,255,0.03)'}">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:${h.keywordsMissing?.length ? '10px' : '0'}">
+            <div style="font-size:24px;font-weight:900;color:${gc(h.score)};font-family:'Outfit',sans-serif;min-width:36px">${h.score}</div>
+            <div style="flex:1;min-width:0">
               <div style="font-size:12px;color:var(--tx2);line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical">${escH(h.jobSnippet || 'Analysis')}</div>
-              <div style="font-size:11px;color:var(--tx3);margin-top:1px">${date} · Grade ${h.grade}</div>
+              <div style="font-size:11px;color:var(--tx3);margin-top:2px">${date} · Grade ${h.grade}</div>
             </div>
+            ${canResume ? `<div style="font-size:11px;font-weight:700;color:var(--vi2);opacity:0.7;white-space:nowrap;padding:4px 10px;border:1px solid rgba(123,109,244,0.25);border-radius:8px;flex-shrink:0">↩ Resume</div>` : ''}
           </div>
-          ${h.keywordsMissing?.length ? `<div style="display:flex;flex-wrap:wrap;gap:4px">${h.keywordsMissing.map(k=>`<span style="padding:2px 8px;border-radius:8px;font-size:10px;background:rgba(239,95,95,0.08);border:1px solid rgba(239,95,95,0.18);color:#ef5f5f">${escH(k)}</span>`).join('')}</div>` : ''}
+          ${h.keywordsMissing?.length ? `<div style="display:flex;flex-wrap:wrap;gap:5px">${h.keywordsMissing.map(k=>`<span style="padding:3px 9px;border-radius:8px;font-size:10px;background:rgba(239,95,95,0.08);border:1px solid rgba(239,95,95,0.18);color:#ef5f5f">${escH(k)}</span>`).join('')}</div>` : ''}
         </div>`;
       }).join('')}
     </div>`;
+}
+
+function resumeAnalysis(id) {
+  const history = getAnalysisHistory();
+  const entry = history.find(h => h.id === id);
+  if (!entry || !entry.analysisData) return;
+
+  // Restore globals
+  analysis = entry.analysisData;
+  if (entry.resumeFull) {
+    resumeContent = entry.resumeFull;
+    const rt = document.getElementById('resumeText');
+    if (rt) rt.value = entry.resumeFull;
+  }
+  if (entry.jobFull) {
+    jobContent = entry.jobFull;
+    const jt = document.getElementById('jobText');
+    if (jt) jt.value = entry.jobFull;
+  }
+
+  // Jump straight to results — no API call needed
+  document.getElementById('stageLoading').style.display = 'none';
+  document.getElementById('stageInput').style.display = 'none';
+  const sr = document.getElementById('stageResults');
+  sr.style.display = 'flex';
+  setStep(3);
+  renderAll(analysis);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 updTrackerBadge();
