@@ -931,7 +931,8 @@ QUALITY RULES — NEVER VIOLATE:
 - quantificationScore of 0 means zero bullets have metrics — be accurate, not generous
 - skillsConsistency.unsupportedSkills must list actual skills from the resume skills section
 - keywordPlacement must cover all keywordsCritical items plus top missing keywords
-- tenureRisk.issues must cite actual dates from the resume if flagging gaps or short stints`;
+- tenureRisk.issues must cite actual dates from the resume if flagging gaps or short stints
+- CAPITALIZATION in rewrittenSummary and rewrittenSkills: only capitalize proper nouns, official titles, company names, and acronyms. Do NOT capitalize common job-function words like "management", "operations", "communication", "analysis", "development" in mid-sentence — match normal business writing conventions`;
 }
 
 

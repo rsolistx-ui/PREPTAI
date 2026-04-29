@@ -416,6 +416,38 @@ footer span{color:var(--gold);font-weight:600}
 :root.light .ls-item.done { color: #22c55e !important; background: rgba(34,197,94,0.1) !important; border-color: rgba(34,197,94,0.35) !important; }
 :root.light .ls-item.active { color: #7a5c00 !important; background: rgba(200,168,75,0.12) !important; border-color: rgba(200,168,75,0.35) !important; }
 :root.light .toast { background: #ffffff; border-color: rgba(0,0,0,0.12); color: #0f0f1c; box-shadow: 0 4px 20px rgba(0,0,0,0.12); }
+/* Tabs — active gold more prominent */
+:root.light .rtab.on { color: #7a5200 !important; border-bottom-color: #b07800 !important; background: rgba(200,168,75,0.1) !important; }
+/* ATS severity badges — brighter in light mode */
+:root.light .sev-h { background: rgba(215,28,28,0.1) !important; color: #c41e1e !important; border-color: rgba(215,28,28,0.35) !important; }
+:root.light .sev-m { background: rgba(180,95,0,0.09) !important; color: #b45000 !important; border-color: rgba(180,95,0,0.35) !important; }
+:root.light .sev-l { background: rgba(21,140,64,0.09) !important; color: #15803d !important; border-color: rgba(21,140,64,0.35) !important; }
+:root.light .issue-t { color: #0f0f1c !important; }
+/* Salary card */
+:root.light .sal-n { color: #8a5f00 !important; }
+:root.light .sal-stat { background: #eeebff !important; }
+:root.light .sal-l { color: #4a4870 !important; }
+:root.light .sal-tip { background: #fef8e4 !important; color: #3a2e00 !important; border-left-color: #b07800 !important; }
+:root.light .sal-tip strong { color: #8a5200 !important; }
+/* Tone card pills */
+:root.light .tc-formal { background: rgba(123,109,244,0.12) !important; color: #4a3daa !important; border-color: rgba(123,109,244,0.35) !important; }
+:root.light .tc-mismatch { background: rgba(215,28,28,0.08) !important; color: #c41e1e !important; border-color: rgba(215,28,28,0.3) !important; }
+/* Target objective card */
+:root.light .obj-card { background: rgba(123,109,244,0.07) !important; border-color: rgba(123,109,244,0.25) !important; }
+:root.light .obj-label { color: #4a3daa !important; }
+:root.light .obj-text { color: #0f0f1c !important; font-style: italic; }
+/* rw-btn PDF/DOCX dark buttons in light mode */
+:root.light .rw-btn-pdf { background: rgba(123,109,244,0.1) !important; color: #4a3daa !important; border-color: rgba(123,109,244,0.3) !important; }
+/* em-tab active */
+:root.light .em-tab.on { background: rgba(123,109,244,0.12) !important; color: #4a3daa !important; border-color: rgba(123,109,244,0.35) !important; }
+:root.light .em-tab { color: #3a3858 !important; }
+/* Footer PDF / TXT download buttons */
+:root.light #footerPdfBtn { background: rgba(100,90,200,0.1) !important; color: #4a3daa !important; border: 1px solid rgba(100,90,200,0.3) !important; }
+:root.light #footerTxtBtn { background: rgba(100,90,200,0.1) !important; color: #4a3daa !important; border: 1px solid rgba(100,90,200,0.3) !important; }
+/* Share PREPT AI button */
+:root.light #shareBtn { background: #7b6df4 !important; color: #ffffff !important; border-color: #6252c0 !important; }
+/* Apply-all bundle button in light mode */
+:root.light #bundleBtn { box-shadow: 0 3px 14px rgba(123,109,244,0.25) !important; }
 :root.light .hero-eyebrow { color: #4338a0; background: rgba(123,109,244,0.1); border-color: rgba(123,109,244,0.3); }
 :root.light .ico-gold { background: #d4a800; border-color: #a87e00; font-size: 18px; }
 :root.light .ico-vi  { background: #dcd8ff; border-color: rgba(123,109,244,0.5); font-size: 18px; }
@@ -644,7 +676,7 @@ footer span{color:var(--gold);font-weight:600}
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;gap:10px">
         <button onclick="resetTool()" style="background:none;border:1px solid var(--b1);color:var(--tx3);padding:8px 18px;border-radius:20px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer">← Analyze a different resume</button>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button onclick="shareResult()" style="padding:8px 16px;background:rgba(123,109,244,0.1);border:1px solid rgba(123,109,244,0.2);border-radius:20px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;color:#a498ff;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(123,109,244,0.2)'" onmouseout="this.style.background='rgba(123,109,244,0.1)'">🔗 Share PREPT AI</button>
+          <button id="shareBtn" onclick="shareResult()" style="padding:9px 18px;background:rgba(123,109,244,0.18);border:1.5px solid rgba(123,109,244,0.45);border-radius:20px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:#c4bcff;cursor:pointer;transition:all 0.2s;letter-spacing:0.2px" onmouseover="this.style.background='rgba(123,109,244,0.28)'" onmouseout="this.style.background='rgba(123,109,244,0.18)'">🔗 Share PREPT AI</button>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
           <button id="bundleBtn" class="apply-all-btn" onclick="downloadBundle()" style="display:flex;align-items:center;gap:6px;background:linear-gradient(135deg,#7b6df4,#a498ff);font-size:13px;padding:10px 18px">
             📦 Download Application Bundle
@@ -654,10 +686,10 @@ footer span{color:var(--gold);font-weight:600}
             📄 Resume only
             <span style="font-size:10px;background:rgba(255,255,255,0.15);border-radius:4px;padding:2px 6px;font-weight:800">DOCX</span>
           </button>
-          <button class="apply-all-btn" onclick="downloadResume('pdf')" style="background:#4d4a66;display:flex;align-items:center;gap:6px">
+          <button id="footerPdfBtn" class="apply-all-btn" onclick="downloadResume('pdf')" style="background:#4d4a66;display:flex;align-items:center;gap:6px">
             🖨 PDF
           </button>
-          <button class="apply-all-btn" onclick="downloadResume('txt')" style="background:#2c2a44;font-size:12px;padding:8px 14px">
+          <button id="footerTxtBtn" class="apply-all-btn" onclick="downloadResume('txt')" style="background:#2c2a44;font-size:12px;padding:8px 14px">
             .txt
           </button>
         </div>
@@ -1378,6 +1410,22 @@ Return ONLY this JSON (no markdown):
   }
 }
 
+function injectObjectiveIntoSummary() {
+  if (!analysis?.targetObjective) return;
+  // Replace the rewritten summary with the objective statement (summary will be the objective)
+  analysis.rewrittenSummary = analysis.targetObjective;
+  renderRewrite(analysis);
+  swRT(4);
+  showToast('Objective set as your Resume Summary — see Rewritten Resume tab');
+}
+
+function copyObjectiveForLinkedIn() {
+  if (!analysis?.targetObjective) return;
+  navigator.clipboard.writeText(analysis.targetObjective)
+    .then(() => showToast('Copied — paste into your LinkedIn About section opener'))
+    .catch(() => showToast('Copy failed — select text manually'));
+}
+
 // ── RENDER ALL ────────────────────────────────────────────────────────────────
 function renderAll(r) {
   renderScoreBanner(r);
@@ -1399,16 +1447,19 @@ function renderTargetObjective(r) {
   const obj = r.targetObjective;
   if (!obj) { el.innerHTML = ''; return; }
   el.innerHTML = `
-    <div style="max-width:900px;margin:0 auto 16px;background:linear-gradient(135deg,rgba(123,109,244,0.10),rgba(56,217,192,0.07));border:1px solid rgba(123,109,244,0.28);border-radius:12px;padding:16px 20px">
+    <div class="obj-card" style="max-width:900px;margin:0 auto 16px;background:linear-gradient(135deg,rgba(123,109,244,0.10),rgba(56,217,192,0.07));border:1px solid rgba(123,109,244,0.28);border-radius:12px;padding:16px 20px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#a89cf5">Target Objective</div>
+        <div class="obj-label" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#b8aaff">Target Objective</div>
         <button data-obj="${escH(obj)}" onclick="navigator.clipboard.writeText(this.dataset.obj).then(()=>showToast('Objective copied')).catch(()=>showToast('Copy failed'))"
-          style="background:rgba(123,109,244,0.12);border:1px solid rgba(123,109,244,0.3);color:#a89cf5;font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer">
+          style="background:rgba(123,109,244,0.12);border:1px solid rgba(123,109,244,0.3);color:#b8aaff;font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;cursor:pointer">
           📋 Copy
         </button>
       </div>
-      <div style="font-size:14px;color:#edeaf7;line-height:1.65;font-style:italic">"${escH(obj)}"</div>
-      <div style="font-size:11px;color:var(--tx3);margin-top:8px">AI-generated from your experience + this job — inject into your resume summary and LinkedIn About</div>
+      <div class="obj-text" style="font-size:14px;color:#edeaf7;line-height:1.65;font-style:italic">"${escH(obj)}"</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button onclick="injectObjectiveIntoSummary()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(123,109,244,0.15);border:1px solid rgba(123,109,244,0.4);border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:#c4bcff;cursor:pointer;transition:all 0.18s" onmouseover="this.style.background='rgba(123,109,244,0.25)'" onmouseout="this.style.background='rgba(123,109,244,0.15)'">📄 Use as Resume Summary</button>
+        <button onclick="copyObjectiveForLinkedIn()" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(10,102,194,0.12);border:1px solid rgba(10,102,194,0.35);border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;color:#4a9eda;cursor:pointer;transition:all 0.18s" onmouseover="this.style.background='rgba(10,102,194,0.22)'" onmouseout="this.style.background='rgba(10,102,194,0.12)'">💼 Copy for LinkedIn About</button>
+      </div>
     </div>`;
 }
 
@@ -1536,7 +1587,7 @@ function renderToneCard(r) {
           ${t.resumeTone?`<span class="tc-pill tc-formal">Resume: ${escH(t.resumeTone)}</span>`:''}
         </div>
       </div>
-      ${t.mismatchNote?`<div style="flex:1;font-size:13px;color:var(--tx2);line-height:1.6">${escH(t.mismatchNote)}</div>`:''}
+      ${t.mismatchNote?`<div style="flex:1;font-size:13px;color:var(--tx2);line-height:1.6">${escH(/[.!?]$/.test(t.mismatchNote.trim())?t.mismatchNote:t.mismatchNote.trim()+'.')}</div>`:''}
     </div>`;
 }
 
@@ -1657,18 +1708,37 @@ function renderIssues(r) {
 function renderBullets(r) {
   const bullets = r.weakBullets || [];
   if (!bullets.length) { document.getElementById('rp3').innerHTML='<div style="color:var(--gr);padding:30px;text-align:center;font-size:15px;font-weight:600">✓ No weak bullet points detected</div>'; return; }
+  // Store bullets on window so inject function can access by index
+  window._weakBullets = bullets;
   document.getElementById('rp3').innerHTML = `
-    <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">These bullet points were identified as weak vague, passive, or missing quantification. Each has been rewritten with stronger language and the metrics the JD is looking for.</div>
-    <div class="bullet-list">${bullets.map(b=>`
+    <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">These bullet points were identified as weak — vague, passive, or missing quantification. Each has been rewritten with stronger language and the keywords this job description requires.</div>
+    <div class="bullet-list">${bullets.map((b,i)=>`
       <div class="bullet-item">
         <div class="bi-orig-lbl">Original</div>
         <div class="bi-orig">${escH(b.original)}</div>
         <div class="bi-new-lbl">Rewritten</div>
         <div class="bi-new">${escH(b.rewritten)}</div>
         <div style="font-size:11px;color:var(--vi2);margin-top:5px">↑ ${escH(b.improvement)}</div>
-        <button class="bi-copy" data-txt="${escH(b.rewritten)}" onclick="navigator.clipboard.writeText(this.dataset.txt).then(()=>showToast('Copied')).catch(()=>showToast('Copy failed'))">Copy rewritten bullet</button>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:8px">
+          <button class="bi-copy" data-txt="${escH(b.rewritten)}" onclick="navigator.clipboard.writeText(this.dataset.txt).then(()=>showToast('Rewritten bullet copied')).catch(()=>showToast('Copy failed'))">📋 Copy</button>
+          <button class="bi-copy" style="background:rgba(123,109,244,0.12);border-color:rgba(123,109,244,0.3);color:var(--vi2)" onclick="injectBulletIntoResume(${i})">✏ Inject into resume</button>
+        </div>
       </div>`).join('')}
     </div>`;
+}
+
+function injectBulletIntoResume(idx) {
+  const bullet = (window._weakBullets || [])[idx];
+  if (!bullet) return;
+  const orig = bullet.original.trim();
+  const rewr = bullet.rewritten.trim();
+  if (!resumeContent) { showToast('No resume content found'); return; }
+  // Try exact match first, then case-insensitive
+  let pos = resumeContent.indexOf(orig);
+  if (pos === -1) pos = resumeContent.toLowerCase().indexOf(orig.toLowerCase());
+  if (pos === -1) { showToast('Could not locate this bullet — copy it manually'); return; }
+  resumeContent = resumeContent.slice(0, pos) + rewr + resumeContent.slice(pos + orig.length);
+  showToast('Bullet updated in resume — regenerate for full rewrite');
 }
 
 function renderRewrite(r) {
@@ -1691,7 +1761,7 @@ function renderRewrite(r) {
       <div style="display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0">
         <button class="rw-btn rw-primary" onclick="copyAllSections()" title="Copy Summary + Skills + Experience as one block">📋 Copy all</button>
         <button class="rw-btn" style="background:#7b6df4;color:#fff;border-color:#7b6df4" onclick="downloadResume('docx')">📄 DOCX</button>
-        <button class="rw-btn" style="background:#4d4a66;color:#fff;border-color:#4d4a66" onclick="downloadResume('pdf')">🖨 PDF</button>
+        <button class="rw-btn rw-btn-pdf" style="background:#4d4a66;color:#fff;border-color:#4d4a66" onclick="downloadResume('pdf')">🖨 PDF</button>
       </div>
     </div>
     <div class="rw-toolbar">
@@ -1700,7 +1770,7 @@ function renderRewrite(r) {
     </div>
     ${allSections.map(s=>`
       <div id="rws-${s.id}" style="display:${s.id===active?'block':'none'}">
-        <div class="rw-content" id="rwc-${s.id}">${hlKeywords(escH(s.content),r)}</div>
+        <div class="rw-content" id="rwc-${s.id}" style="white-space:pre-wrap">${s.id==='exp' ? hlHeaders(hlKeywords(escH(s.content),r)) : hlKeywords(escH(s.content),r)}</div>
         <div class="rw-acts">
           <button class="rw-btn rw-primary" onclick="copyRW('${s.id}')">📋 Copy ${s.label}</button>
           <button class="rw-btn rw-sec" onclick="copyRWPlain('${s.id}')">Plain text</button>
@@ -1709,8 +1779,9 @@ function renderRewrite(r) {
     ${!hasExp ? `
       <div id="rws-exp" style="display:none">
         <div id="rw-exp-inner">
-          <div style="padding:24px 0 10px;text-align:center">
-            <div style="font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.6">Rewrite your experience bullets with the top missing keywords from this job description woven in naturally.</div>
+          <div style="padding:20px 0 10px">
+            <div style="font-size:13px;font-weight:700;color:var(--tx);margin-bottom:6px">✦ Experience Rewrite — AI does the work for you</div>
+            <div style="font-size:12px;color:var(--tx2);margin-bottom:16px;line-height:1.65">Click the button below and PREPT AI will rewrite every bullet point in your experience section — adding the top missing keywords from this job description naturally, strengthening your action verbs, and weaving in quantified results where your resume already implies them.</div>
             <button class="rw-btn rw-primary" style="font-size:13px;padding:10px 22px" onclick="generateRewrittenExperience()">✦ Generate Experience Rewrite</button>
           </div>
         </div>
@@ -1757,7 +1828,7 @@ async function generateRewrittenExperience() {
     if (analysis) analysis.rewrittenExperience = text;
     const content = text.replace(/\\n/g, '\n');
     inner.innerHTML = `
-      <div class="rw-content" id="rwc-exp" style="margin-top:4px">${hlKeywords(escH(content), analysis||{})}</div>
+      <div class="rw-content" id="rwc-exp" style="margin-top:4px;white-space:pre-wrap">${hlHeaders(hlKeywords(escH(content), analysis||{}))}</div>
       <div class="rw-acts">
         <button class="rw-btn rw-primary" onclick="copyRW('exp')">📋 Copy Experience</button>
         <button class="rw-btn rw-sec" onclick="copyRWPlain('exp')">Plain text</button>
@@ -1767,6 +1838,25 @@ async function generateRewrittenExperience() {
   } catch(e) {
     inner.innerHTML = `<div style="color:var(--tx2);font-size:13px;padding:16px 0">Could not generate. <button class="rw-btn rw-sec" onclick="generateRewrittenExperience()" style="margin-left:8px">Try again</button></div>`;
   }
+}
+
+// Detects ALL-CAPS header lines in rewritten content and highlights them
+function hlHeaders(html) {
+  return html.split('\n').map(line => {
+    // Strip any existing HTML tags to evaluate the raw text
+    const raw = line.replace(/<[^>]+>/g,'').trim();
+    if (!raw) return '<br>';
+    // Header: mostly uppercase letters, at least 4 alpha chars, no more than one lowercase letter
+    const letters = raw.replace(/[^a-zA-Z]/g,'');
+    const uppers  = raw.replace(/[^A-Z]/g,'');
+    if (letters.length >= 4 && uppers.length / letters.length >= 0.85) {
+      const isLight = document.documentElement.classList.contains('light');
+      const bg = isLight ? 'rgba(123,109,244,0.1)' : 'rgba(123,109,244,0.18)';
+      const cl = isLight ? '#4a3daa' : '#c4bcff';
+      return `<span style="display:block;background:${bg};border-left:3px solid var(--pu);padding:5px 10px;border-radius:4px;font-size:11px;font-weight:800;letter-spacing:0.6px;margin:14px 0 3px;color:${cl}">${line}</span>`;
+    }
+    return line + '<br>';
+  }).join('');
 }
 
 function hlKeywords(text,r) {
@@ -1964,13 +2054,14 @@ async function generateEmail(type) {
   const out  = document.getElementById('em-out-' + type);
   const acts = document.getElementById('em-acts-' + type);
   if (!out) return;
+  // Show the output area FIRST so plan-upgrade prompt or errors are visible
+  out.style.display = 'block';
   const requiredPlan = type === 'negotiation' ? 'career' : 'pro';
   if (!requirePlan(requiredPlan, out)) return;
 
   const role    = (analysis?.targetRole) || document.getElementById('jobText')?.value?.trim().split('\n')[0] || 'this role';
   const company = document.getElementById('matchCompanyInput')?.value?.trim() || 'the company';
 
-  out.style.display = 'block';
   out.innerHTML = '<div class="thinking"><div class="tdots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div><span class="tlbl">Writing your email...</span></div>';
   if (acts) acts.style.display = 'none';
 
